@@ -61,8 +61,7 @@ class _CadastroLeiteState extends State<CadastroLeite> {
       onWillPop: _requestPop,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
-              _editedProdLeite.dataColeta ?? "Cadastrar Produção do Leite",
+          title: Text("Cadastrar Produção do Leite",
               style: TextStyle(fontSize: 15.0)),
           centerTitle: true,
           actions: [

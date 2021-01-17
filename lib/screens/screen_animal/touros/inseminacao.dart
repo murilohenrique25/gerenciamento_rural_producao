@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/touros/second_screen/list_touros.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/touros/second_screen/list_inseminacoes.dart';
 
-class Touro extends StatefulWidget {
+class Inseminacao extends StatefulWidget {
   @override
-  _TouroState createState() => _TouroState();
+  _InseminacaoState createState() => _InseminacaoState();
 }
 
-class _TouroState extends State<Touro> {
+class _InseminacaoState extends State<Inseminacao> {
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         GestureDetector(
           onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => ListTouros()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ListInseminacoes()));
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),
@@ -22,7 +22,7 @@ class _TouroState extends State<Touro> {
               alignment: Alignment.center,
               children: [
                 Image.asset(
-                  "images/touro.jpg",
+                  "images/inseminacao.jpg",
                   height: 150.0,
                   width: 150.0,
                   color: Color.fromRGBO(255, 255, 255, 0.7),
@@ -38,7 +38,7 @@ class _TouroState extends State<Touro> {
                         size: 21.0,
                       ),
                       Text(
-                        "Touros",
+                        "Inseminação",
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 16.5,

@@ -1,11 +1,94 @@
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/touros/inseminacao.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/touros/inventario_semen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/touros/touros.dart';
 
-class DescriptionTouro extends StatelessWidget {
+class DescriptionTouro extends StatefulWidget {
+  @override
+  _DescriptionTouroState createState() => _DescriptionTouroState();
+}
+
+class _DescriptionTouroState extends State<DescriptionTouro> {
+  double _height = 130.0;
+  double _width = 130.0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Touros e Inseminação"),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        child: Stack(
+          children: [
+            Image.asset(
+              "images/telainicial.png",
+              fit: BoxFit.cover,
+              height: 1000.0,
+            ),
+            Column(
+              children: [
+                //Primeira linha
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: _width,
+                          height: _height,
+                          color: Colors.grey[50],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Touro(),
+                        ),
+                      ],
+                    ),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: _width,
+                          height: _height,
+                          color: Colors.grey[50],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Inseminacao(),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 10.0),
+                    ),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: _width,
+                          height: _height,
+                          color: Colors.grey[50],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: InventarioSemen(),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

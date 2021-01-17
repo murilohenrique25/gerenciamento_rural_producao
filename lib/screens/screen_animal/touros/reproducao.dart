@@ -1,20 +1,38 @@
 import 'package:flutter/material.dart';
 
-class Reproducao extends StatelessWidget {
+class Touros extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Reprodução"),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Container(
-          width: 150.0,
-          height: 150.0,
-          color: Colors.deepPurpleAccent,
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () {},
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15.0),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Image.asset(
+                  "images/reprodutor.jpg",
+                  height: 150.0,
+                  width: 150.0,
+                  color: Color.fromRGBO(255, 255, 255, 0.7),
+                  colorBlendMode: BlendMode.modulate,
+                ),
+                Text(
+                  "Reprodução",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 14,
+                      letterSpacing: 1.0,
+                      fontWeight: FontWeight.bold,
+                      backgroundColor: Colors.white),
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

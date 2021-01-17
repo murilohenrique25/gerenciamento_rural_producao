@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/touros/description_touro.dart';
 
 class TouroInseminacao extends StatefulWidget {
   @override
@@ -11,7 +12,10 @@ class _TouroInseminacaoState extends State<TouroInseminacao> {
     return Column(
       children: [
         GestureDetector(
-          onTap: () {},
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => DescriptionTouro()));
+          },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),
             child: Stack(
@@ -28,7 +32,7 @@ class _TouroInseminacaoState extends State<TouroInseminacao> {
                   "Touros e Inseminação",
                   style: TextStyle(
                       color: Colors.black,
-                      fontSize: 14,
+                      fontSize: 11.0,
                       letterSpacing: 1.0,
                       fontWeight: FontWeight.bold,
                       backgroundColor: Colors.white),
