@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/touros/inseminacao.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/touros/inventario_semen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/touros/touros.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/cadastrar_bezerra_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/cadastrar_novilha_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/cadastrar_vaca_screen.dart';
 
-class DescriptionTouro extends StatefulWidget {
+class CadastrarAnimais extends StatefulWidget {
   @override
-  _DescriptionTouroState createState() => _DescriptionTouroState();
+  _CadastrarAnimaisState createState() => _CadastrarAnimaisState();
 }
 
-class _DescriptionTouroState extends State<DescriptionTouro> {
+class _CadastrarAnimaisState extends State<CadastrarAnimais> {
   double _height = 130.0;
   double _width = 130.0;
 
@@ -16,7 +16,7 @@ class _DescriptionTouroState extends State<DescriptionTouro> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Touros e Inseminação"),
+        title: Text("Cadastrar Animais"),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -43,7 +43,7 @@ class _DescriptionTouroState extends State<DescriptionTouro> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: Touro(),
+                          child: CadastrarVacaScreen(),
                         ),
                       ],
                     ),
@@ -57,12 +57,13 @@ class _DescriptionTouroState extends State<DescriptionTouro> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: Inseminacao(),
+                          child: CadastrarNovilhaScreen(),
                         ),
                       ],
                     ),
                   ],
                 ),
+                //Segunda linha
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -76,7 +77,7 @@ class _DescriptionTouroState extends State<DescriptionTouro> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: InventarioSemen(),
+                          child: CadastrarBezerraScreen(),
                         ),
                       ],
                     ),

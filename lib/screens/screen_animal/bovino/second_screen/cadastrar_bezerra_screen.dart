@@ -1,14 +1,14 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/cadastro_animal.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/cadastro_bezerra.dart';
 
-class CadastrarAnimal extends StatefulWidget {
+class CadastrarBezerraScreen extends StatefulWidget {
   @override
-  _CadastrarAnimalState createState() => _CadastrarAnimalState();
+  _CadastrarBezerraScreenState createState() => _CadastrarBezerraScreenState();
 }
 
-class _CadastrarAnimalState extends State<CadastrarAnimal> {
+class _CadastrarBezerraScreenState extends State<CadastrarBezerraScreen> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -16,7 +16,7 @@ class _CadastrarAnimalState extends State<CadastrarAnimal> {
         GestureDetector(
           onTap: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => CadastroAnimal()));
+                MaterialPageRoute(builder: (context) => CadastroBezerra()));
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),
@@ -24,7 +24,7 @@ class _CadastrarAnimalState extends State<CadastrarAnimal> {
               alignment: Alignment.center,
               children: [
                 Image.asset(
-                  "images/fundobtn.jpg",
+                  "images/gadoleite.jpg",
                   height: 150.0,
                   width: 150.0,
                   color: Color.fromRGBO(255, 255, 255, 0.7),
@@ -40,7 +40,7 @@ class _CadastrarAnimalState extends State<CadastrarAnimal> {
                         size: 21.0,
                       ),
                       Text(
-                        "Cadastrar",
+                        "Bezerra",
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 16.5,

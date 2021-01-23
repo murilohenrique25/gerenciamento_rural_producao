@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/touros/second_screen/tree_screen/cadastrar_inseminacao.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/touros/second_screen/tree_screen/cadastrar_inventario_semen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/touros/second_screen/tree_screen/cadastrar_touro.dart';
 
 enum OrderOptions { orderaz, orderza }
 

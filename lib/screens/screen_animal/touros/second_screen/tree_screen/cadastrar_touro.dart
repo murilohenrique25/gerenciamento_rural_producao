@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:date_format/date_format.dart';
 import 'package:intl/intl.dart';
 
 class CadastroTouro extends StatefulWidget {
@@ -18,10 +17,6 @@ class _CadastroTouroState extends State<CadastroTouro> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   String _idadeAnimal = "1 ano";
-
-  DateTime _selectedDate = DateTime.now();
-
-  DateFormat _conversor = DateFormat();
 
   int _radioValue = 0;
 

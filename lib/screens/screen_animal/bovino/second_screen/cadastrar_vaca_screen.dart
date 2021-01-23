@@ -1,12 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/touros/second_screen/list_inventario_semen.dart';
+import 'dart:ui';
 
-class InventarioSemen extends StatefulWidget {
+import 'package:flutter/material.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/cadastro_vaca.dart';
+
+class CadastrarVacaScreen extends StatefulWidget {
   @override
-  _InventarioSemenState createState() => _InventarioSemenState();
+  _CadastrarVacaScreenState createState() => _CadastrarVacaScreenState();
 }
 
-class _InventarioSemenState extends State<InventarioSemen> {
+class _CadastrarVacaScreenState extends State<CadastrarVacaScreen> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -14,7 +16,7 @@ class _InventarioSemenState extends State<InventarioSemen> {
         GestureDetector(
           onTap: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ListInventarioSemen()));
+                MaterialPageRoute(builder: (context) => CadastroVaca()));
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),
@@ -22,7 +24,7 @@ class _InventarioSemenState extends State<InventarioSemen> {
               alignment: Alignment.center,
               children: [
                 Image.asset(
-                  "images/botijaosemen.jpg",
+                  "images/gadoleite.jpg",
                   height: 150.0,
                   width: 150.0,
                   color: Color.fromRGBO(255, 255, 255, 0.7),
@@ -38,7 +40,7 @@ class _InventarioSemenState extends State<InventarioSemen> {
                         size: 21.0,
                       ),
                       Text(
-                        "Inventário",
+                        "Vaca",
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 16.5,

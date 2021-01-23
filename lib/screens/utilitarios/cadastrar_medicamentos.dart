@@ -7,8 +7,10 @@ class CadastrarMedicamento extends StatefulWidget {
 }
 
 class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
-  var controleDateVencimento = MaskedTextController(mask: '00/00/0000');
-  var controleDataAbertura = MaskedTextController(mask: '00/00/0000');
+  var controleDateVencimento = MaskedTextController(mask: '00-00-0000');
+  var controleDateCompra = MaskedTextController(mask: '00-00-0000');
+  var controleDataAbertura = MaskedTextController(mask: '00-00-0000');
+
   List<TipoMedicamento> _tipos = <TipoMedicamento>[
     const TipoMedicamento("Nenhum"),
     const TipoMedicamento("ml"),
@@ -22,13 +24,11 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
 
   final _nomeMedicamentoController = TextEditingController();
   final _quantidadeController = TextEditingController();
-  // final _tipoDosagemController = TextEditingController();
   final _carenciaMedicamento = TextEditingController();
-  // final _dataVencimento = TextEditingController();
   final _fornecedor = TextEditingController();
-  // final _dataAbertura = TextEditingController();
   final _principioAtivo = TextEditingController();
   final _observacao = TextEditingController();
+  final _tempoDescarteLeite = TextEditingController();
 
   String selectedTipo;
 
@@ -126,7 +126,16 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
                     TextField(
                       controller: _carenciaMedicamento,
                       decoration:
-                          InputDecoration(labelText: "Carencia Medicamento"),
+                          InputDecoration(labelText: "Carência Medicamento"),
+                      onChanged: (text) {
+                        _loteEdited = true;
+                        setState(() {});
+                      },
+                      keyboardType: TextInputType.number,
+                    ),
+                    TextField(
+                      controller: controleDateCompra,
+                      decoration: InputDecoration(labelText: "Data de Compra"),
                       onChanged: (text) {
                         _loteEdited = true;
                         setState(() {});
@@ -172,6 +181,16 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
                       keyboardType: TextInputType.text,
                     ),
                     TextField(
+                      controller: _tempoDescarteLeite,
+                      decoration: InputDecoration(
+                          labelText: "Tempo de Descarte do Leite"),
+                      onChanged: (text) {
+                        _loteEdited = true;
+                        setState(() {});
+                      },
+                      keyboardType: TextInputType.text,
+                    ),
+                    TextField(
                       controller: _observacao,
                       decoration: InputDecoration(labelText: "Observação"),
                       onChanged: (text) {
@@ -180,6 +199,7 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
                       },
                       keyboardType: TextInputType.text,
                     ),
+                    Padding(padding: EdgeInsets.only(bottom: 35.0))
                   ],
                 ),
               ),

@@ -30,7 +30,7 @@ class _CadastroInventarioSemenState extends State<CadastroInventarioSemen> {
       key: _scaffoldstate,
       appBar: AppBar(
         title: Text(
-          "Cadastrar Inventario de Sêmen",
+          "Cadastrar Inventário de Sêmen",
           style: TextStyle(fontSize: 15.0),
         ),
         centerTitle: true,
@@ -74,7 +74,7 @@ class _CadastroInventarioSemenState extends State<CadastroInventarioSemen> {
                           _radioValue = value;
                         });
                       }),
-                  Text("Não Sexuado"),
+                  Text("Não Sexado"),
                 ],
               ),
               SizedBox(

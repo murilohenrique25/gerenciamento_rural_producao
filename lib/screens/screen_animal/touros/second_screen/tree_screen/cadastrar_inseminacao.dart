@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 
 class CadastroInseminacao extends StatefulWidget {
   @override
@@ -8,14 +9,12 @@ class CadastroInseminacao extends StatefulWidget {
 class _CadastroInseminacaoState extends State<CadastroInseminacao> {
   TextEditingController _nomeVacaController = TextEditingController();
   TextEditingController _semenController = TextEditingController();
-  TextEditingController _dataController = TextEditingController();
   TextEditingController _inseminadorController = TextEditingController();
   TextEditingController _obsController = TextEditingController();
 
+  var _dataInse = MaskedTextController(mask: '00-00-0000');
+
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  int _radioValue = 0;
-
   final GlobalKey<ScaffoldState> _scaffoldstate =
       new GlobalKey<ScaffoldState>();
 
@@ -31,7 +30,7 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
       key: _scaffoldstate,
       appBar: AppBar(
         title: Text(
-          "Cadastrar Inseminacao",
+          "Cadastrar Inseminação",
           style: TextStyle(fontSize: 15.0),
         ),
         centerTitle: true,
@@ -106,6 +105,18 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
                 },
               ),
               TextFormField(
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                    labelText: "Data",
+                    labelStyle:
+                        TextStyle(color: Color.fromARGB(255, 4, 125, 141))),
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                    color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
+                controller: _dataInse,
+                // ignore: missing_return
+              ),
+              TextFormField(
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
                     labelText: "Observação",
@@ -114,7 +125,7 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
                 textAlign: TextAlign.left,
                 style: TextStyle(
                     color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
-                controller: _inseminadorController,
+                controller: _obsController,
                 // ignore: missing_return
                 validator: (value) {
                   if (value.isEmpty) {
@@ -124,29 +135,6 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
               ),
               SizedBox(
                 height: 20.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Radio(
-                      value: 0,
-                      groupValue: _radioValue,
-                      onChanged: (int value) {
-                        setState(() {
-                          _radioValue = value;
-                        });
-                      }),
-                  Text("Vivo"),
-                  Radio(
-                      value: 1,
-                      groupValue: _radioValue,
-                      onChanged: (int value) {
-                        setState(() {
-                          _radioValue = value;
-                        });
-                      }),
-                  Text("Morto"),
-                ],
               ),
               SizedBox(
                 height: 20.0,

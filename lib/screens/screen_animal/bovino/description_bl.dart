@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/cadastrar_animal.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/cadastro_animal.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/nutricao.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/producao_leite.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/rebanho.dart';
