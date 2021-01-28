@@ -1,17 +1,17 @@
 class Lote {
   int id;
   String name;
-  int codigoExterno;
+  int quantidade;
 
   Lote();
   Lote.fromMap(Map map) {
     id = map["id_lote"];
     name = map["name"];
-    codigoExterno = map["codigoExterno"];
+    quantidade = map["quantidade"];
   }
 
   Map toMap() {
-    Map<String, dynamic> map = {"name": name, "codigoExterno": codigoExterno};
+    Map<String, dynamic> map = {"name": name, "quantidade": quantidade};
     if (id != null) {
       map["id_lote"] = id;
     }
@@ -20,6 +20,6 @@ class Lote {
 
   @override
   String toString() {
-    return "Lote(id:$id, name: $name, codigoExterno : $codigoExterno)";
+    return "Lote(id:$id, name: $name, codigoExterno : $quantidade)";
   }
 }

@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/description_info_leite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/list_producao_leite.dart';
 
-class ProducaoLeite extends StatefulWidget {
+class DescriptionColetaLeite extends StatefulWidget {
   @override
-  _ProducaoLeiteState createState() => _ProducaoLeiteState();
+  _DescriptionColetaLeiteState createState() => _DescriptionColetaLeiteState();
 }
 
-class _ProducaoLeiteState extends State<ProducaoLeite> {
+class _DescriptionColetaLeiteState extends State<DescriptionColetaLeite> {
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         GestureDetector(
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          DescriptionInfoLeite()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ProducoesLeite()));
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15.0),
@@ -25,14 +22,14 @@ class _ProducaoLeiteState extends State<ProducaoLeite> {
                 alignment: Alignment.center,
                 children: [
                   Image.asset(
-                    "images/producaoleite.jpg",
+                    "images/prancheta.jpg",
                     width: 150.0,
                     height: 150.0,
                     color: Color.fromRGBO(255, 255, 255, 0.7),
                     colorBlendMode: BlendMode.modulate,
                   ),
                   Text(
-                    "Produção de\nLeite",
+                    "Coletas",
                     style: TextStyle(
                         color: Colors.black,
                         letterSpacing: 1.0,

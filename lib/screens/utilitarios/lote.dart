@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/lote_db.dart';
 import 'package:gerenciamento_rural/models/lote.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/cadastrar_lote.dart';
+import 'package:gerenciamento_rural/screens/utilitarios/impressao_lote.dart';
+import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPageLote.dart';
+import 'dart:io';
+import 'package:pdf/widgets.dart' as pdfLib;
+import 'package:path_provider/path_provider.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -11,7 +16,9 @@ class Lotes extends StatefulWidget {
 }
 
 class _LotesState extends State<Lotes> {
+  TextEditingController editingController = TextEditingController();
   LoteDB helper = LoteDB();
+  List<Lote> items = List();
   List<Lote> lotes = List();
   @override
   void initState() {
@@ -38,6 +45,11 @@ class _LotesState extends State<Lotes> {
             onSelected: _orderList,
           ),
           IconButton(
+              icon: Icon(Icons.add_chart),
+              onPressed: () {
+                _creatPdf(context);
+              }),
+          IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
                 _showLotePage();
@@ -46,12 +58,36 @@ class _LotesState extends State<Lotes> {
         centerTitle: true,
         title: Text("Lotes"),
       ),
-      body: ListView.builder(
-          padding: EdgeInsets.all(10.0),
-          itemCount: lotes.length,
-          itemBuilder: (context, index) {
-            return _loteCard(context, index);
-          }),
+      body: Container(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                onChanged: (value) {
+                  filterSearchResults(value);
+                },
+                controller: editingController,
+                decoration: InputDecoration(
+                    labelText: "Buscar Lote",
+                    hintText: "Buscar Lote",
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(25.0)))),
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.all(10.0),
+                  itemCount: lotes.length,
+                  itemBuilder: (context, index) {
+                    return _loteCard(context, index);
+                  }),
+            )
+          ],
+        ),
+      ),
     );
   }
 
@@ -63,7 +99,7 @@ class _LotesState extends State<Lotes> {
           child: Row(
             children: [
               Text(
-                lotes[index].name ?? "",
+                "Nome: " + lotes[index].name ?? "",
                 style: TextStyle(fontSize: 14.0),
               ),
               SizedBox(
@@ -74,7 +110,8 @@ class _LotesState extends State<Lotes> {
                 width: 15,
               ),
               Text(
-                lotes[index].codigoExterno ?? "",
+                "Quantidade animais: " + lotes[index].quantidade.toString() ??
+                    "",
                 style: TextStyle(fontSize: 14.0),
               )
             ],
@@ -157,8 +194,30 @@ class _LotesState extends State<Lotes> {
     helper.getAllItems().then((list) {
       setState(() {
         lotes = list;
+        items.addAll(lotes);
       });
     });
+  }
+
+  _creatPdf(context) async {
+    List<Lote> tLotes = items;
+    final pdfLib.Document pdf = pdfLib.Document(deflate: zlib.encode);
+    pdf.addPage(pdfLib.MultiPage(
+        build: (context) => [
+              pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
+                <String>['Nome', 'Quantidade'],
+                ...tLotes.map((item) => [item.name, item.quantidade.toString()])
+              ])
+            ]));
+
+    final String dir = (await getApplicationDocumentsDirectory()).path;
+
+    final String path = '$dir/pdfExample.pdf';
+    final File file = File(path);
+    file.writeAsBytesSync(pdf.save());
+
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => PdfViwerPageLote(path: path)));
   }
 
   void _orderList(OrderOptions result) {
@@ -175,5 +234,28 @@ class _LotesState extends State<Lotes> {
         break;
     }
     setState(() {});
+  }
+
+  void filterSearchResults(String query) {
+    List<Lote> dummySearchList = List();
+    dummySearchList.addAll(items);
+    if (query.isNotEmpty) {
+      List<Lote> dummyListData = List();
+      dummySearchList.forEach((item) {
+        if (item.name.toLowerCase().contains(query.toLowerCase())) {
+          dummyListData.add(item);
+        }
+      });
+      setState(() {
+        lotes.clear();
+        lotes.addAll(dummyListData);
+      });
+      return;
+    } else {
+      setState(() {
+        lotes.clear();
+        lotes.addAll(items);
+      });
+    }
   }
 }

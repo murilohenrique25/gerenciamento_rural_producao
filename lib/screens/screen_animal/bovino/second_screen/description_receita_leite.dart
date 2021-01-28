@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/description_info_leite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/cadastro_receita_leite.dart';
 
-class ProducaoLeite extends StatefulWidget {
+class DescriptionReceitaLeite extends StatefulWidget {
   @override
-  _ProducaoLeiteState createState() => _ProducaoLeiteState();
+  _DescriptionReceitaLeiteState createState() =>
+      _DescriptionReceitaLeiteState();
 }
 
-class _ProducaoLeiteState extends State<ProducaoLeite> {
+class _DescriptionReceitaLeiteState extends State<DescriptionReceitaLeite> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -16,8 +17,7 @@ class _ProducaoLeiteState extends State<ProducaoLeite> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          DescriptionInfoLeite()));
+                      builder: (context) => CadastroReceitaLeite()));
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15.0),
@@ -25,14 +25,15 @@ class _ProducaoLeiteState extends State<ProducaoLeite> {
                 alignment: Alignment.center,
                 children: [
                   Image.asset(
-                    "images/producaoleite.jpg",
+                    "images/prancheta.jpg",
                     width: 150.0,
                     height: 150.0,
                     color: Color.fromRGBO(255, 255, 255, 0.7),
                     colorBlendMode: BlendMode.modulate,
                   ),
                   Text(
-                    "Produção de\nLeite",
+                    "Receitas do leite",
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                         color: Colors.black,
                         letterSpacing: 1.0,

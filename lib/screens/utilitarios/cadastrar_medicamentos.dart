@@ -24,11 +24,14 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
 
   final _nomeMedicamentoController = TextEditingController();
   final _quantidadeController = TextEditingController();
+  final _precoController = TextEditingController();
   final _carenciaMedicamento = TextEditingController();
   final _fornecedor = TextEditingController();
   final _principioAtivo = TextEditingController();
   final _observacao = TextEditingController();
   final _tempoDescarteLeite = TextEditingController();
+
+  double precoTotal = 0.00;
 
   String selectedTipo;
 
@@ -54,7 +57,15 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
             actions: [],
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                int quantidade = int.parse(_quantidadeController.text);
+                double valorUnitario = double.parse(_precoController.text);
+                if (quantidade > 0 && valorUnitario > 0.0) {
+                  precoTotal = quantidade * valorUnitario;
+                }
+              });
+            },
             child: Icon(Icons.save),
             backgroundColor: Colors.green[700],
           ),
@@ -122,6 +133,15 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
                               ),
                             )),
                       ],
+                    ),
+                    TextField(
+                      controller: _precoController,
+                      decoration: InputDecoration(labelText: "Preço Unitário"),
+                      onChanged: (text) {
+                        _loteEdited = true;
+                        setState(() {});
+                      },
+                      keyboardType: TextInputType.number,
                     ),
                     TextField(
                       controller: _carenciaMedicamento,

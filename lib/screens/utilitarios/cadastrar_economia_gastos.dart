@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/models/lote.dart';
 
-class CadastroLote extends StatefulWidget {
-  final Lote lote;
-
-  CadastroLote({this.lote});
-
+class CadastroEconomiaGasto extends StatefulWidget {
   @override
-  _CadastroLoteState createState() => _CadastroLoteState();
+  _CadastroEconomiaGastoState createState() => _CadastroEconomiaGastoState();
 }
 
-class _CadastroLoteState extends State<CadastroLote> {
+class _CadastroEconomiaGastoState extends State<CadastroEconomiaGasto> {
   final _nomeLoteController = TextEditingController();
+  final _valorController = TextEditingController();
   final _quantidadeController = TextEditingController();
 
   final _nameFocus = FocusNode();
@@ -20,18 +17,7 @@ class _CadastroLoteState extends State<CadastroLote> {
 
   Lote _editedLote;
 
-  @override
-  void initState() {
-    super.initState();
-
-    if (widget.lote == null) {
-      _editedLote = Lote();
-    } else {
-      _editedLote = Lote.fromMap(widget.lote.toMap());
-      _nomeLoteController.text = _editedLote.name;
-      _quantidadeController.text = _editedLote.quantidade.toString();
-    }
-  }
+  double valorTotal = 0.0;
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -41,17 +27,37 @@ class _CadastroLoteState extends State<CadastroLote> {
         onWillPop: _requestPop,
         child: Scaffold(
           appBar: AppBar(
-            title: Text(_editedLote.name ?? "Cadastrar Lote"),
+            title: Text("Cadastrar Gastos"),
             centerTitle: true,
             actions: [],
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              if (_editedLote.name != null && _editedLote.name.isNotEmpty) {
-                Navigator.pop(context, _editedLote);
-              } else {
-                FocusScope.of(context).requestFocus(_nameFocus);
-              }
+              setState(() {
+                try {
+                  int quant = int.parse(_quantidadeController.text);
+                  double valor = double.parse(_valorController.text);
+                  valorTotal = quant * valor;
+                } catch (Expetion) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: new Text("Erro"),
+                        content: new Text("Algum valor está incorreto"),
+                        actions: [
+                          new FlatButton(
+                            child: new Text("Fechar"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          )
+                        ],
+                      );
+                    },
+                  );
+                }
+              });
             },
             child: Icon(Icons.save),
             backgroundColor: Colors.green[700],
@@ -71,7 +77,7 @@ class _CadastroLoteState extends State<CadastroLote> {
                   TextField(
                     controller: _nomeLoteController,
                     focusNode: _nameFocus,
-                    decoration: InputDecoration(labelText: "Nome"),
+                    decoration: InputDecoration(labelText: "Gasto"),
                     onChanged: (text) {
                       _loteEdited = true;
                       setState(() {
@@ -80,9 +86,8 @@ class _CadastroLoteState extends State<CadastroLote> {
                     },
                   ),
                   TextField(
-                    controller: _quantidadeController,
-                    decoration:
-                        InputDecoration(labelText: "Quantidade de animais"),
+                    controller: _valorController,
+                    decoration: InputDecoration(labelText: "Valor"),
                     onChanged: (text) {
                       _loteEdited = true;
                       setState(() {
@@ -90,6 +95,34 @@ class _CadastroLoteState extends State<CadastroLote> {
                       });
                     },
                     keyboardType: TextInputType.number,
+                  ),
+                  TextField(
+                    controller: _quantidadeController,
+                    decoration: InputDecoration(labelText: "Quantidade"),
+                    onChanged: (text) {
+                      _loteEdited = true;
+                      setState(() {
+                        _editedLote.quantidade = int.parse(text);
+                      });
+                    },
+                    keyboardType: TextInputType.number,
+                  ),
+                  TextField(
+                    decoration: InputDecoration(labelText: "Observação"),
+                    onChanged: (text) {
+                      _loteEdited = true;
+                      setState(() {
+                        _editedLote.quantidade = int.parse(text);
+                      });
+                    },
+                    keyboardType: TextInputType.text,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                    child: Text(
+                      "Valor Total: $valorTotal",
+                      style: TextStyle(fontSize: 18.0),
+                    ),
                   ),
                 ],
               ),

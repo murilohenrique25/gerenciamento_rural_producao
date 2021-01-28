@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/description_bl.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/description_bc.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/suino/description_suinos.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/touros/description_touro.dart';
+import 'package:gerenciamento_rural/screens/utilitarios/economia.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/lote.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/medicamentos.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/cadastrar_tratamento.dart';
@@ -39,15 +36,11 @@ class CustomDrawer extends StatelessWidget {
                   backgroundImage: AssetImage('images/logos.png'),
                 ),
               ),
-              DrawerTile(Icons.arrow_right, "Bovino de Leite",
-                  DescriptionBovinoLeite()),
-              DrawerTile(Icons.arrow_right, "Bovino de Corte",
-                  DescriptionBovinoCorte()),
-              DrawerTile(Icons.arrow_right, "Suínos", DescriptionSuinos()),
-              DrawerTile(Icons.arrow_right, "Touros", DescriptionTouro()),
               DrawerTile(Icons.arrow_right, "Lotes", Lotes()),
               DrawerTile(Icons.arrow_right, "Medicamentos", Medicamentos()),
-              DrawerTile(Icons.arrow_right, "Tratamentos", CadastroTratamento())
+              DrawerTile(
+                  Icons.arrow_right, "Tratamentos", CadastroTratamento()),
+              DrawerTile(Icons.arrow_right, "Economia", Economia()),
             ],
           ),
         ],

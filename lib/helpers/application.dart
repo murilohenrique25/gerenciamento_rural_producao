@@ -1,4 +1,4 @@
-String dbName = 'gerenciabovi.db';
+String dbName = 'gerenciamentoobovino.db';
 int dbVersion = 1;
 
 List<String> dbCreate = [
@@ -6,7 +6,7 @@ List<String> dbCreate = [
   """CREATE TABLE loteTable(
     id_lote INTEGER PRIMARY KEY, 
     name TEXT, 
-    codigoExterno INTEGER
+    quantidade INTEGER
     )""",
   //tb producaoleite
   """CREATE TABLE producaoLeiteTable(
