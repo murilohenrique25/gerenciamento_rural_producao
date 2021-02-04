@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/lote_db.dart';
 import 'package:gerenciamento_rural/models/lote.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/cadastrar_lote.dart';
-import 'package:gerenciamento_rural/screens/utilitarios/impressao_lote.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPageLote.dart';
+import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
@@ -20,10 +20,13 @@ class _LotesState extends State<Lotes> {
   LoteDB helper = LoteDB();
   List<Lote> items = List();
   List<Lote> lotes = List();
+  List<Lote> tLotes = List();
   @override
   void initState() {
     super.initState();
     _getAllLotes();
+    items = List();
+    tLotes = List();
   }
 
   @override
@@ -45,7 +48,7 @@ class _LotesState extends State<Lotes> {
             onSelected: _orderList,
           ),
           IconButton(
-              icon: Icon(Icons.add_chart),
+              icon: Icon(Icons.picture_as_pdf),
               onPressed: () {
                 _creatPdf(context);
               }),
@@ -191,6 +194,7 @@ class _LotesState extends State<Lotes> {
   }
 
   void _getAllLotes() {
+    items = List();
     helper.getAllItems().then((list) {
       setState(() {
         lotes = list;
@@ -200,22 +204,23 @@ class _LotesState extends State<Lotes> {
   }
 
   _creatPdf(context) async {
-    List<Lote> tLotes = items;
+    tLotes = lotes;
     final pdfLib.Document pdf = pdfLib.Document(deflate: zlib.encode);
     pdf.addPage(pdfLib.MultiPage(
+        header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome', 'Quantidade'],
+                <String>['Nome', 'Quantidade de animais'],
                 ...tLotes.map((item) => [item.name, item.quantidade.toString()])
               ])
             ]));
 
     final String dir = (await getApplicationDocumentsDirectory()).path;
 
-    final String path = '$dir/pdfExample.pdf';
+    final String path = '$dir/pdfLotes.pdf';
     final File file = File(path);
     file.writeAsBytesSync(pdf.save());
-
+    print("$file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPageLote(path: path)));
   }
@@ -257,5 +262,35 @@ class _LotesState extends State<Lotes> {
         lotes.addAll(items);
       });
     }
+  }
+
+  pdfLib.Widget _buildHeade(pdfLib.Context context) {
+    return pdfLib.Container(
+        color: PdfColors.green,
+        height: 150,
+        child: pdfLib.Padding(
+            padding: pdfLib.EdgeInsets.all(5),
+            child: pdfLib.Row(
+                crossAxisAlignment: pdfLib.CrossAxisAlignment.center,
+                mainAxisAlignment: pdfLib.MainAxisAlignment.spaceBetween,
+                children: [
+                  pdfLib.Column(
+                    mainAxisAlignment: pdfLib.MainAxisAlignment.center,
+                    crossAxisAlignment: pdfLib.CrossAxisAlignment.start,
+                    children: [
+                      pdfLib.Text('Instituto Federal Goiano',
+                          style: pdfLib.TextStyle(
+                              fontSize: 22, color: PdfColors.white)),
+                      pdfLib.Text(
+                          'Rodovia Geraldo Silva Nascimento Km 2,5, Rod. Gustavo Capanema,\nUrutaí - GO, 75790-000',
+                          style: pdfLib.TextStyle(color: PdfColors.white)),
+                      pdfLib.Text('(64) 3465-1900',
+                          style: pdfLib.TextStyle(color: PdfColors.white)),
+                      pdfLib.Text('Lotes',
+                          style: pdfLib.TextStyle(
+                              fontSize: 22, color: PdfColors.white))
+                    ],
+                  )
+                ])));
   }
 }

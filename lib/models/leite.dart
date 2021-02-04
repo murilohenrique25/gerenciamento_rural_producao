@@ -1,4 +1,4 @@
-class ProducaoLeite {
+class Leite {
   int id;
   String dataColeta;
   double quantidade;
@@ -8,10 +8,11 @@ class ProducaoLeite {
   double ureia;
   double ccs;
   double cbt;
+  int idMes;
 
-  ProducaoLeite();
-  ProducaoLeite.fromMap(Map map) {
-    id = map["id_prod_leite"];
+  Leite();
+  Leite.fromMap(Map map) {
+    id = map["id_leite"];
     dataColeta = map["dataColeta"];
     quantidade = map["quantidade"];
     gordura = map["gordura"];
@@ -20,6 +21,7 @@ class ProducaoLeite {
     ureia = map["ureia"];
     ccs = map["ccs"];
     cbt = map["cbt"];
+    idMes = map["idMes"];
   }
 
   Map toMap() {
@@ -31,10 +33,11 @@ class ProducaoLeite {
       "lactose": lactose,
       "ureia": ureia,
       "ccs": ccs,
-      "cbt": cbt
+      "cbt": cbt,
+      "idMes": idMes
     };
     if (id != null) {
-      map["id_prod_leite"] = id;
+      map["id_leite"] = id;
     }
     return map;
   }
@@ -42,6 +45,6 @@ class ProducaoLeite {
   @override
   String toString() {
     return "ProducaoLeite(id:$id, dataColeta: $dataColeta, quantidade: $quantidade, " +
-        "gordura:$gordura, proteina:$proteina, lactose: $lactose, ureia: $ureia, ccs:$ccs, cbt: $cbt)";
+        "gordura:$gordura, proteina:$proteina, lactose: $lactose, ureia: $ureia, ccs:$ccs, cbt: $cbt, idMes: $idMes)";
   }
 }

@@ -1,32 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/lote_db.dart';
+import 'package:gerenciamento_rural/helpers/vaca_db.dart';
 import 'package:gerenciamento_rural/models/lote.dart';
+import 'package:gerenciamento_rural/models/vaca.dart';
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class CadastroVaca extends StatefulWidget {
+  final Vaca vaca;
+
+  CadastroVaca({this.vaca});
   @override
   _CadastroVacaState createState() => _CadastroVacaState();
 }
 
 class _CadastroVacaState extends State<CadastroVaca> {
-  LoteDB helper = LoteDB();
+  LoteDB helperLote = LoteDB();
   List<Lote> lotes = List();
 
-  @override
-  void initState() {
-    super.initState();
-    _getAllLotes();
-  }
+  VacaDB helper = VacaDB();
+  List<Vaca> vacas = List();
+  final _nameFocus = FocusNode();
 
-  void _getAllLotes() {
-    helper.getAllItems().then((list) {
-      setState(() {
-        lotes = list;
-      });
-    });
-  }
+  bool _vacasEdited = false;
+
+  Vaca _editedVaca;
 
   List<Item> _ecc = <Item>[
     const Item("Não especificado"),
@@ -46,49 +45,117 @@ class _CadastroVacaState extends State<CadastroVaca> {
     const Item("M. Em Serviço Ru"),
     const Item("M. Descanso"),
   ];
+
   Item selectedECC;
 
   Item selectedStatus;
 
-  Item selectedLote;
+  int selectedLote;
+
   int selectedLotes;
 
-  //String _infoText = "Informe os dados!";
+  void _reset() {
+    setState(() {});
+  }
 
-  final nomeController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    _getAllLotes();
+    if (widget.vaca == null) {
+      _editedVaca = Vaca();
+    } else {
+      _editedVaca = Vaca.fromMap(widget.vaca.toMap());
+    }
+  }
 
-  final pesoController = TextEditingController();
-
-  final racaController = TextEditingController();
-
-  final estadoController = TextEditingController();
+  var dataUltInsemiController = MaskedTextController(mask: '00-00-0000');
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  var dataUltimaInseminacaoController =
-      MaskedTextController(mask: '00-00-0000');
-  var dataNasc = MaskedTextController(mask: '00-00-0000');
-
-  DateTime _selectedDate = DateTime.now();
-
-  final _nameFocus = FocusNode();
+  TextEditingController _nomeController = TextEditingController();
+  TextEditingController _racaController = TextEditingController();
+  TextEditingController _paiController = TextEditingController();
+  TextEditingController _maeController = TextEditingController();
+  TextEditingController _avoMMaternoController = TextEditingController();
+  TextEditingController _avoFMaternoController = TextEditingController();
+  TextEditingController _avoFPaternoController = TextEditingController();
+  TextEditingController _avoMPaternoController = TextEditingController();
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Pedigree'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _paiController,
+                  decoration: InputDecoration(labelText: "Pai"),
+                  onChanged: (text) {},
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _maeController,
+                  decoration: InputDecoration(labelText: "Mãe"),
+                  onChanged: (text) {
+                    print(text);
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _avoFPaternoController,
+                  decoration: InputDecoration(labelText: "Avó Paterno"),
+                  onChanged: (text) {
+                    print(text);
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _avoMPaternoController,
+                  decoration: InputDecoration(labelText: "Avô Paterno"),
+                  onChanged: (text) {
+                    print(text);
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _avoFMaternoController,
+                  decoration: InputDecoration(labelText: "Avó Materno"),
+                  onChanged: (text) {
+                    print(text);
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _avoMMaternoController,
+                  decoration: InputDecoration(labelText: "Avô Materno"),
+                  onChanged: (text) {
+                    print(text);
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   final df = new DateFormat("dd-MM-yyyy");
 
-  String _idadeAnimal = "1ano e 2meses";
-
   final GlobalKey<ScaffoldState> _scaffoldstate =
       new GlobalKey<ScaffoldState>();
-
-  void _reset() {
-    nomeController.text = "";
-    pesoController.text = "";
-    setState(() {
-      _formKey = GlobalKey();
-      selectedECC = _ecc[0];
-      selectedStatus = _status[0];
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,43 +193,11 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   size: 80.0,
                   color: Color.fromARGB(255, 4, 125, 141),
                 ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     Radio(
-                //         value: 0,
-                //         groupValue: _radioValue,
-                //         onChanged: (int value) {
-                //           setState(() {
-                //             _radioValue = value;
-                //           });
-                //         }),
-                //     Text("Vaca"),
-                //     Radio(
-                //         value: 1,
-                //         groupValue: _radioValue,
-                //         onChanged: (int value) {
-                //           setState(() {
-                //             _radioValue = value;
-                //           });
-                //         }),
-                //     Text("Novilha"),
-                //     Radio(
-                //         value: 2,
-                //         groupValue: _radioValue,
-                //         onChanged: (int value) {
-                //           setState(() {
-                //             _radioValue = value;
-                //           });
-                //         }),
-                //     Text("Bezerra"),
-                //   ],
-                // ),
                 SizedBox(
                   height: 20,
                 ),
                 TextField(
-                  controller: nomeController,
+                  controller: _nomeController,
                   focusNode: _nameFocus,
                   decoration: InputDecoration(labelText: "Nome / Nº Brinco"),
                   onChanged: (text) {},
@@ -230,33 +265,14 @@ class _CadastroVacaState extends State<CadastroVaca> {
                 // ),
                 TextField(
                   keyboardType: TextInputType.number,
-                  controller: dataNasc,
-                  decoration: InputDecoration(labelText: "Data de Nascimento"),
-                  onChanged: (text) {},
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0),
-                ),
-                Text(
-                  "Idade animal:  ${differenceDate()}",
-                  style: TextStyle(
-                      fontSize: 16.0, color: Color.fromARGB(255, 4, 125, 141)),
-                ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: racaController,
+                  controller: _racaController,
                   decoration: InputDecoration(labelText: "Raça"),
                   onChanged: (text) {},
                 ),
+
                 TextField(
                   keyboardType: TextInputType.text,
-                  controller: estadoController,
-                  decoration: InputDecoration(labelText: "Estado"),
-                  onChanged: (text) {},
-                ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: dataUltimaInseminacaoController,
+                  controller: dataUltInsemiController,
                   decoration: InputDecoration(labelText: "Última inseminação"),
                   onChanged: (text) {},
                 ),
@@ -319,6 +335,13 @@ class _CadastroVacaState extends State<CadastroVaca> {
                     );
                   }).toList(),
                 ),
+
+                RaisedButton(
+                  onPressed: () {
+                    _showMyDialog();
+                  },
+                  child: Text("Pedigree"),
+                ),
               ],
             ),
           ),
@@ -374,36 +397,12 @@ class _CadastroVacaState extends State<CadastroVaca> {
   //     });
   // }
 
-  String differenceDate() {
-    DateTime dt = DateTime.now();
-
-    int quant = dt.difference(_selectedDate).inDays;
-    if (quant < 0) {
-      _idadeAnimal = "Data incorreta";
-    } else if (quant < 365) {
-      _idadeAnimal = "$quant dias";
-    } else if (quant == 365) {
-      _idadeAnimal = "1 ano";
-    } else if (quant > 365 && quant < 731) {
-      int dias = quant - 365;
-      _idadeAnimal = "1 ano e $dias dias";
-    } else if (quant > 731 && quant < 1096) {
-      int dias = quant - 731;
-      _idadeAnimal = "2 ano e $dias dias";
-    } else if (quant > 1095 && quant < 1461) {
-      int dias = quant - 1095;
-      _idadeAnimal = "3 ano e $dias dias";
-    } else if (quant > 1460 && quant < 1826) {
-      int dias = quant - 1460;
-      _idadeAnimal = "4 ano e $dias dias";
-    } else if (quant > 1825 && quant < 2191) {
-      int dias = quant - 1825;
-      _idadeAnimal = "5 ano e $dias dias";
-    } else if (quant > 2190 && quant < 2.556) {
-      int dias = quant - 2190;
-      _idadeAnimal = "6 ano e $dias dias";
-    }
-    return _idadeAnimal;
+  void _getAllLotes() {
+    helperLote.getAllItems().then((list) {
+      setState(() {
+        lotes = list;
+      });
+    });
   }
 }
 

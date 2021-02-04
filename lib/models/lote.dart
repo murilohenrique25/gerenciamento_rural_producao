@@ -11,7 +11,10 @@ class Lote {
   }
 
   Map toMap() {
-    Map<String, dynamic> map = {"name": name, "quantidade": quantidade};
+    Map<String, dynamic> map = {
+      "name": name,
+      "quantidade": quantidade,
+    };
     if (id != null) {
       map["id_lote"] = id;
     }

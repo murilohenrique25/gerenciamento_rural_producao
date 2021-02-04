@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/models/producao_leite.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:gerenciamento_rural/models/leite.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
+import 'package:toast/toast.dart';
 
 class CadastroLeite extends StatefulWidget {
-  final ProducaoLeite producaoLeite;
+  final Leite producaoLeite;
 
   CadastroLeite({this.producaoLeite});
   @override
@@ -29,18 +31,18 @@ class _CadastroLeiteState extends State<CadastroLeite> {
 
   bool _producaoLeiteEdited = false;
 
-  ProducaoLeite _editedProdLeite;
+  Leite _editedProdLeite;
 
-  int selectedValue;
+  var dataColeta = MaskedTextController(mask: '00-00-0000');
 
   @override
   void initState() {
     super.initState();
 
     if (widget.producaoLeite == null) {
-      _editedProdLeite = ProducaoLeite();
+      _editedProdLeite = Leite();
     } else {
-      _editedProdLeite = ProducaoLeite.fromMap(widget.producaoLeite.toMap());
+      _editedProdLeite = Leite.fromMap(widget.producaoLeite.toMap());
       _quantidadeController.text = _editedProdLeite.quantidade.toString();
       _gorduraController.text = _editedProdLeite.gordura.toString();
       _proteinaController.text = _editedProdLeite.proteina.toString();
@@ -48,11 +50,11 @@ class _CadastroLeiteState extends State<CadastroLeite> {
       _ureiaController.text = _editedProdLeite.ureia.toString();
       _ccsController.text = _editedProdLeite.ccs.toString();
       _cbtController.text = _editedProdLeite.cbt.toString();
+      _idMesController.text = _editedProdLeite.idMes.toString();
     }
   }
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController _dateController = TextEditingController();
   TextEditingController _quantidadeController = TextEditingController();
   TextEditingController _gorduraController = TextEditingController();
   TextEditingController _proteinaController = TextEditingController();
@@ -60,15 +62,16 @@ class _CadastroLeiteState extends State<CadastroLeite> {
   TextEditingController _ureiaController = TextEditingController();
   TextEditingController _ccsController = TextEditingController();
   TextEditingController _cbtController = TextEditingController();
+  TextEditingController _idMesController = TextEditingController();
   void _reset() {
     setState(() {
       _formKey = GlobalKey<FormState>();
-      _dateController.text = "";
       _quantidadeController.text = "";
       _gorduraController.text = "";
       _proteinaController.text = "";
       _lactoseController.text = "";
       _ureiaController.text = "";
+      _idMesController.text = "";
     });
   }
 
@@ -91,11 +94,22 @@ class _CadastroLeiteState extends State<CadastroLeite> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            if (_editedProdLeite.quantidade != null &&
-                _editedProdLeite.quantidade.toString().isNotEmpty) {
-              Navigator.pop(context, _editedProdLeite);
+            if (_editedProdLeite.idMes == null) {
+              Toast.show("Informe o mês", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            } else if (dataColeta.text.isEmpty) {
+              Toast.show("Informe a data completa", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            } else if (_quantidadeController.text.isEmpty) {
+              Toast.show("Informe a quantidade", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
             } else {
-              FocusScope.of(context).requestFocus(_nameFocus);
+              if (_editedProdLeite.quantidade != null &&
+                  _editedProdLeite.quantidade.toString().isNotEmpty) {
+                Navigator.pop(context, _editedProdLeite);
+              } else {
+                FocusScope.of(context).requestFocus(_nameFocus);
+              }
             }
           },
           child: Icon(Icons.save),
@@ -126,12 +140,12 @@ class _CadastroLeiteState extends State<CadastroLeite> {
                         ),
                       );
                     }).toList(),
-                    value: selectedValue,
+                    value: _editedProdLeite.idMes,
                     hint: "Selecione o mês",
                     searchHint: "Selecione o mês",
                     onChanged: (value) {
                       setState(() {
-                        selectedValue = value;
+                        _editedProdLeite.idMes = value;
                       });
                     },
                     doneButton: "Pronto",
@@ -158,12 +172,12 @@ class _CadastroLeiteState extends State<CadastroLeite> {
                     height: 5.0,
                   ),
                   TextField(
-                    enabled: false,
-                    controller: _dateController,
+                    keyboardType: TextInputType.number,
+                    controller: dataColeta,
                     focusNode: _nameFocus,
                     decoration: InputDecoration(labelText: "Data coleta"),
                     onChanged: (text) {
-                      _producaoLeiteEdited = true;
+                      _producaoLeiteEdited = false;
                       setState(() {
                         _editedProdLeite.dataColeta = text;
                       });

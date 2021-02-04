@@ -17,6 +17,7 @@ class _CadastroTouroState extends State<CadastroTouro> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   String _idadeAnimal = "1 ano";
+  String idadeFinal = "";
 
   int _radioValue = 0;
 
@@ -35,162 +36,156 @@ class _CadastroTouroState extends State<CadastroTouro> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldstate,
-      appBar: AppBar(
-        title: Text(
-          "Cadastrar Touro",
-          style: TextStyle(fontSize: 15.0),
+    return WillPopScope(
+      onWillPop: _requestPop,
+      child: Scaffold(
+        key: _scaffoldstate,
+        appBar: AppBar(
+          title: Text(
+            "Cadastrar Touro",
+            style: TextStyle(fontSize: 15.0),
+          ),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: _reset,
+            )
+          ],
         ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: _reset,
-          )
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Icon(
-                Icons.add_circle,
-                size: 80.0,
-                color: Color.fromARGB(255, 4, 125, 141),
-              ),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                    labelText: "Nome",
-                    labelStyle:
-                        TextStyle(color: Color.fromARGB(255, 4, 125, 141))),
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
-                controller: _nomeController,
-                // ignore: missing_return
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "Informe o nome do animal";
-                  }
-                },
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                    labelText: "Raça",
-                    labelStyle:
-                        TextStyle(color: Color.fromARGB(255, 4, 125, 141))),
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
-                controller: _racaController,
-                // ignore: missing_return
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "Informe a raça do animal";
-                  }
-                },
-              ),
-              TextFormField(
-                onChanged: (text) {
-                  numeroData = text;
-                  setState(() {
-                    differenceDate();
-                  });
-                },
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                    labelText: "Data de Nascimento",
-                    labelStyle:
-                        TextStyle(color: Color.fromARGB(255, 4, 125, 141))),
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
-                controller: _dataNasc,
-                // ignore: missing_return
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "Informe o data denascimento do animal";
-                  }
-                },
-              ),
-              SizedBox(
-                height: 15.0,
-              ),
-              Text("Idade do Animal" ?? "Idade do animal:  ${differenceDate()}",
-                  style: TextStyle(
-                      fontSize: 16.0, color: Color.fromARGB(255, 4, 125, 141))),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                    labelText: "Geneologia",
-                    labelStyle:
-                        TextStyle(color: Color.fromARGB(255, 4, 125, 141))),
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
-                controller: _geneologiaController,
-                // ignore: missing_return
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "Informe a geneologia";
-                  }
-                },
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Radio(
-                      value: 0,
-                      groupValue: _radioValue,
-                      onChanged: (int value) {
-                        setState(() {
-                          _radioValue = value;
-                        });
-                      }),
-                  Text("Vivo"),
-                  Radio(
-                      value: 1,
-                      groupValue: _radioValue,
-                      onChanged: (int value) {
-                        setState(() {
-                          _radioValue = value;
-                        });
-                      }),
-                  Text("Morto"),
-                ],
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                child: Container(
-                  height: 50.0,
-                  child: RaisedButton(
-                    onPressed: () {
-                      setState(() {});
-                    },
-                    child: Text(
-                      "Salvar Animal",
-                      style: TextStyle(color: Colors.white, fontSize: 20.0),
-                    ),
-                    color: Colors.green,
-                  ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          child: Icon(Icons.save),
+          backgroundColor: Colors.green[700],
+        ),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Icon(
+                  Icons.add_circle,
+                  size: 80.0,
+                  color: Color.fromARGB(255, 4, 125, 141),
                 ),
-              ),
-            ],
+                TextFormField(
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                      labelText: "Nome",
+                      labelStyle:
+                          TextStyle(color: Color.fromARGB(255, 4, 125, 141))),
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
+                  controller: _nomeController,
+                  // ignore: missing_return
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return "Informe o nome do animal";
+                    }
+                  },
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                TextFormField(
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                      labelText: "Raça",
+                      labelStyle:
+                          TextStyle(color: Color.fromARGB(255, 4, 125, 141))),
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
+                  controller: _racaController,
+                  // ignore: missing_return
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return "Informe a raça do animal";
+                    }
+                  },
+                ),
+                TextFormField(
+                  onChanged: (text) {
+                    numeroData = text;
+                    setState(() {
+                      idadeFinal = differenceDate();
+                      print(idadeFinal);
+                    });
+                  },
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                      labelText: "Data de Nascimento",
+                      labelStyle:
+                          TextStyle(color: Color.fromARGB(255, 4, 125, 141))),
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
+                  controller: _dataNasc,
+                  // ignore: missing_return
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return "Informe o data denascimento do animal";
+                    }
+                  },
+                ),
+                SizedBox(
+                  height: 15.0,
+                ),
+                Text("Idade do animal:  $idadeFinal",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                TextFormField(
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                      labelText: "Geneologia",
+                      labelStyle:
+                          TextStyle(color: Color.fromARGB(255, 4, 125, 141))),
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
+                  controller: _geneologiaController,
+                  // ignore: missing_return
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return "Informe a geneologia";
+                    }
+                  },
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Radio(
+                        value: 0,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                          });
+                        }),
+                    Text("Vivo"),
+                    Radio(
+                        value: 1,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                          });
+                        }),
+                    Text("Morto"),
+                  ],
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -242,5 +237,37 @@ class _CadastroTouroState extends State<CadastroTouro> {
       _idadeAnimal = "Ohh já está idoso";
     }
     return _idadeAnimal;
+  }
+
+  Future<bool> _requestPop() {
+    if (true) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Descartar Alterações?"),
+              content: Text("Se sair as alterações serão perdidas."),
+              actions: [
+                FlatButton(
+                  child: Text("Cancelar"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                FlatButton(
+                  child: Text("Sim"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          });
+      return Future.value(false);
+      // ignore: dead_code
+    } else {
+      return Future.value(true);
+    }
   }
 }

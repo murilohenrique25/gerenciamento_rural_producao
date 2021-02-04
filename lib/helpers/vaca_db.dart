@@ -1,22 +1,22 @@
 import 'package:gerenciamento_rural/helpers/HelperDB.dart';
 import 'package:gerenciamento_rural/helpers/application.dart';
-import 'package:gerenciamento_rural/models/lote.dart';
+import 'package:gerenciamento_rural/models/vaca.dart';
 import 'package:sqflite/sqflite.dart';
 
-class LoteDB extends HelperDB {
-  Lote lote;
+class VacaDB extends HelperDB {
+  Vaca vaca;
   //Singleton
   //
-  static LoteDB _this;
-  factory LoteDB() {
+  static VacaDB _this;
+  factory VacaDB() {
     if (_this == null) {
-      _this = LoteDB.getInstance();
+      _this = VacaDB.getInstance();
     }
     return _this;
   }
   //
   //The instance
-  LoteDB.getInstance() : super();
+  VacaDB.getInstance() : super();
   //
 
   @override
@@ -28,8 +28,8 @@ class LoteDB extends HelperDB {
   @override
   Future<Map> getItem(dynamic where) async {
     Database db = await this.getDb();
-    List<Map> items = await db.query("loteTable",
-        where: "id_lote = ?", whereArgs: [where], limit: 1);
+    List<Map> items = await db.query("vaca",
+        where: "idVaca = ?", whereArgs: [where], limit: 1);
     Map result = Map();
     if (items.isNotEmpty) {
       result = items.first;
@@ -37,23 +37,22 @@ class LoteDB extends HelperDB {
     return result;
   }
 
-  Future<Lote> insert(Lote lote) async {
+  Future<Vaca> insert(Vaca vaca) async {
     Database db = await this.getDb();
-    lote.id = await db.insert("loteTable", lote.toMap());
-    return lote;
+    vaca.idVaca = await db.insert("vaca", vaca.toMap());
+    return vaca;
   }
 
   @override
   Future<List<Map>> list() async {
     Database db = await this.getDb();
-    return db.rawQuery("SELECT * FROM loteTable orderBy id_lote CRESC");
+    return db.rawQuery("SELECT * FROM vaca orderBy idVaca CRESC");
   }
 
   @override
   Future<bool> delete(dynamic id) async {
     Database db = await this.getDb();
-    int rows =
-        await db.delete("loteTable", where: "id_lote = ?", whereArgs: [id]);
+    int rows = await db.delete("vaca", where: "idVaca = ?", whereArgs: [id]);
 
     return (rows != 0);
   }
@@ -61,22 +60,22 @@ class LoteDB extends HelperDB {
   Future<int> getNumber() async {
     Database db = await this.getDb();
     return Sqflite.firstIntValue(
-        await db.rawQuery("SELECT COUNT(*) FROM loteTable"));
+        await db.rawQuery("SELECT COUNT(*) FROM vaca"));
   }
 
-  Future<int> updateItem(Lote lote) async {
+  Future<int> updateItem(Vaca vaca) async {
     Database db = await this.getDb();
-    int p = await db.update("loteTable", lote.toMap());
+    int p = await db.update("vaca", vaca.toMap());
 
     return p;
   }
 
   Future<List> getAllItems() async {
     Database db = await this.getDb();
-    List listMap = await db.rawQuery("SELECT * FROM loteTable");
-    List<Lote> list = List();
+    List listMap = await db.rawQuery("SELECT * FROM vaca");
+    List<Vaca> list = List();
     for (Map m in listMap) {
-      list.add(Lote.fromMap(m));
+      list.add(Vaca.fromMap(m));
     }
     return list;
   }

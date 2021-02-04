@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/economia.dart';
-import 'package:gerenciamento_rural/screens/utilitarios/lote.dart';
+import 'package:gerenciamento_rural/screens/utilitarios/lotes.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/medicamentos.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/cadastrar_tratamento.dart';
 import 'package:gerenciamento_rural/tiles/drawer_tile.dart';

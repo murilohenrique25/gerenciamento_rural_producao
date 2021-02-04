@@ -1,22 +1,22 @@
 import 'package:gerenciamento_rural/helpers/HelperDB.dart';
 import 'package:gerenciamento_rural/helpers/application.dart';
-import 'package:gerenciamento_rural/models/lote.dart';
+import 'package:gerenciamento_rural/models/bezerra.dart';
 import 'package:sqflite/sqflite.dart';
 
-class LoteDB extends HelperDB {
-  Lote lote;
+class BezerraDB extends HelperDB {
+  Bezerra bezerra;
   //Singleton
   //
-  static LoteDB _this;
-  factory LoteDB() {
+  static BezerraDB _this;
+  factory BezerraDB() {
     if (_this == null) {
-      _this = LoteDB.getInstance();
+      _this = BezerraDB.getInstance();
     }
     return _this;
   }
   //
   //The instance
-  LoteDB.getInstance() : super();
+  BezerraDB.getInstance() : super();
   //
 
   @override
@@ -28,8 +28,8 @@ class LoteDB extends HelperDB {
   @override
   Future<Map> getItem(dynamic where) async {
     Database db = await this.getDb();
-    List<Map> items = await db.query("loteTable",
-        where: "id_lote = ?", whereArgs: [where], limit: 1);
+    List<Map> items = await db.query("bezerra",
+        where: "idBezerra = ?", whereArgs: [where], limit: 1);
     Map result = Map();
     if (items.isNotEmpty) {
       result = items.first;
@@ -37,23 +37,23 @@ class LoteDB extends HelperDB {
     return result;
   }
 
-  Future<Lote> insert(Lote lote) async {
+  Future<Bezerra> insert(Bezerra bezerra) async {
     Database db = await this.getDb();
-    lote.id = await db.insert("loteTable", lote.toMap());
-    return lote;
+    bezerra.idBezerra = await db.insert("novilha", bezerra.toMap());
+    return bezerra;
   }
 
   @override
   Future<List<Map>> list() async {
     Database db = await this.getDb();
-    return db.rawQuery("SELECT * FROM loteTable orderBy id_lote CRESC");
+    return db.rawQuery("SELECT * FROM bezerra orderBy idBezerra CRESC");
   }
 
   @override
   Future<bool> delete(dynamic id) async {
     Database db = await this.getDb();
     int rows =
-        await db.delete("loteTable", where: "id_lote = ?", whereArgs: [id]);
+        await db.delete("bezerra", where: "idBezerra = ?", whereArgs: [id]);
 
     return (rows != 0);
   }
@@ -61,22 +61,22 @@ class LoteDB extends HelperDB {
   Future<int> getNumber() async {
     Database db = await this.getDb();
     return Sqflite.firstIntValue(
-        await db.rawQuery("SELECT COUNT(*) FROM loteTable"));
+        await db.rawQuery("SELECT COUNT(*) FROM bezerra"));
   }
 
-  Future<int> updateItem(Lote lote) async {
+  Future<int> updateItem(Bezerra bezerra) async {
     Database db = await this.getDb();
-    int p = await db.update("loteTable", lote.toMap());
+    int p = await db.update("bezerra", bezerra.toMap());
 
     return p;
   }
 
   Future<List> getAllItems() async {
     Database db = await this.getDb();
-    List listMap = await db.rawQuery("SELECT * FROM loteTable");
-    List<Lote> list = List();
+    List listMap = await db.rawQuery("SELECT * FROM bezerra");
+    List<Bezerra> list = List();
     for (Map m in listMap) {
-      list.add(Lote.fromMap(m));
+      list.add(Bezerra.fromMap(m));
     }
     return list;
   }

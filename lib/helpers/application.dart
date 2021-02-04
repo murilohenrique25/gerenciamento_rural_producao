@@ -1,4 +1,4 @@
-String dbName = 'gerenciamentoobovino.db';
+String dbName = '03022020final.db';
 int dbVersion = 1;
 
 List<String> dbCreate = [
@@ -9,8 +9,8 @@ List<String> dbCreate = [
     quantidade INTEGER
     )""",
   //tb producaoleite
-  """CREATE TABLE producaoLeiteTable(
-    id_prod_leite INTEGER PRIMARY KEY, 
+  """CREATE TABLE leiteTable(
+    id_leite INTEGER PRIMARY KEY, 
     dataColeta TEXT, 
     quantidade REAL, 
     gordura REAL, 
@@ -18,6 +18,60 @@ List<String> dbCreate = [
     lactose REAL, 
     ureia REAL,
     ccs REAL,
-    cbt REAL
-    )"""
+    cbt REAL,
+    idMes INTEGER
+    )""",
+  //tb Vaca
+  """CREATE TABLE vaca(
+    idVaca INTEGER PRIMARY KEY, 
+    nome TEXT,
+    ultimaInseminacao TEXT, 
+    raca TEXT, 
+    idLote INTEGER,
+    estado TEXT,
+    pai TEXT,
+    mae TEXT,
+    avoMMaterno TEXT,
+    avoFMaterno TEXT,
+    avoMPaterno TEXT,
+    avoFPaterno TEXT
+    )""",
+  //tb NOVILHA
+  """CREATE TABLE novilha(
+    idNovilha INTEGER PRIMARY KEY, 
+    nome TEXT,
+    raca TEXT,
+    pesoNascimento REAL, 
+    pesoDesmama REAL, 
+    idLote INTEGER,
+    dataDesmama TEXT,
+    dataCobertura TEXT,
+    pesoPrimeiraCobertura REAL,
+    idadePrimeiraCobertura REAL,
+    idadePrimeiroParto REAL,
+    diagnosticoGestacao TEXT,
+    pai TEXT,
+    mae TEXT,
+    avoMMaterno TEXT,
+    avoFMaterno TEXT,
+    avoMPaterno TEXT,
+    avoFPaterno TEXT
+    )""",
+  //tb BEZERRA
+  """CREATE TABLE bezerra(
+    idBezerra INTEGER PRIMARY KEY, 
+    nome TEXT,
+    raca TEXT,
+    dataNascimento TEXT,
+    pesoNascimento REAL, 
+    pesoDesmama REAL, 
+    idLote INTEGER,
+    dataDesmama TEXT,
+    pai TEXT,
+    mae TEXT,
+    avoMMaterno TEXT,
+    avoFMaterno TEXT,
+    avoMPaterno TEXT,
+    avoFPaterno TEXT
+    )""",
 ];
