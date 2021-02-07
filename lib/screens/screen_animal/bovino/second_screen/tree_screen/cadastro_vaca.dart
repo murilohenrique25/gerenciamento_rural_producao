@@ -27,30 +27,25 @@ class _CadastroVacaState extends State<CadastroVaca> {
 
   Vaca _editedVaca;
 
-  List<Item> _ecc = <Item>[
-    const Item("Não especificado"),
-    const Item("1 - Raquítico"),
-    const Item("2 - Magro"),
-    const Item("3 - Ideal"),
-    const Item("4 - Gordo"),
-    const Item("5 - Obeso"),
-  ];
+  // List<Item> _ecc = <Item>[
+  //   const Item("Não especificado"),
+  //   const Item("Raquítico"),
+  //   const Item("Magro"),
+  //   const Item("deal"),
+  //   const Item("Gordo"),
+  //   const Item("Obeso"),
+  // ];
 
-  List<Item> _status = <Item>[
-    const Item("Não especificado"),
-    const Item("F. Solteira"),
-    const Item("F. Em Protocolo"),
-    const Item("F. Inseminada"),
-    const Item("M. Em Serviço Rm"),
-    const Item("M. Em Serviço Ru"),
-    const Item("M. Descanso"),
-  ];
+  // List<Item> _status = <Item>[
+  //   const Item("Não especificado"),
+  //   const Item("F. Solteira"),
+  //   const Item("F. Em Protocolo"),
+  //   const Item("F. Inseminada"),
+  // ];
 
   Item selectedECC;
 
   Item selectedStatus;
-
-  int selectedLote;
 
   int selectedLotes;
 
@@ -66,20 +61,29 @@ class _CadastroVacaState extends State<CadastroVaca> {
       _editedVaca = Vaca();
     } else {
       _editedVaca = Vaca.fromMap(widget.vaca.toMap());
+      _nomeController.text = _editedVaca.nome;
+      _racaController.text = _editedVaca.raca;
+      _paiController.text = _editedVaca.pai;
+      _maeController.text = _editedVaca.mae;
+      _avoMMaternoController.text = _editedVaca.avoMMaterno;
+      _avoFMaternoController.text = _editedVaca.avoFMaterno;
+      _avoFPaternoController.text = _editedVaca.avoFPaterno;
+      _avoMPaternoController.text = _editedVaca.avoMPaterno;
     }
   }
 
   var dataUltInsemiController = MaskedTextController(mask: '00-00-0000');
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController _nomeController = TextEditingController();
-  TextEditingController _racaController = TextEditingController();
-  TextEditingController _paiController = TextEditingController();
-  TextEditingController _maeController = TextEditingController();
-  TextEditingController _avoMMaternoController = TextEditingController();
-  TextEditingController _avoFMaternoController = TextEditingController();
-  TextEditingController _avoFPaternoController = TextEditingController();
-  TextEditingController _avoMPaternoController = TextEditingController();
+  final _nomeController = TextEditingController();
+  final _racaController = TextEditingController();
+  final _paiController = TextEditingController();
+  final _maeController = TextEditingController();
+  final _avoMMaternoController = TextEditingController();
+  final _avoFMaternoController = TextEditingController();
+  final _avoFPaternoController = TextEditingController();
+  final _avoMPaternoController = TextEditingController();
+
   Future<void> _showMyDialog() async {
     return showDialog<void>(
       context: context,
@@ -94,14 +98,22 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   keyboardType: TextInputType.text,
                   controller: _paiController,
                   decoration: InputDecoration(labelText: "Pai"),
-                  onChanged: (text) {},
+                  onChanged: (text) {
+                    _vacasEdited = true;
+                    setState(() {
+                      _editedVaca.pai = text;
+                    });
+                  },
                 ),
                 TextField(
                   keyboardType: TextInputType.text,
                   controller: _maeController,
                   decoration: InputDecoration(labelText: "Mãe"),
                   onChanged: (text) {
-                    print(text);
+                    _vacasEdited = true;
+                    setState(() {
+                      _editedVaca.mae = text;
+                    });
                   },
                 ),
                 TextField(
@@ -109,7 +121,10 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   controller: _avoFPaternoController,
                   decoration: InputDecoration(labelText: "Avó Paterno"),
                   onChanged: (text) {
-                    print(text);
+                    _vacasEdited = true;
+                    setState(() {
+                      _editedVaca.avoFPaterno = text;
+                    });
                   },
                 ),
                 TextField(
@@ -117,7 +132,10 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   controller: _avoMPaternoController,
                   decoration: InputDecoration(labelText: "Avô Paterno"),
                   onChanged: (text) {
-                    print(text);
+                    _vacasEdited = true;
+                    setState(() {
+                      _editedVaca.avoMPaterno = text;
+                    });
                   },
                 ),
                 TextField(
@@ -125,7 +143,10 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   controller: _avoFMaternoController,
                   decoration: InputDecoration(labelText: "Avó Materno"),
                   onChanged: (text) {
-                    print(text);
+                    _vacasEdited = true;
+                    setState(() {
+                      _editedVaca.avoFMaterno = text;
+                    });
                   },
                 ),
                 TextField(
@@ -133,7 +154,10 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   controller: _avoMMaternoController,
                   decoration: InputDecoration(labelText: "Avô Materno"),
                   onChanged: (text) {
-                    print(text);
+                    _vacasEdited = true;
+                    setState(() {
+                      _editedVaca.avoMMaterno = text;
+                    });
                   },
                 ),
               ],
@@ -165,7 +189,7 @@ class _CadastroVacaState extends State<CadastroVaca> {
         key: _scaffoldstate,
         appBar: AppBar(
           title: Text(
-            "Cadastrar Vaca",
+            _editedVaca.nome ?? "Cadastrar Vaca",
             style: TextStyle(fontSize: 15.0),
           ),
           centerTitle: true,
@@ -200,7 +224,12 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   controller: _nomeController,
                   focusNode: _nameFocus,
                   decoration: InputDecoration(labelText: "Nome / Nº Brinco"),
-                  onChanged: (text) {},
+                  onChanged: (text) {
+                    _vacasEdited = true;
+                    setState(() {
+                      _editedVaca.nome = text;
+                    });
+                  },
                 ),
                 SearchableDropdown.single(
                   items: lotes.map((Lote lote) {
@@ -217,7 +246,9 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   hint: "Selecione um Lote",
                   searchHint: "Selecione um Lote",
                   onChanged: (value) {
+                    _vacasEdited = true;
                     setState(() {
+                      _editedVaca.idLote = value;
                       selectedLotes = value;
                     });
                   },
@@ -267,19 +298,27 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   keyboardType: TextInputType.number,
                   controller: _racaController,
                   decoration: InputDecoration(labelText: "Raça"),
-                  onChanged: (text) {},
+                  onChanged: (text) {
+                    _vacasEdited = true;
+                    setState(() {
+                      _editedVaca.raca = text;
+                    });
+                  },
                 ),
 
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: dataUltInsemiController,
-                  decoration: InputDecoration(labelText: "Última inseminação"),
-                  onChanged: (text) {},
+                Padding(
+                  padding: EdgeInsets.only(top: 10.0, bottom: 5.0),
+                  child: Text(
+                    "Não inseminada",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141)),
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 10.0, bottom: 5.0),
                   child: Text(
-                    "Secagem Prevista: xx-xx-xxxx",
+                    "Não inseminada",
                     style: TextStyle(
                         fontSize: 16.0,
                         color: Color.fromARGB(255, 4, 125, 141)),
@@ -289,52 +328,52 @@ class _CadastroVacaState extends State<CadastroVaca> {
                 Padding(
                   padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
                   child: Text(
-                    "Parto Previsto: xx-xx-xxxx",
+                    "Não inseminada",
                     style: TextStyle(
                         fontSize: 16.0,
                         color: Color.fromARGB(255, 4, 125, 141)),
                   ),
                 ),
 
-                SizedBox(height: 5.0),
-                DropdownButton<Item>(
-                  hint: Text("Selecione o ECC"),
-                  value: selectedECC,
-                  onChanged: (Item value) {
-                    setState(() {
-                      selectedECC = value;
-                    });
-                  },
-                  items: _ecc.map((Item ecc) {
-                    return DropdownMenuItem(
-                      value: ecc,
-                      child: Row(
-                        children: [
-                          Text(ecc.name),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                ),
-                DropdownButton<Item>(
-                  hint: Text("Selecione o Status"),
-                  value: selectedStatus,
-                  onChanged: (Item value) {
-                    setState(() {
-                      selectedStatus = value;
-                    });
-                  },
-                  items: _status.map((Item status) {
-                    return DropdownMenuItem(
-                      value: status,
-                      child: Row(
-                        children: [
-                          Text(status.name),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                ),
+                // SizedBox(height: 5.0),
+                // DropdownButton<Item>(
+                //   hint: Text("Selecione o ECC"),
+                //   value: selectedECC,
+                //   onChanged: (Item value) {
+                //     setState(() {
+                //       selectedECC = value;
+                //     });
+                //   },
+                //   items: _ecc.map((Item ecc) {
+                //     return DropdownMenuItem(
+                //       value: ecc,
+                //       child: Row(
+                //         children: [
+                //           Text(ecc.name),
+                //         ],
+                //       ),
+                //     );
+                //   }).toList(),
+                // ),
+                // DropdownButton<Item>(
+                //   hint: Text("Selecione o Status"),
+                //   value: selectedStatus,
+                //   onChanged: (Item value) {
+                //     setState(() {
+                //       selectedStatus = value;
+                //     });
+                //   },
+                //   items: _status.map((Item status) {
+                //     return DropdownMenuItem(
+                //       value: status,
+                //       child: Row(
+                //         children: [
+                //           Text(status.name),
+                //         ],
+                //       ),
+                //     );
+                //   }).toList(),
+                // ),
 
                 RaisedButton(
                   onPressed: () {
@@ -351,7 +390,7 @@ class _CadastroVacaState extends State<CadastroVaca> {
   }
 
   Future<bool> _requestPop() {
-    if (true) {
+    if (_vacasEdited) {
       showDialog(
           context: context,
           builder: (context) {

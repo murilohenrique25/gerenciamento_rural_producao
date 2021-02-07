@@ -1,17 +1,14 @@
 import 'package:gerenciamento_rural/models/animal.dart';
 
-class Vaca extends Animal {
-  int idVaca;
-  String ultimaInseminacao;
+class Touro extends Animal {
+  int idTouro;
 
-  Vaca();
-  Vaca.fromMap(Map map) {
-    idVaca = map["idVaca"];
+  Touro();
+  Touro.fromMap(Map map) {
+    idTouro = map["idTouro"];
     nome = map["nome"];
     dataNascimento = map["dataNascimento"];
-    ultimaInseminacao = map["ultimaInseminacao"];
     raca = map["raca"];
-    idLote = map["idLote"];
     estado = map["estado"];
     pai = map["pai"];
     mae = map["mae"];
@@ -25,8 +22,7 @@ class Vaca extends Animal {
       "nome": nome,
       "dataNascimento": dataNascimento,
       "raca": raca,
-      "idLote": idLote,
-      "ultimaInseminacao": ultimaInseminacao,
+      "estado": estado,
       "pai": pai,
       "mae": mae,
       "avoMMaterno": avoMMaterno,
@@ -34,8 +30,8 @@ class Vaca extends Animal {
       "avoMPaterno": avoMPaterno,
       "avoFPaterno": avoFPaterno
     };
-    if (idVaca != null) {
-      map["idVaca"] = idVaca;
+    if (idTouro != null) {
+      map["idTouro"] = idTouro;
     }
     return map;
   }

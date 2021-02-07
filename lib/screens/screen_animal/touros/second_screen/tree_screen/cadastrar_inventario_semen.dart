@@ -1,17 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_rural/models/inventario_semen.dart';
+import 'package:gerenciamento_rural/models/touro.dart';
+import 'package:gerenciamento_rural/helpers/touro_db.dart';
+import 'package:searchable_dropdown/searchable_dropdown.dart';
 
+// ignore: must_be_immutable
 class CadastroInventarioSemen extends StatefulWidget {
+  InventarioSemen invet;
+
+  CadastroInventarioSemen({this.invet});
   @override
   _CadastroInventarioSemenState createState() =>
       _CadastroInventarioSemenState();
 }
 
 class _CadastroInventarioSemenState extends State<CadastroInventarioSemen> {
+  TouroDB touroDB = TouroDB();
+  List<Touro> touros = List();
+
   int _radioValue = 0;
   int _radioValueTamanho = 0;
-  TextEditingController _nomeTouroController = TextEditingController();
-  TextEditingController _quantidadeController = TextEditingController();
-  TextEditingController _corPalhetaController = TextEditingController();
+  final _nomeTouroController = TextEditingController();
+  final _quantidadeController = TextEditingController();
+  final _corPalhetaController = TextEditingController();
+
+  final _nameFocus = FocusNode();
+  int selectedTouro;
+  bool _inventarioEdited = false;
+
+  InventarioSemen _editedInventario;
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -22,6 +39,32 @@ class _CadastroInventarioSemenState extends State<CadastroInventarioSemen> {
     setState(() {
       _formKey = GlobalKey();
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getAllTouros();
+    if (widget.invet == null) {
+      _editedInventario = InventarioSemen();
+    } else {
+      _editedInventario = InventarioSemen.fromMap(widget.invet.toMap());
+      if (_editedInventario.codigoIA == "Sexuado") {
+        _radioValue = 0;
+      } else {
+        _radioValue = 1;
+      }
+      _nomeTouroController.text = _editedInventario.touro.nome;
+      _quantidadeController.text = _editedInventario.quantidade.toString();
+      _corPalhetaController.text = _editedInventario.cor;
+      if (_editedInventario.tamanho == "Pequena") {
+        _radioValueTamanho = 0;
+      } else if (_editedInventario.tamanho == "Media") {
+        _radioValueTamanho = 1;
+      } else {
+        _radioValueTamanho = 2;
+      }
+    }
   }
 
   @override
@@ -80,39 +123,58 @@ class _CadastroInventarioSemenState extends State<CadastroInventarioSemen> {
               SizedBox(
                 height: 20.0,
               ),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                    labelText: "Touro",
-                    labelStyle:
-                        TextStyle(color: Color.fromARGB(255, 4, 125, 141))),
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
-                controller: _nomeTouroController,
-                // ignore: missing_return
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "Informe o touro";
-                  }
+              SearchableDropdown.single(
+                items: touros.map((Touro touro) {
+                  return DropdownMenuItem(
+                    value: touro.idTouro,
+                    child: Row(
+                      children: [
+                        Text(touro.nome),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                value: selectedTouro,
+                hint: "Selecione um Touro",
+                searchHint: "Selecione um Touro",
+                onChanged: (value) {
+                  _inventarioEdited = true;
+                  setState(() {
+                    _editedInventario.touro.idTouro = value;
+                    selectedTouro = value;
+                  });
                 },
+                doneButton: "Pronto",
+                displayItem: (item, selected) {
+                  return (Row(children: [
+                    selected
+                        ? Icon(
+                            Icons.radio_button_checked,
+                            color: Colors.grey,
+                          )
+                        : Icon(
+                            Icons.radio_button_unchecked,
+                            color: Colors.grey,
+                          ),
+                    SizedBox(width: 7),
+                    Expanded(
+                      child: item,
+                    ),
+                  ]));
+                },
+                isExpanded: true,
               ),
-              TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                    labelText: "Estoque de Palheta",
-                    labelStyle:
-                        TextStyle(color: Color.fromARGB(255, 4, 125, 141))),
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
+              TextField(
+                enabled: _inventarioEdited,
                 controller: _quantidadeController,
-                // ignore: missing_return
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "Informe a quantidade";
-                  }
+                decoration: InputDecoration(labelText: "Estoque de Palheta"),
+                onChanged: (value) {
+                  _inventarioEdited = true;
+                  setState(() {
+                    _editedInventario.quantidade = int.parse(value);
+                  });
                 },
+                keyboardType: TextInputType.number,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -127,8 +189,10 @@ class _CadastroInventarioSemenState extends State<CadastroInventarioSemen> {
                             value: 0,
                             groupValue: _radioValueTamanho,
                             onChanged: (int value) {
+                              _inventarioEdited = true;
                               setState(() {
                                 _radioValueTamanho = value;
+                                _editedInventario.tamanho = "Pequena";
                               });
                             }),
                         Text("Pequena"),
@@ -142,8 +206,10 @@ class _CadastroInventarioSemenState extends State<CadastroInventarioSemen> {
                             value: 1,
                             groupValue: _radioValueTamanho,
                             onChanged: (int value) {
+                              _inventarioEdited = true;
                               setState(() {
                                 _radioValueTamanho = value;
+                                _editedInventario.tamanho = "Media";
                               });
                             }),
                         Text("Média"),
@@ -157,8 +223,10 @@ class _CadastroInventarioSemenState extends State<CadastroInventarioSemen> {
                             value: 1,
                             groupValue: _radioValueTamanho,
                             onChanged: (int value) {
+                              _inventarioEdited = true;
                               setState(() {
                                 _radioValueTamanho = value;
+                                _editedInventario.tamanho = "Grande";
                               });
                             }),
                         Text("Grande"),
@@ -167,43 +235,28 @@ class _CadastroInventarioSemenState extends State<CadastroInventarioSemen> {
                   ),
                 ],
               ),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                    labelText: "Cor da Palheta",
-                    labelStyle:
-                        TextStyle(color: Color.fromARGB(255, 4, 125, 141))),
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
+              TextField(
                 controller: _corPalhetaController,
-                // ignore: missing_return
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "Informe a Observação";
-                  }
+                decoration: InputDecoration(labelText: "Cor da Palheta"),
+                onChanged: (text) {
+                  _inventarioEdited = true;
+                  setState(() {
+                    _editedInventario.cor = text;
+                  });
                 },
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                child: Container(
-                  height: 50.0,
-                  child: RaisedButton(
-                    onPressed: () {
-                      setState(() {});
-                    },
-                    child: Text(
-                      "Salvar Animal",
-                      style: TextStyle(color: Colors.white, fontSize: 20.0),
-                    ),
-                    color: Colors.green,
-                  ),
-                ),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _getAllTouros() {
+    touroDB.getAllItems().then((value) {
+      setState(() {
+        touros = value;
+      });
+    });
   }
 }

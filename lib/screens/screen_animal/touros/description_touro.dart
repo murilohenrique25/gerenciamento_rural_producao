@@ -43,7 +43,7 @@ class _DescriptionTouroState extends State<DescriptionTouro> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: Touro(),
+                          child: Touros(),
                         ),
                       ],
                     ),
@@ -76,7 +76,7 @@ class _DescriptionTouroState extends State<DescriptionTouro> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: InventarioSemen(),
+                          child: InventarioSemenS(),
                         ),
                       ],
                     ),

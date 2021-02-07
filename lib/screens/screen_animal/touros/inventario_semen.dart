@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/touros/second_screen/list_inventario_semen.dart';
 
-class InventarioSemen extends StatefulWidget {
+class InventarioSemenS extends StatefulWidget {
   @override
-  _InventarioSemenState createState() => _InventarioSemenState();
+  _InventarioSemenSState createState() => _InventarioSemenSState();
 }
 
-class _InventarioSemenState extends State<InventarioSemen> {
+class _InventarioSemenSState extends State<InventarioSemenS> {
   @override
   Widget build(BuildContext context) {
     return Column(

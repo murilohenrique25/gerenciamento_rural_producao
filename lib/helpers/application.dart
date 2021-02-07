@@ -1,4 +1,4 @@
-String dbName = '03022020final.db';
+String dbName = '07022021final1.db';
 int dbVersion = 1;
 
 List<String> dbCreate = [
@@ -74,4 +74,28 @@ List<String> dbCreate = [
     avoMPaterno TEXT,
     avoFPaterno TEXT
     )""",
+  //tabela inventario semen
+  """CREATE TABLE inventarioSemen(
+      id_inventario INTEGER PRIMARY KEY,
+      codigoIA TEXT,
+      tamanho TEXT,
+      quantidade INTEGER,
+      cor TEXT,
+      id_touro INTEGER,
+      CONSTRAINT fk_invenTouro FOREIGN KEY (id_touro) REFERENCES touro(id_touro) 
+    )""",
+  //tabela touro
+  """CREATE TABLE touro(
+      idTouro INTEGER PRIMARY KEY,
+      nome TEXT,
+      raca TEXT,
+      dataNascimento TEXT,
+      estado TEXT,
+      pai TEXT,
+      mae TEXT,
+      avoMMaterno TEXT,
+      avoFMaterno TEXT,
+      avoMPaterno TEXT,
+      avoFPaterno TEXT
+     )"""
 ];

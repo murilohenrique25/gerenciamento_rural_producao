@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/touros/second_screen/list_touros.dart';
 
-class Touro extends StatefulWidget {
+class Touros extends StatefulWidget {
   @override
-  _TouroState createState() => _TouroState();
+  _TourosState createState() => _TourosState();
 }
 
-class _TouroState extends State<Touro> {
+class _TourosState extends State<Touros> {
   @override
   Widget build(BuildContext context) {
     return Column(
