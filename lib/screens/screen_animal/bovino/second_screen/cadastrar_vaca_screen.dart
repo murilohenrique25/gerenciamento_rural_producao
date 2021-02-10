@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/list_vacas.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/cadastro_vaca.dart';
 
 class CadastrarVacaScreen extends StatefulWidget {
@@ -15,8 +16,8 @@ class _CadastrarVacaScreenState extends State<CadastrarVacaScreen> {
       children: [
         GestureDetector(
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => CadastroVaca()));
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => ListaVacas()));
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),

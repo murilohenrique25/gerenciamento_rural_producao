@@ -1,30 +1,34 @@
-import 'package:gerenciamento_rural/models/touro.dart';
-
 class InventarioSemen {
   int id;
   String codigoIA;
-  Touro touro;
+  int idTouro;
+  String nomeTouro;
   String tamanho;
   int quantidade;
   String cor;
+  String dataCadastro;
 
   InventarioSemen();
   InventarioSemen.fromMap(Map map) {
     id = map["id_inventario"];
     codigoIA = map["codigoIA"];
-    touro.idTouro = map["id_touro"];
+    idTouro = map["idTouro"];
+    nomeTouro = map["nomeTouro"];
     tamanho = map["tamanho"];
     quantidade = map["quantidade"];
     cor = map["cor"];
+    dataCadastro = map["dataCadastro"];
   }
 
   Map toMap() {
     Map<String, dynamic> map = {
       "codigoIA": codigoIA,
-      "id_touro": touro.idTouro,
+      "idTouro": idTouro,
+      "nomeTouro": nomeTouro,
       "tamanho": tamanho,
       "quantidade": quantidade,
-      "cor": cor
+      "cor": cor,
+      "dataCadastro": dataCadastro
     };
     if (id != null) {
       map["id_inventario"] = id;
@@ -34,6 +38,6 @@ class InventarioSemen {
 
   @override
   String toString() {
-    return "Inventario(id:$id, touro: $touro, Quantidade : $quantidade)";
+    return "Inventario(id:$id, touro: $idTouro, Quantidade : $quantidade)";
   }
 }

@@ -114,17 +114,6 @@ class _ListaVacasState extends State<ListaVacas> {
                   width: 2,
                 ),
                 Text(
-                  "Última inseminação: " + totalVacas[index].ultimaInseminacao,
-                  style: TextStyle(fontSize: 14.0),
-                ),
-                SizedBox(
-                  width: 2,
-                ),
-                Text(" - "),
-                SizedBox(
-                  width: 2,
-                ),
-                Text(
                   "Raça: " + totalVacas[index].raca,
                   style: TextStyle(fontSize: 14.0),
                 ),
@@ -280,7 +269,7 @@ class _ListaVacasState extends State<ListaVacas> {
     if (query.isNotEmpty) {
       List<Vaca> dummyListData = List();
       dummySearchList.forEach((item) {
-        if (item.nome == query) {
+        if (item.nome.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
         }
       });

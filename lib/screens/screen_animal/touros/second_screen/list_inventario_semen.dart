@@ -100,24 +100,62 @@ class _ListInventarioSemenState extends State<ListInventarioSemen> {
       child: Card(
         child: Padding(
           padding: EdgeInsets.all(10.0),
-          child: Row(
-            children: [
-              Text(
-                "Nome: " + semens[index].touro.nome ?? "",
-                style: TextStyle(fontSize: 14.0),
-              ),
-              SizedBox(
-                width: 15,
-              ),
-              Text(" - "),
-              SizedBox(
-                width: 15,
-              ),
-              Text(
-                "Quantidade: " + semens[index].quantidade.toString() ?? "",
-                style: TextStyle(fontSize: 14.0),
-              )
-            ],
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                Text(
+                  "IA: " + semens[index].codigoIA,
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(" - "),
+                Text(
+                  "Touro: " + semens[index].nomeTouro ?? "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(" - "),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(
+                  "Estoque: " + semens[index].quantidade.toString() ?? "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(" - "),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(
+                  "Tamanho Palheta: " + semens[index].tamanho ?? "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(" - "),
+                Text(
+                  "Cor Palheta: " + semens[index].cor ?? "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(" - "),
+                Text(
+                  "Data Coleta: " + semens[index].dataCadastro ?? "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -210,9 +248,22 @@ class _ListInventarioSemenState extends State<ListInventarioSemen> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome', 'Quantidade de Sêmens'],
-                ...tSemens.map(
-                    (item) => [item.touro.nome, item.quantidade.toString()])
+                <String>[
+                  'Código IA',
+                  'Touro',
+                  'Estoque',
+                  'Tamanho Palheta',
+                  'Cor da Palheta',
+                  'Data Coleta'
+                ],
+                ...tSemens.map((item) => [
+                      item.codigoIA,
+                      item.nomeTouro,
+                      item.quantidade.toString(),
+                      item.tamanho,
+                      item.cor,
+                      item.dataCadastro
+                    ])
               ])
             ]));
 
@@ -230,16 +281,12 @@ class _ListInventarioSemenState extends State<ListInventarioSemen> {
     switch (result) {
       case OrderOptions.orderaz:
         semens.sort((a, b) {
-          return a.touro.nome
-              .toLowerCase()
-              .compareTo(b.touro.nome.toLowerCase());
+          return a.codigoIA.toLowerCase().compareTo(b.codigoIA.toLowerCase());
         });
         break;
       case OrderOptions.orderza:
         semens.sort((a, b) {
-          return b.touro.nome
-              .toLowerCase()
-              .compareTo(a.touro.nome.toLowerCase());
+          return b.codigoIA.toLowerCase().compareTo(a.codigoIA.toLowerCase());
         });
         break;
     }
@@ -252,7 +299,7 @@ class _ListInventarioSemenState extends State<ListInventarioSemen> {
     if (query.isNotEmpty) {
       List<InventarioSemen> dummyListData = List();
       dummySearchList.forEach((item) {
-        if (item.touro.nome.toLowerCase().contains(query.toLowerCase())) {
+        if (item.nomeTouro.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
         }
       });
@@ -291,7 +338,7 @@ class _ListInventarioSemenState extends State<ListInventarioSemen> {
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
-                      pdfLib.Text('Lotes',
+                      pdfLib.Text('Inventário',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white))
                     ],

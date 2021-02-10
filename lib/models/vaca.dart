@@ -3,6 +3,8 @@ import 'package:gerenciamento_rural/models/animal.dart';
 class Vaca extends Animal {
   int idVaca;
   String ultimaInseminacao;
+  String partoPrevisto;
+  String secagemPrevista;
 
   Vaca();
   Vaca.fromMap(Map map) {
@@ -10,6 +12,8 @@ class Vaca extends Animal {
     nome = map["nome"];
     dataNascimento = map["dataNascimento"];
     ultimaInseminacao = map["ultimaInseminacao"];
+    partoPrevisto = map["partoPrevisto"];
+    secagemPrevista = map["secagemPrevista"];
     raca = map["raca"];
     idLote = map["idLote"];
     estado = map["estado"];
@@ -25,6 +29,8 @@ class Vaca extends Animal {
       "nome": nome,
       "dataNascimento": dataNascimento,
       "raca": raca,
+      "secagemPrevista": secagemPrevista,
+      "partoPrevisto": partoPrevisto,
       "idLote": idLote,
       "ultimaInseminacao": ultimaInseminacao,
       "pai": pai,

@@ -22,30 +22,16 @@ class _CadastroVacaState extends State<CadastroVaca> {
   VacaDB helper = VacaDB();
   List<Vaca> vacas = List();
   final _nameFocus = FocusNode();
-
+  Lote lote = Lote();
   bool _vacasEdited = false;
 
   Vaca _editedVaca;
 
-  // List<Item> _ecc = <Item>[
-  //   const Item("Não especificado"),
-  //   const Item("Raquítico"),
-  //   const Item("Magro"),
-  //   const Item("deal"),
-  //   const Item("Gordo"),
-  //   const Item("Obeso"),
-  // ];
-
-  // List<Item> _status = <Item>[
-  //   const Item("Não especificado"),
-  //   const Item("F. Solteira"),
-  //   const Item("F. Em Protocolo"),
-  //   const Item("F. Inseminada"),
-  // ];
-
-  Item selectedECC;
-
-  Item selectedStatus;
+  String numeroData;
+  String dataSecagem;
+  String dataParto;
+  String idadeFinal = "";
+  String _idadeAnimal = "1 ano";
 
   int selectedLotes;
 
@@ -69,10 +55,19 @@ class _CadastroVacaState extends State<CadastroVaca> {
       _avoFMaternoController.text = _editedVaca.avoFMaterno;
       _avoFPaternoController.text = _editedVaca.avoFPaterno;
       _avoMPaternoController.text = _editedVaca.avoMPaterno;
+      numeroData = _editedVaca.dataNascimento;
+      dataParto = _editedVaca.partoPrevisto;
+      dataSecagem = _editedVaca.secagemPrevista;
+      dataUltInsemiController.text = _editedVaca.ultimaInseminacao;
+      dataPrePartoController.text = _editedVaca.partoPrevisto;
+      dataPrevSecageController.text = _editedVaca.secagemPrevista;
+      idadeFinal = differenceDate();
     }
   }
 
   var dataUltInsemiController = MaskedTextController(mask: '00-00-0000');
+  var dataPrePartoController = MaskedTextController(mask: '00-00-0000');
+  var dataPrevSecageController = MaskedTextController(mask: '00-00-0000');
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _nomeController = TextEditingController();
@@ -83,6 +78,7 @@ class _CadastroVacaState extends State<CadastroVaca> {
   final _avoFMaternoController = TextEditingController();
   final _avoFPaternoController = TextEditingController();
   final _avoMPaternoController = TextEditingController();
+  var _dataNasc = MaskedTextController(mask: '00-00-0000');
 
   Future<void> _showMyDialog() async {
     return showDialog<void>(
@@ -201,7 +197,9 @@ class _CadastroVacaState extends State<CadastroVaca> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context, _editedVaca);
+          },
           child: Icon(Icons.save),
           backgroundColor: Colors.green[700],
         ),
@@ -231,8 +229,30 @@ class _CadastroVacaState extends State<CadastroVaca> {
                     });
                   },
                 ),
+                TextField(
+                  controller: _dataNasc,
+                  decoration: InputDecoration(labelText: "Data de Nascimento"),
+                  onChanged: (text) {
+                    _vacasEdited = true;
+                    setState(() {
+                      numeroData = text;
+                      _editedVaca.dataNascimento = text;
+                      idadeFinal = differenceDate();
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 15.0,
+                ),
+                Text("Idade do animal:  $idadeFinal",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                SizedBox(
+                  height: 20.0,
+                ),
                 SearchableDropdown.single(
-                  items: lotes.map((Lote lote) {
+                  items: lotes.map((lote) {
                     return DropdownMenuItem(
                       value: lote.id,
                       child: Row(
@@ -272,28 +292,6 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   },
                   isExpanded: true,
                 ),
-
-                SizedBox(
-                  height: 10.0,
-                ),
-                // Row(
-                //   children: [
-                //     RaisedButton(
-                //       onPressed: () => _selectDate(context), // Refer step 3
-                //       child: Text(
-                //         'Selecione a data de nascimento',
-                //         style: TextStyle(
-                //             color: Colors.black, fontWeight: FontWeight.bold),
-                //       ),
-                //       color: Color.fromARGB(255, 4, 125, 141),
-                //     ),
-                //     Text(
-                //       " :" + df.format(_selectedDate),
-                //       style:
-                //           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                //     ),
-                //   ],
-                // ),
                 TextField(
                   keyboardType: TextInputType.number,
                   controller: _racaController,
@@ -305,11 +303,10 @@ class _CadastroVacaState extends State<CadastroVaca> {
                     });
                   },
                 ),
-
                 Padding(
                   padding: EdgeInsets.only(top: 10.0, bottom: 5.0),
                   child: Text(
-                    "Não inseminada",
+                    "Última inseminação: Não inseminada",
                     style: TextStyle(
                         fontSize: 16.0,
                         color: Color.fromARGB(255, 4, 125, 141)),
@@ -318,63 +315,21 @@ class _CadastroVacaState extends State<CadastroVaca> {
                 Padding(
                   padding: EdgeInsets.only(top: 10.0, bottom: 5.0),
                   child: Text(
-                    "Não inseminada",
+                    "Secagem prevista: Não inseminada",
                     style: TextStyle(
                         fontSize: 16.0,
                         color: Color.fromARGB(255, 4, 125, 141)),
                   ),
                 ),
-
                 Padding(
                   padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
                   child: Text(
-                    "Não inseminada",
+                    "Parto previsto: Não inseminada",
                     style: TextStyle(
                         fontSize: 16.0,
                         color: Color.fromARGB(255, 4, 125, 141)),
                   ),
                 ),
-
-                // SizedBox(height: 5.0),
-                // DropdownButton<Item>(
-                //   hint: Text("Selecione o ECC"),
-                //   value: selectedECC,
-                //   onChanged: (Item value) {
-                //     setState(() {
-                //       selectedECC = value;
-                //     });
-                //   },
-                //   items: _ecc.map((Item ecc) {
-                //     return DropdownMenuItem(
-                //       value: ecc,
-                //       child: Row(
-                //         children: [
-                //           Text(ecc.name),
-                //         ],
-                //       ),
-                //     );
-                //   }).toList(),
-                // ),
-                // DropdownButton<Item>(
-                //   hint: Text("Selecione o Status"),
-                //   value: selectedStatus,
-                //   onChanged: (Item value) {
-                //     setState(() {
-                //       selectedStatus = value;
-                //     });
-                //   },
-                //   items: _status.map((Item status) {
-                //     return DropdownMenuItem(
-                //       value: status,
-                //       child: Row(
-                //         children: [
-                //           Text(status.name),
-                //         ],
-                //       ),
-                //     );
-                //   }).toList(),
-                // ),
-
                 RaisedButton(
                   onPressed: () {
                     _showMyDialog();
@@ -421,20 +376,42 @@ class _CadastroVacaState extends State<CadastroVaca> {
     }
   }
 
-  // _selectDate(BuildContext context) async {
-  //   final DateTime picked = await showDatePicker(
-  //     context: context,
-  //     initialDate: _selectedDate, // Refer step 1
-  //     firstDate: DateTime(1900),
-  //     lastDate: DateTime(2022),
-  //   );
+  String differenceDate() {
+    String num = "";
+    DateTime dt = DateTime.now();
+    if (numeroData.isNotEmpty) {
+      num = numeroData.split('-').reversed.join();
+    }
 
-  //   if (picked != null && picked != _selectedDate)
-  //     setState(() {
-  //       _selectedDate = picked;
-  //       differenceDate();
-  //     });
-  // }
+    DateTime date = DateTime.parse(num);
+    int quant = dt.difference(date).inDays;
+    if (quant < 0) {
+      _idadeAnimal = "Data incorreta";
+    } else if (quant < 365) {
+      _idadeAnimal = "$quant dias";
+    } else if (quant == 365) {
+      _idadeAnimal = "1 ano";
+    } else if (quant > 365 && quant < 731) {
+      int dias = quant - 365;
+      _idadeAnimal = "1 ano e $dias dias";
+    } else if (quant > 731 && quant < 1096) {
+      int dias = quant - 731;
+      _idadeAnimal = "2 ano e $dias dias";
+    } else if (quant > 1095 && quant < 1461) {
+      int dias = quant - 1095;
+      _idadeAnimal = "3 ano e $dias dias";
+    } else if (quant > 1460 && quant < 1826) {
+      int dias = quant - 1460;
+      _idadeAnimal = "4 ano e $dias dias";
+    } else if (quant > 1825 && quant < 2191) {
+      int dias = quant - 1825;
+      _idadeAnimal = "5 ano e $dias dias";
+    } else if (quant > 2190 && quant < 2.556) {
+      int dias = quant - 2190;
+      _idadeAnimal = "6 ano e $dias dias";
+    }
+    return _idadeAnimal;
+  }
 
   void _getAllLotes() {
     helperLote.getAllItems().then((list) {
