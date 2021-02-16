@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/models/lote.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:gerenciamento_rural/models/gasto.dart';
 
 class CadastroEconomiaGasto extends StatefulWidget {
+  final Gasto gasto;
+  CadastroEconomiaGasto({this.gasto});
   @override
   _CadastroEconomiaGastoState createState() => _CadastroEconomiaGastoState();
 }
@@ -10,16 +13,34 @@ class _CadastroEconomiaGastoState extends State<CadastroEconomiaGasto> {
   final _nomeLoteController = TextEditingController();
   final _valorController = TextEditingController();
   final _quantidadeController = TextEditingController();
+  final _obsController = TextEditingController();
 
+  var _dataCadastro = MaskedTextController(mask: '00-00-0000');
   final _nameFocus = FocusNode();
 
-  bool _loteEdited = false;
+  bool _gastoEdited = false;
 
-  Lote _editedLote;
+  Gasto _editedGasto;
 
   double valorTotal = 0.0;
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.gasto == null) {
+      _editedGasto = Gasto();
+    } else {
+      _editedGasto = Gasto.fromMap(widget.gasto.toMap());
+      _dataCadastro.text = _editedGasto.data;
+      _nomeLoteController.text = _editedGasto.nome;
+      _valorController.text = _editedGasto.valorUnitario.toString();
+      _quantidadeController.text = _editedGasto.quantidade.toString();
+      _obsController.text = _editedGasto.observacao;
+      valorTotal = _editedGasto.valorTotal;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +58,9 @@ class _CadastroEconomiaGastoState extends State<CadastroEconomiaGasto> {
                 try {
                   int quant = int.parse(_quantidadeController.text);
                   double valor = double.parse(_valorController.text);
+                  _editedGasto.valorTotal = quant * valor;
                   valorTotal = quant * valor;
+                  Navigator.pop(context, _editedGasto);
                 } catch (Expetion) {
                   showDialog(
                     context: context,
@@ -75,13 +98,23 @@ class _CadastroEconomiaGastoState extends State<CadastroEconomiaGasto> {
                     color: Color.fromARGB(255, 4, 125, 141),
                   ),
                   TextField(
+                    controller: _dataCadastro,
+                    decoration: InputDecoration(labelText: "Data"),
+                    onChanged: (text) {
+                      _gastoEdited = true;
+                      setState(() {
+                        _editedGasto.data = text;
+                      });
+                    },
+                  ),
+                  TextField(
                     controller: _nomeLoteController,
                     focusNode: _nameFocus,
                     decoration: InputDecoration(labelText: "Gasto"),
                     onChanged: (text) {
-                      _loteEdited = true;
+                      _gastoEdited = true;
                       setState(() {
-                        _editedLote.name = text;
+                        _editedGasto.nome = text;
                       });
                     },
                   ),
@@ -89,9 +122,9 @@ class _CadastroEconomiaGastoState extends State<CadastroEconomiaGasto> {
                     controller: _valorController,
                     decoration: InputDecoration(labelText: "Valor"),
                     onChanged: (text) {
-                      _loteEdited = true;
+                      _gastoEdited = true;
                       setState(() {
-                        _editedLote.quantidade = int.parse(text);
+                        _editedGasto.valorUnitario = double.parse(text);
                       });
                     },
                     keyboardType: TextInputType.number,
@@ -100,19 +133,20 @@ class _CadastroEconomiaGastoState extends State<CadastroEconomiaGasto> {
                     controller: _quantidadeController,
                     decoration: InputDecoration(labelText: "Quantidade"),
                     onChanged: (text) {
-                      _loteEdited = true;
+                      _gastoEdited = true;
                       setState(() {
-                        _editedLote.quantidade = int.parse(text);
+                        _editedGasto.quantidade = int.parse(text);
                       });
                     },
                     keyboardType: TextInputType.number,
                   ),
                   TextField(
+                    controller: _obsController,
                     decoration: InputDecoration(labelText: "Observação"),
                     onChanged: (text) {
-                      _loteEdited = true;
+                      _gastoEdited = true;
                       setState(() {
-                        _editedLote.quantidade = int.parse(text);
+                        _editedGasto.observacao = text;
                       });
                     },
                     keyboardType: TextInputType.text,
@@ -132,7 +166,7 @@ class _CadastroEconomiaGastoState extends State<CadastroEconomiaGasto> {
   }
 
   Future<bool> _requestPop() {
-    if (_loteEdited) {
+    if (_gastoEdited) {
       showDialog(
           context: context,
           builder: (context) {

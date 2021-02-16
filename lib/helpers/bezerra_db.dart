@@ -39,7 +39,7 @@ class BezerraDB extends HelperDB {
 
   Future<Bezerra> insert(Bezerra bezerra) async {
     Database db = await this.getDb();
-    bezerra.idBezerra = await db.insert("novilha", bezerra.toMap());
+    bezerra.idBezerra = await db.insert("bezerra", bezerra.toMap());
     return bezerra;
   }
 

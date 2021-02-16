@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:gerenciamento_rural/helpers/touro_db.dart';
+import 'package:gerenciamento_rural/helpers/vaca_db.dart';
+import 'package:gerenciamento_rural/models/touro.dart';
+import 'package:gerenciamento_rural/models/vaca.dart';
 
 class CadastroInseminacao extends StatefulWidget {
   @override
@@ -18,10 +22,22 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
   final GlobalKey<ScaffoldState> _scaffoldstate =
       new GlobalKey<ScaffoldState>();
 
+  VacaDB helperVaca = VacaDB();
+  List<Vaca> totalVacas = List();
+
+  TouroDB helperTouro = TouroDB();
+  List<Touro> totalTouros = List();
   void _reset() {
     setState(() {
       _formKey = GlobalKey();
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getAllVacas();
+    _getAllTouros();
   }
 
   @override
@@ -139,26 +155,26 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
               SizedBox(
                 height: 20.0,
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                child: Container(
-                  height: 50.0,
-                  child: RaisedButton(
-                    onPressed: () {
-                      setState(() {});
-                    },
-                    child: Text(
-                      "Salvar Inseminação",
-                      style: TextStyle(color: Colors.white, fontSize: 20.0),
-                    ),
-                    color: Colors.green,
-                  ),
-                ),
-              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _getAllVacas() {
+    helperVaca.getAllItems().then((list) {
+      setState(() {
+        totalVacas = list;
+      });
+    });
+  }
+
+  void _getAllTouros() {
+    helperTouro.getAllVivos().then((list) {
+      setState(() {
+        totalTouros = list;
+      });
+    });
   }
 }

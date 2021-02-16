@@ -54,6 +54,7 @@ class _CadastroTouroState extends State<CadastroTouro> {
     super.initState();
     if (widget.touro == null) {
       _editedTouro = Touro();
+      _editedTouro.estado = "Vivo";
     } else {
       _editedTouro = Touro.fromMap(widget.touro.toMap());
       _nomeController.text = _editedTouro.nome;

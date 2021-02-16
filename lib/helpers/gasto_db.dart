@@ -1,22 +1,22 @@
 import 'package:gerenciamento_rural/helpers/HelperDB.dart';
 import 'package:gerenciamento_rural/helpers/application.dart';
-import 'package:gerenciamento_rural/models/touro.dart';
+import 'package:gerenciamento_rural/models/gasto.dart';
 import 'package:sqflite/sqflite.dart';
 
-class TouroDB extends HelperDB {
-  Touro touro;
+class GastoDB extends HelperDB {
+  Gasto gasto;
   //Singleton
   //
-  static TouroDB _this;
-  factory TouroDB() {
+  static GastoDB _this;
+  factory GastoDB() {
     if (_this == null) {
-      _this = TouroDB.getInstance();
+      _this = GastoDB.getInstance();
     }
     return _this;
   }
   //
   //The instance
-  TouroDB.getInstance() : super();
+  GastoDB.getInstance() : super();
   //
 
   @override
@@ -28,8 +28,8 @@ class TouroDB extends HelperDB {
   @override
   Future<Map> getItem(dynamic where) async {
     Database db = await this.getDb();
-    List<Map> items = await db.query("touro",
-        where: "idTouro = ?", whereArgs: [where], limit: 1);
+    List<Map> items =
+        await db.query("gasto", where: "id = ?", whereArgs: [where], limit: 1);
     Map result = Map();
     if (items.isNotEmpty) {
       result = items.first;
@@ -37,22 +37,22 @@ class TouroDB extends HelperDB {
     return result;
   }
 
-  Future<Touro> insert(Touro touro) async {
+  Future<Gasto> insert(Gasto gasto) async {
     Database db = await this.getDb();
-    touro.idTouro = await db.insert("touro", touro.toMap());
-    return touro;
+    gasto.id = await db.insert("gasto", gasto.toMap());
+    return gasto;
   }
 
   @override
   Future<List<Map>> list() async {
     Database db = await this.getDb();
-    return db.rawQuery("SELECT * FROM touro orderBy idTouro CRESC");
+    return db.rawQuery("SELECT * FROM gasto orderBy id CRESC");
   }
 
   @override
   Future<bool> delete(dynamic id) async {
     Database db = await this.getDb();
-    int rows = await db.delete("touro", where: "idTouro = ?", whereArgs: [id]);
+    int rows = await db.delete("gasto", where: "id = ?", whereArgs: [id]);
 
     return (rows != 0);
   }
@@ -60,33 +60,33 @@ class TouroDB extends HelperDB {
   Future<int> getNumber() async {
     Database db = await this.getDb();
     return Sqflite.firstIntValue(
-        await db.rawQuery("SELECT COUNT(*) FROM touro"));
+        await db.rawQuery("SELECT COUNT(*) FROM gasto"));
   }
 
-  Future<int> updateItem(Touro touro) async {
+  Future<int> updateItem(Gasto gasto) async {
     Database db = await this.getDb();
-    int p = await db.update("touro", touro.toMap());
+    int p = await db.update("gasto", gasto.toMap());
 
     return p;
   }
 
   Future<List> getAllItems() async {
     Database db = await this.getDb();
-    List listMap = await db.rawQuery("SELECT * FROM touro");
-    List<Touro> list = List();
+    List listMap = await db.rawQuery("SELECT * FROM gasto");
+    List<Gasto> list = List();
     for (Map m in listMap) {
-      list.add(Touro.fromMap(m));
+      list.add(Gasto.fromMap(m));
     }
     return list;
   }
 
-  Future<List> getAllVivos() async {
+  Future<List> getBetwwenItems(String data1, String data2) async {
     Database db = await this.getDb();
-    List listMap =
-        await db.rawQuery("SELECT * FROM touro WHERE estado = 'Vivo'");
-    List<Touro> list = List();
+    List listMap = await db
+        .rawQuery("SELECT * FROM gasto WHERE data BETWEEN $data1 AND $data2");
+    List<Gasto> list = List();
     for (Map m in listMap) {
-      list.add(Touro.fromMap(m));
+      list.add(Gasto.fromMap(m));
     }
     return list;
   }

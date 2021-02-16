@@ -1,4 +1,4 @@
-String dbName = 'new090220215.db';
+String dbName = 'new15022021.db';
 int dbVersion = 1;
 
 List<String> dbCreate = [
@@ -102,5 +102,15 @@ List<String> dbCreate = [
       avoFMaterno TEXT,
       avoMPaterno TEXT,
       avoFPaterno TEXT
+     )""",
+  //tabela gasto
+  """CREATE TABLE gasto(
+      id INTEGER PRIMARY KEY,
+      nome TEXT,
+      data TEXT,
+      quantidade INTEGER,
+      observacao TEXT,
+      valorUnitario REAL,
+      valorTotal REAL
      )"""
 ];

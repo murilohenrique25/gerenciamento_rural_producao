@@ -22,7 +22,6 @@ class _CadastroInventarioSemenState extends State<CadastroInventarioSemen> {
   int _radioValue = 0;
   int _radioValueTamanho = 0;
   int idTouro = 0;
-  final _nomeTouroController = TextEditingController();
   final _quantidadeController = TextEditingController();
   final _corPalhetaController = TextEditingController();
 
@@ -304,7 +303,7 @@ class _CadastroInventarioSemenState extends State<CadastroInventarioSemen> {
   }
 
   void _getAllTouros() {
-    touroDB.getAllItems().then((value) {
+    touroDB.getAllVivos().then((value) {
       setState(() {
         touros = value;
       });

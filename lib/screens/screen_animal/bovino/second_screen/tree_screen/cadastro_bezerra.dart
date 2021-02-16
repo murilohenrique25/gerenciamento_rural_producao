@@ -1,78 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:gerenciamento_rural/helpers/bezerra_db.dart';
 import 'package:gerenciamento_rural/helpers/lote_db.dart';
+import 'package:gerenciamento_rural/models/bezerra.dart';
 import 'package:gerenciamento_rural/models/lote.dart';
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class CadastroBezerra extends StatefulWidget {
+  final Bezerra bezerra;
+  CadastroBezerra({this.bezerra});
   @override
   _CadastroBezerraState createState() => _CadastroBezerraState();
 }
 
 class _CadastroBezerraState extends State<CadastroBezerra> {
-  LoteDB helper = LoteDB();
+  LoteDB helperLote = LoteDB();
   List<Lote> lotes = List();
+  BezerraDB helper = BezerraDB();
+  List<Bezerra> bezerras = List();
+  final _nameFocus = FocusNode();
 
-  @override
-  void initState() {
-    super.initState();
-    _getAllLotes();
-  }
-
-  void _getAllLotes() {
-    helper.getAllItems().then((list) {
-      setState(() {
-        lotes = list;
-      });
-    });
-  }
-
-  List<Item> _ecc = <Item>[
-    const Item("Não especificado"),
-    const Item("1 - Raquítico"),
-    const Item("2 - Magro"),
-    const Item("3 - Ideal"),
-    const Item("4 - Gordo"),
-    const Item("5 - Obeso"),
-  ];
-
-  List<Item> _status = <Item>[
-    const Item("Não especificado"),
-    const Item("F. Solteira"),
-    const Item("F. Em Protocolo"),
-    const Item("F. Inseminada"),
-    const Item("M. Em Serviço Rm"),
-    const Item("M. Em Serviço Ru"),
-    const Item("M. Descanso"),
-  ];
-  Item selectedECC;
-
-  Item selectedStatus;
-
-  Item selectedLote;
+  bool _bezerraEdited;
+  Bezerra _editedBezerra;
+  String idadeFinal = "";
+  String numeroData;
   int selectedLotes;
 
-  //String _infoText = "Informe os dados!";
-
-  final nomeController = TextEditingController();
-
-  final pesoController = TextEditingController();
-
-  final pesoDesmamaController = TextEditingController();
-
-  final racaController = TextEditingController();
-
-  final estadoController = TextEditingController();
+  final _nomeController = TextEditingController();
+  final _pesoController = TextEditingController();
+  final _pesoDesmamaController = TextEditingController();
+  final _racaController = TextEditingController();
+  final _paiController = TextEditingController();
+  final _maeController = TextEditingController();
+  final _avoMMaternoController = TextEditingController();
+  final _avoFMaternoController = TextEditingController();
+  final _avoFPaternoController = TextEditingController();
+  final _avoMPaternoController = TextEditingController();
+  var _dataNasc = MaskedTextController(mask: '00-00-0000');
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  var dataDesmamaController = MaskedTextController(mask: '00-00-0000');
-  var dataNascController = MaskedTextController(mask: '00-00-0000');
-
-  DateTime _selectedDate = DateTime.now();
-
-  final _nameFocus = FocusNode();
+  var _dataDesmamaController = MaskedTextController(mask: '00-00-0000');
 
   final df = new DateFormat("dd-MM-yyyy");
 
@@ -82,13 +51,127 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
       new GlobalKey<ScaffoldState>();
 
   void _reset() {
-    nomeController.text = "";
-    pesoController.text = "";
     setState(() {
       _formKey = GlobalKey();
-      selectedECC = _ecc[0];
-      selectedStatus = _status[0];
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getAllLotes();
+    if (widget.bezerra == null) {
+      _editedBezerra = Bezerra();
+    } else {
+      _editedBezerra = Bezerra.fromMap(widget.bezerra.toMap());
+      _nomeController.text = _editedBezerra.nome;
+      _racaController.text = _editedBezerra.raca;
+      _pesoDesmamaController.text = _editedBezerra.pesoDesmama.toString();
+      _pesoController.text = _editedBezerra.pesoNascimento.toString();
+      _dataDesmamaController.text = _editedBezerra.dataDesmama;
+      _paiController.text = _editedBezerra.pai;
+      _maeController.text = _editedBezerra.mae;
+      _avoMMaternoController.text = _editedBezerra.avoMMaterno;
+      _avoFMaternoController.text = _editedBezerra.avoFMaterno;
+      _avoFPaternoController.text = _editedBezerra.avoFPaterno;
+      _avoMPaternoController.text = _editedBezerra.avoMPaterno;
+      selectedLotes = _editedBezerra.idLote;
+      numeroData = _editedBezerra.dataNascimento;
+      _dataNasc.text = numeroData;
+      idadeFinal = differenceDate();
+    }
+  }
+
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Pedigree'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _paiController,
+                  decoration: InputDecoration(labelText: "Pai"),
+                  onChanged: (text) {
+                    _bezerraEdited = true;
+                    setState(() {
+                      _editedBezerra.pai = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _maeController,
+                  decoration: InputDecoration(labelText: "Mãe"),
+                  onChanged: (text) {
+                    _bezerraEdited = true;
+                    setState(() {
+                      _editedBezerra.mae = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _avoFPaternoController,
+                  decoration: InputDecoration(labelText: "Avó Paterno"),
+                  onChanged: (text) {
+                    _bezerraEdited = true;
+                    setState(() {
+                      _editedBezerra.avoFPaterno = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _avoMPaternoController,
+                  decoration: InputDecoration(labelText: "Avô Paterno"),
+                  onChanged: (text) {
+                    _bezerraEdited = true;
+                    setState(() {
+                      _editedBezerra.avoMPaterno = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _avoFMaternoController,
+                  decoration: InputDecoration(labelText: "Avó Materno"),
+                  onChanged: (text) {
+                    _bezerraEdited = true;
+                    setState(() {
+                      _editedBezerra.avoFMaterno = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _avoMMaternoController,
+                  decoration: InputDecoration(labelText: "Avô Materno"),
+                  onChanged: (text) {
+                    _bezerraEdited = true;
+                    setState(() {
+                      _editedBezerra.avoMMaterno = text;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -99,7 +182,7 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
         key: _scaffoldstate,
         appBar: AppBar(
           title: Text(
-            "Cadastrar Bezerra",
+            _editedBezerra.nome ?? "Cadastrar Bezerra",
             style: TextStyle(fontSize: 15.0),
           ),
           centerTitle: true,
@@ -111,7 +194,9 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context, _editedBezerra);
+          },
           child: Icon(Icons.save),
           backgroundColor: Colors.green[700],
         ),
@@ -131,10 +216,38 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
                   height: 20,
                 ),
                 TextField(
-                  controller: nomeController,
+                  controller: _nomeController,
                   focusNode: _nameFocus,
                   decoration: InputDecoration(labelText: "Nome / Nº Brinco"),
-                  onChanged: (text) {},
+                  onChanged: (text) {
+                    _bezerraEdited = true;
+                    setState(() {
+                      _editedBezerra.nome = text;
+                    });
+                  },
+                ),
+                TextField(
+                  controller: _dataNasc,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: "Data de Nascimento"),
+                  onChanged: (text) {
+                    _bezerraEdited = true;
+                    setState(() {
+                      numeroData = text;
+                      _editedBezerra.dataNascimento = text;
+                      idadeFinal = differenceDate();
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 15.0,
+                ),
+                Text("Idade do animal:  $idadeFinal",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                SizedBox(
+                  height: 20.0,
                 ),
                 SearchableDropdown.single(
                   items: lotes.map((Lote lote) {
@@ -151,7 +264,9 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
                   hint: "Selecione um Lote",
                   searchHint: "Selecione um Lote",
                   onChanged: (value) {
+                    _bezerraEdited = true;
                     setState(() {
+                      _editedBezerra.idLote = value;
                       selectedLotes = value;
                     });
                   },
@@ -178,98 +293,58 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
                 SizedBox(
                   height: 10.0,
                 ),
-                // Row(
-                //   children: [
-                //     RaisedButton(
-                //       onPressed: () => _selectDate(context), // Refer step 3
-                //       child: Text(
-                //         'Selecione a data de nascimento',
-                //         style: TextStyle(
-                //             color: Colors.black, fontWeight: FontWeight.bold),
-                //       ),
-                //       color: Color.fromARGB(255, 4, 125, 141),
-                //     ),
-                //     Text(
-                //       " :" + df.format(_selectedDate),
-                //       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                //     ),
-                //   ],
-                // ),
-
                 TextField(
                   keyboardType: TextInputType.text,
-                  controller: dataNascController,
-                  decoration: InputDecoration(labelText: "Data de nascimento"),
-                  onChanged: (text) {},
-                ),
-                Padding(padding: EdgeInsets.only(top: 15.0)),
-                Text(
-                  "Idade animal:  ${differenceDate()}",
-                  style: TextStyle(
-                      fontSize: 16.0, color: Color.fromARGB(255, 4, 125, 141)),
-                ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: racaController,
+                  controller: _racaController,
                   decoration: InputDecoration(labelText: "Raça"),
-                  onChanged: (text) {},
+                  onChanged: (text) {
+                    _bezerraEdited = true;
+                    setState(() {
+                      _editedBezerra.raca = text;
+                    });
+                  },
                 ),
                 TextField(
-                  keyboardType: TextInputType.text,
-                  controller: pesoController,
+                  keyboardType: TextInputType.number,
+                  controller: _pesoController,
                   decoration: InputDecoration(labelText: "Peso ao nascimento"),
-                  onChanged: (text) {},
+                  onChanged: (text) {
+                    _bezerraEdited = true;
+                    setState(() {
+                      _editedBezerra.pesoNascimento = double.parse(text);
+                    });
+                  },
                 ),
                 TextField(
-                  keyboardType: TextInputType.text,
-                  controller: pesoDesmamaController,
+                  keyboardType: TextInputType.number,
+                  controller: _pesoDesmamaController,
                   decoration: InputDecoration(labelText: "Peso na desmama"),
-                  onChanged: (text) {},
+                  onChanged: (text) {
+                    _bezerraEdited = true;
+                    setState(() {
+                      _editedBezerra.pesoDesmama = double.parse(text);
+                    });
+                  },
                 ),
                 TextField(
                   keyboardType: TextInputType.text,
-                  controller: dataDesmamaController,
+                  controller: _dataDesmamaController,
                   decoration: InputDecoration(labelText: "Data da desmama"),
-                  onChanged: (text) {},
-                ),
-                SizedBox(height: 5.0),
-                DropdownButton<Item>(
-                  hint: Text("Selecione o ECC"),
-                  value: selectedECC,
-                  onChanged: (Item value) {
+                  onChanged: (text) {
+                    _bezerraEdited = true;
                     setState(() {
-                      selectedECC = value;
+                      _editedBezerra.dataDesmama = text;
                     });
                   },
-                  items: _ecc.map((Item ecc) {
-                    return DropdownMenuItem(
-                      value: ecc,
-                      child: Row(
-                        children: [
-                          Text(ecc.name),
-                        ],
-                      ),
-                    );
-                  }).toList(),
                 ),
-                DropdownButton<Item>(
-                  hint: Text("Selecione o Status"),
-                  value: selectedStatus,
-                  onChanged: (Item value) {
-                    setState(() {
-                      selectedStatus = value;
-                    });
+                RaisedButton(
+                  onPressed: () {
+                    _showMyDialog();
                   },
-                  items: _status.map((Item status) {
-                    return DropdownMenuItem(
-                      value: status,
-                      child: Row(
-                        children: [
-                          Text(status.name),
-                        ],
-                      ),
-                    );
-                  }).toList(),
+                  child: Text("Pedigree"),
+                ),
+                SizedBox(
+                  height: 15.0,
                 ),
               ],
             ),
@@ -280,7 +355,7 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
   }
 
   Future<bool> _requestPop() {
-    if (true) {
+    if (_bezerraEdited) {
       showDialog(
           context: context,
           builder: (context) {
@@ -311,25 +386,15 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
     }
   }
 
-  // _selectDate(BuildContext context) async {
-  //   final DateTime picked = await showDatePicker(
-  //     context: context,
-  //     initialDate: _selectedDate, // Refer step 1
-  //     firstDate: DateTime(1900),
-  //     lastDate: DateTime(2022),
-  //   );
-
-  //   if (picked != null && picked != _selectedDate)
-  //     setState(() {
-  //       _selectedDate = picked;
-  //       differenceDate();
-  //     });
-  // }
-
   String differenceDate() {
+    String num = "";
     DateTime dt = DateTime.now();
+    if (numeroData.isNotEmpty) {
+      num = numeroData.split('-').reversed.join();
+    }
 
-    int quant = dt.difference(_selectedDate).inDays;
+    DateTime date = DateTime.parse(num);
+    int quant = dt.difference(date).inDays;
     if (quant < 0) {
       _idadeAnimal = "Data incorreta";
     } else if (quant < 365) {
@@ -357,9 +422,12 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
     }
     return _idadeAnimal;
   }
-}
 
-class Item {
-  const Item(this.name);
-  final String name;
+  void _getAllLotes() {
+    helperLote.getAllItems().then((list) {
+      setState(() {
+        lotes = list;
+      });
+    });
+  }
 }

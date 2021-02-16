@@ -1,85 +1,93 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/lote_db.dart';
-import 'package:gerenciamento_rural/helpers/vaca_db.dart';
+import 'package:gerenciamento_rural/helpers/novilha_db.dart';
 import 'package:gerenciamento_rural/models/lote.dart';
-import 'package:gerenciamento_rural/models/vaca.dart';
+import 'package:gerenciamento_rural/models/novilha.dart';
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 
-class CadastroVaca extends StatefulWidget {
-  final Vaca vaca;
-
-  CadastroVaca({this.vaca});
+class CadastroNovilha extends StatefulWidget {
+  final Novilha novilha;
+  CadastroNovilha({this.novilha});
   @override
-  _CadastroVacaState createState() => _CadastroVacaState();
+  _CadastroNovilhaState createState() => _CadastroNovilhaState();
 }
 
-class _CadastroVacaState extends State<CadastroVaca> {
+class _CadastroNovilhaState extends State<CadastroNovilha> {
   LoteDB helperLote = LoteDB();
   List<Lote> lotes = List();
-
-  VacaDB helper = VacaDB();
-  List<Vaca> vacas = List();
+  NovilhaDB helper = NovilhaDB();
+  List<Novilha> novilhas = List();
   final _nameFocus = FocusNode();
-  Lote lote = Lote();
-  bool _vacasEdited = false;
 
-  Vaca _editedVaca;
-
-  String numeroData;
-  String dataSecagem;
-  String dataParto;
+  bool _novilhaEdited;
+  Novilha _editedNovilha;
   String idadeFinal = "";
-  String _idadeAnimal = "1 ano";
-
+  String numeroData;
   int selectedLotes;
 
-  void _reset() {
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getAllLotes();
-    if (widget.vaca == null) {
-      _editedVaca = Vaca();
-    } else {
-      _editedVaca = Vaca.fromMap(widget.vaca.toMap());
-      _nomeController.text = _editedVaca.nome;
-      _racaController.text = _editedVaca.raca;
-      _paiController.text = _editedVaca.pai;
-      _maeController.text = _editedVaca.mae;
-      _avoMMaternoController.text = _editedVaca.avoMMaterno;
-      _avoFMaternoController.text = _editedVaca.avoFMaterno;
-      _avoFPaternoController.text = _editedVaca.avoFPaterno;
-      _avoMPaternoController.text = _editedVaca.avoMPaterno;
-      numeroData = _editedVaca.dataNascimento;
-      _dataNasc.text = numeroData;
-      dataParto = _editedVaca.partoPrevisto;
-      dataSecagem = _editedVaca.secagemPrevista;
-      dataUltInsemiController.text = _editedVaca.ultimaInseminacao;
-      dataPrePartoController.text = _editedVaca.partoPrevisto;
-      dataPrevSecageController.text = _editedVaca.secagemPrevista;
-      idadeFinal = differenceDate();
-    }
-  }
-
-  var dataUltInsemiController = MaskedTextController(mask: '00-00-0000');
-  var dataPrePartoController = MaskedTextController(mask: '00-00-0000');
-  var dataPrevSecageController = MaskedTextController(mask: '00-00-0000');
-
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _nomeController = TextEditingController();
+  final _pesoController = TextEditingController();
+  final _pesoDesmamaController = TextEditingController();
+  final _pesoPrimCoberturaController = TextEditingController();
   final _racaController = TextEditingController();
+  final _diagnosticoGestacaoController = TextEditingController();
   final _paiController = TextEditingController();
   final _maeController = TextEditingController();
   final _avoMMaternoController = TextEditingController();
   final _avoFMaternoController = TextEditingController();
   final _avoFPaternoController = TextEditingController();
   final _avoMPaternoController = TextEditingController();
+
   var _dataNasc = MaskedTextController(mask: '00-00-0000');
+
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  var _dataDesmamaController = MaskedTextController(mask: '00-00-0000');
+  var _dataPrimCoberturaController = MaskedTextController(mask: '00-00-0000');
+
+  final df = new DateFormat("dd-MM-yyyy");
+
+  String _idadeAnimal = "1ano e 2meses";
+
+  final GlobalKey<ScaffoldState> _scaffoldstate =
+      new GlobalKey<ScaffoldState>();
+
+  void _reset() {
+    setState(() {
+      _formKey = GlobalKey();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getAllLotes();
+    if (widget.novilha == null) {
+      _editedNovilha = Novilha();
+    } else {
+      _editedNovilha = Novilha.fromMap(widget.novilha.toMap());
+      _nomeController.text = _editedNovilha.nome;
+      _racaController.text = _editedNovilha.raca;
+      _pesoDesmamaController.text = _editedNovilha.pesoDesmama.toString();
+      _pesoController.text = _editedNovilha.pesoNascimento.toString();
+      _dataDesmamaController.text = _editedNovilha.dataDesmama;
+      _pesoPrimCoberturaController.text =
+          _editedNovilha.pesoPrimeiraCobertura.toString();
+      _diagnosticoGestacaoController.text = _editedNovilha.diagnosticoGestacao;
+      _paiController.text = _editedNovilha.pai;
+      _maeController.text = _editedNovilha.mae;
+      _avoMMaternoController.text = _editedNovilha.avoMMaterno;
+      _avoFMaternoController.text = _editedNovilha.avoFMaterno;
+      _avoFPaternoController.text = _editedNovilha.avoFPaterno;
+      _avoMPaternoController.text = _editedNovilha.avoMPaterno;
+      selectedLotes = _editedNovilha.idLote;
+      numeroData = _editedNovilha.dataNascimento;
+      _dataNasc.text = numeroData;
+      idadeFinal = differenceDate();
+    }
+  }
 
   Future<void> _showMyDialog() async {
     return showDialog<void>(
@@ -96,9 +104,9 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   controller: _paiController,
                   decoration: InputDecoration(labelText: "Pai"),
                   onChanged: (text) {
-                    _vacasEdited = true;
+                    _novilhaEdited = true;
                     setState(() {
-                      _editedVaca.pai = text;
+                      _editedNovilha.pai = text;
                     });
                   },
                 ),
@@ -107,9 +115,9 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   controller: _maeController,
                   decoration: InputDecoration(labelText: "Mãe"),
                   onChanged: (text) {
-                    _vacasEdited = true;
+                    _novilhaEdited = true;
                     setState(() {
-                      _editedVaca.mae = text;
+                      _editedNovilha.mae = text;
                     });
                   },
                 ),
@@ -118,9 +126,9 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   controller: _avoFPaternoController,
                   decoration: InputDecoration(labelText: "Avó Paterno"),
                   onChanged: (text) {
-                    _vacasEdited = true;
+                    _novilhaEdited = true;
                     setState(() {
-                      _editedVaca.avoFPaterno = text;
+                      _editedNovilha.avoFPaterno = text;
                     });
                   },
                 ),
@@ -129,9 +137,9 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   controller: _avoMPaternoController,
                   decoration: InputDecoration(labelText: "Avô Paterno"),
                   onChanged: (text) {
-                    _vacasEdited = true;
+                    _novilhaEdited = true;
                     setState(() {
-                      _editedVaca.avoMPaterno = text;
+                      _editedNovilha.avoMPaterno = text;
                     });
                   },
                 ),
@@ -140,9 +148,9 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   controller: _avoFMaternoController,
                   decoration: InputDecoration(labelText: "Avó Materno"),
                   onChanged: (text) {
-                    _vacasEdited = true;
+                    _novilhaEdited = true;
                     setState(() {
-                      _editedVaca.avoFMaterno = text;
+                      _editedNovilha.avoFMaterno = text;
                     });
                   },
                 ),
@@ -151,9 +159,9 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   controller: _avoMMaternoController,
                   decoration: InputDecoration(labelText: "Avô Materno"),
                   onChanged: (text) {
-                    _vacasEdited = true;
+                    _novilhaEdited = true;
                     setState(() {
-                      _editedVaca.avoMMaterno = text;
+                      _editedNovilha.avoMMaterno = text;
                     });
                   },
                 ),
@@ -173,11 +181,6 @@ class _CadastroVacaState extends State<CadastroVaca> {
     );
   }
 
-  final df = new DateFormat("dd-MM-yyyy");
-
-  final GlobalKey<ScaffoldState> _scaffoldstate =
-      new GlobalKey<ScaffoldState>();
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -186,7 +189,7 @@ class _CadastroVacaState extends State<CadastroVaca> {
         key: _scaffoldstate,
         appBar: AppBar(
           title: Text(
-            _editedVaca.nome ?? "Cadastrar Vaca",
+            _editedNovilha.nome ?? "Cadastrar Novilha",
             style: TextStyle(fontSize: 15.0),
           ),
           centerTitle: true,
@@ -199,7 +202,7 @@ class _CadastroVacaState extends State<CadastroVaca> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.pop(context, _editedVaca);
+            Navigator.pop(context, _editedNovilha);
           },
           child: Icon(Icons.save),
           backgroundColor: Colors.green[700],
@@ -224,9 +227,9 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   focusNode: _nameFocus,
                   decoration: InputDecoration(labelText: "Nome / Nº Brinco"),
                   onChanged: (text) {
-                    _vacasEdited = true;
+                    _novilhaEdited = true;
                     setState(() {
-                      _editedVaca.nome = text;
+                      _editedNovilha.nome = text;
                     });
                   },
                 ),
@@ -235,10 +238,10 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(labelText: "Data de Nascimento"),
                   onChanged: (text) {
-                    _vacasEdited = true;
+                    _novilhaEdited = true;
                     setState(() {
                       numeroData = text;
-                      _editedVaca.dataNascimento = text;
+                      _editedNovilha.dataNascimento = text;
                       idadeFinal = differenceDate();
                     });
                   },
@@ -254,7 +257,7 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   height: 20.0,
                 ),
                 SearchableDropdown.single(
-                  items: lotes.map((lote) {
+                  items: lotes.map((Lote lote) {
                     return DropdownMenuItem(
                       value: lote.id,
                       child: Row(
@@ -268,9 +271,9 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   hint: "Selecione um Lote",
                   searchHint: "Selecione um Lote",
                   onChanged: (value) {
-                    _vacasEdited = true;
+                    _novilhaEdited = true;
                     setState(() {
-                      _editedVaca.idLote = value;
+                      _editedNovilha.idLote = value;
                       selectedLotes = value;
                     });
                   },
@@ -294,43 +297,88 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   },
                   isExpanded: true,
                 ),
+                SizedBox(
+                  height: 10.0,
+                ),
                 TextField(
                   keyboardType: TextInputType.text,
                   controller: _racaController,
                   decoration: InputDecoration(labelText: "Raça"),
                   onChanged: (text) {
-                    _vacasEdited = true;
+                    _novilhaEdited = true;
                     setState(() {
-                      _editedVaca.raca = text;
+                      _editedNovilha.raca = text;
                     });
                   },
                 ),
-                Padding(
-                  padding: EdgeInsets.only(top: 10.0, bottom: 5.0),
-                  child: Text(
-                    "Última inseminação: Não inseminada",
-                    style: TextStyle(
-                        fontSize: 16.0,
-                        color: Color.fromARGB(255, 4, 125, 141)),
-                  ),
+                TextField(
+                  keyboardType: TextInputType.number,
+                  controller: _pesoController,
+                  decoration: InputDecoration(labelText: "Peso ao nascimento"),
+                  onChanged: (text) {
+                    _novilhaEdited = true;
+                    setState(() {
+                      _editedNovilha.pesoNascimento = double.parse(text);
+                    });
+                  },
                 ),
-                Padding(
-                  padding: EdgeInsets.only(top: 10.0, bottom: 5.0),
-                  child: Text(
-                    "Secagem prevista: Não inseminada",
-                    style: TextStyle(
-                        fontSize: 16.0,
-                        color: Color.fromARGB(255, 4, 125, 141)),
-                  ),
+                TextField(
+                  keyboardType: TextInputType.number,
+                  controller: _pesoDesmamaController,
+                  decoration: InputDecoration(labelText: "Peso na desmama"),
+                  onChanged: (text) {
+                    _novilhaEdited = true;
+                    setState(() {
+                      _editedNovilha.pesoDesmama = double.parse(text);
+                    });
+                  },
                 ),
-                Padding(
-                  padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
-                  child: Text(
-                    "Parto previsto: Não inseminada",
-                    style: TextStyle(
-                        fontSize: 16.0,
-                        color: Color.fromARGB(255, 4, 125, 141)),
-                  ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataDesmamaController,
+                  decoration: InputDecoration(labelText: "Data da desmama"),
+                  onChanged: (text) {
+                    _novilhaEdited = true;
+                    setState(() {
+                      _editedNovilha.dataDesmama = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataPrimCoberturaController,
+                  decoration:
+                      InputDecoration(labelText: "Data primeira cobertura"),
+                  onChanged: (text) {
+                    _novilhaEdited = true;
+                    setState(() {
+                      _editedNovilha.dataCobertura = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _pesoPrimCoberturaController,
+                  decoration:
+                      InputDecoration(labelText: "Peso primeira cobertura"),
+                  onChanged: (text) {
+                    _novilhaEdited = true;
+                    setState(() {
+                      _editedNovilha.pesoPrimeiraCobertura = double.parse(text);
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _diagnosticoGestacaoController,
+                  decoration:
+                      InputDecoration(labelText: "Diagnóstico de Gestação"),
+                  onChanged: (text) {
+                    _novilhaEdited = true;
+                    setState(() {
+                      _editedNovilha.diagnosticoGestacao = text;
+                    });
+                  },
                 ),
                 RaisedButton(
                   onPressed: () {
@@ -350,7 +398,7 @@ class _CadastroVacaState extends State<CadastroVaca> {
   }
 
   Future<bool> _requestPop() {
-    if (_vacasEdited) {
+    if (_novilhaEdited) {
       showDialog(
           context: context,
           builder: (context) {
@@ -425,9 +473,4 @@ class _CadastroVacaState extends State<CadastroVaca> {
       });
     });
   }
-}
-
-class Item {
-  const Item(this.name);
-  final String name;
 }
