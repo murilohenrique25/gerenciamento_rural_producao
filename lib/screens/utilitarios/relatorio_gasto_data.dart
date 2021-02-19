@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/gasto_db.dart';
+import 'package:gerenciamento_rural/helpers/medicamento_db.dart';
 import 'package:gerenciamento_rural/models/gasto.dart';
+import 'package:gerenciamento_rural/models/medicamento.dart';
 import 'package:toast/toast.dart';
 import 'gastos_data.dart';
 
@@ -14,8 +16,13 @@ class _RelatorioGastoDataState extends State<RelatorioGastoData> {
   var _dataInicial = MaskedTextController(mask: '00-00-0000');
   var _dataFinal = MaskedTextController(mask: '00-00-0000');
   GastoDB helper = GastoDB();
+  MedicamentoDB helperMedicamento = MedicamentoDB();
+
   List<Gasto> totalGasto = List();
   List<Gasto> totalGastoData = List();
+
+  List<Medicamento> totalGastoMedicamento = List();
+  List<Medicamento> totalGastoMedicamentoData = List();
   var datainicial;
   var datafinal;
 
@@ -29,7 +36,7 @@ class _RelatorioGastoDataState extends State<RelatorioGastoData> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Relatório Entre Datas - Custos"),
+        title: Text("Relatório Entre Datas - Balanço Total"),
       ),
       body: Center(
         child: Card(
@@ -93,6 +100,8 @@ class _RelatorioGastoDataState extends State<RelatorioGastoData> {
 
   void verificaDatas() {
     totalGastoData = List();
+    totalGastoMedicamentoData = List();
+
     var dataini = datainicial;
     var datafim = datafinal;
     if ((dataini != null && datafim != null)) {
@@ -116,11 +125,21 @@ class _RelatorioGastoDataState extends State<RelatorioGastoData> {
             totalGastoData.add(element);
           }
         });
+        totalGastoMedicamento.forEach((element) {
+          String stringDataServer =
+              element.dataCompra.split('-').reversed.join();
+          DateTime dateServer = DateTime.parse(stringDataServer);
+          if (dateServer.compareTo(dateIni) >= 0 &&
+              dateFim.compareTo(dateServer) >= 0) {
+            totalGastoMedicamentoData.add(element);
+          }
+        });
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => GastosData(
                     gasto: totalGastoData,
+                    medicamento: totalGastoMedicamentoData,
                     datainicial: dataini,
                     datafinal: datafim)));
       }
@@ -134,6 +153,11 @@ class _RelatorioGastoDataState extends State<RelatorioGastoData> {
     helper.getAllItems().then((value) {
       setState(() {
         totalGasto = value;
+      });
+    });
+    helperMedicamento.getAllItems().then((value) {
+      setState(() {
+        totalGastoMedicamento = value;
       });
     });
   }

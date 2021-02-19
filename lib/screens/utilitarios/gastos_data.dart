@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/models/gasto.dart';
+import 'package:gerenciamento_rural/models/medicamento.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPageLote.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -10,9 +11,10 @@ enum OrderOptions { orderaz, orderza }
 
 class GastosData extends StatefulWidget {
   final List<Gasto> gasto;
+  final List<Medicamento> medicamento;
   final String datafinal;
   final String datainicial;
-  GastosData({this.gasto, this.datainicial, this.datafinal});
+  GastosData({this.gasto, this.datainicial, this.datafinal, this.medicamento});
   @override
   _GastosDataState createState() => _GastosDataState();
 }
@@ -20,8 +22,11 @@ class GastosData extends StatefulWidget {
 class _GastosDataState extends State<GastosData> {
   TextEditingController editingController = TextEditingController();
   List<Gasto> gastos = List();
+  List<Medicamento> medicamentos = List();
   String dinicial = "";
   String dfinal = "";
+  double _precoTotal = 0.00;
+  double _precoTotalReceita = 0.00;
   @override
   void initState() {
     super.initState();
@@ -29,6 +34,13 @@ class _GastosDataState extends State<GastosData> {
     if (widget.gasto.isNotEmpty) {
       widget.gasto.forEach((element) {
         gastos.add(element);
+        _precoTotal += element.valorTotal;
+      });
+    }
+    if (widget.medicamento.isNotEmpty) {
+      widget.medicamento.forEach((element) {
+        medicamentos.add(element);
+        _precoTotal += element.precoTotal;
       });
     }
     dinicial = widget.datainicial;
@@ -60,7 +72,7 @@ class _GastosDataState extends State<GastosData> {
               }),
         ],
         centerTitle: true,
-        title: Text("Gastos"),
+        title: Text("Balanço"),
       ),
       body: Container(
         child: Column(
@@ -69,11 +81,20 @@ class _GastosDataState extends State<GastosData> {
               child: ListView.builder(
                   shrinkWrap: true,
                   padding: EdgeInsets.all(10.0),
+                  itemCount: medicamentos.length,
+                  itemBuilder: (context, index) {
+                    return _medicamentosCard(context, index);
+                  }),
+            ),
+            Expanded(
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.all(10.0),
                   itemCount: gastos.length,
                   itemBuilder: (context, index) {
                     return _gastosCard(context, index);
                   }),
-            )
+            ),
           ],
         ),
       ),
@@ -143,20 +164,106 @@ class _GastosDataState extends State<GastosData> {
     );
   }
 
+  Widget _medicamentosCard(BuildContext context, int index) {
+    return GestureDetector(
+      child: Card(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Padding(
+            padding: EdgeInsets.all(10.0),
+            child: Row(
+              children: [
+                Text(
+                  "Data: " + medicamentos[index].dataCompra ?? "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                Text(" - "),
+                Text(
+                  "Nome: " + medicamentos[index].nomeMedicamento ?? "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                Text(" - "),
+                SizedBox(
+                  width: 15,
+                ),
+                Text(
+                  "Quantidade: " + medicamentos[index].quantidade.toString() ??
+                      "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                Text(" - "),
+                SizedBox(
+                  width: 15,
+                ),
+                Text(
+                  "Valor Unitário: " +
+                          medicamentos[index].precoUnitario.toString() ??
+                      "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                Text(" - "),
+                SizedBox(
+                  width: 15,
+                ),
+                Text(
+                  "Valor Total: " + medicamentos[index].precoTotal.toString() ??
+                      "",
+                  style: TextStyle(fontSize: 14.0),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   _creatPdf(context) async {
     final pdfLib.Document pdf = pdfLib.Document(deflate: zlib.encode);
     pdf.addPage(pdfLib.MultiPage(
         header: _buildHeade,
+        footer: _buildFooter,
         build: (context) => [
-              pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome', 'Quantidade', 'Valor Unitário', 'Valor Total'],
-                ...gastos.map((item) => [
+              pdfLib.Table.fromTextArray(
+                context: context,
+                data: <List<String>>[
+                  <String>[
+                    'Tipo',
+                    'Descrição Gasto',
+                    'Quantidade',
+                    'Valor Unitário',
+                    'Valor Total'
+                  ],
+                  ...gastos.map(
+                    (item) => [
+                      "Gasto Geral (-)",
                       item.nome,
                       item.quantidade.toString(),
                       item.valorUnitario.toString(),
                       item.valorTotal.toString()
-                    ])
-              ])
+                    ],
+                  ),
+                  ...medicamentos.map((item) => [
+                        "Medicamentos (-)",
+                        item.nomeMedicamento,
+                        item.quantidade.toString(),
+                        item.precoUnitario.toString(),
+                        item.precoTotal.toString()
+                      ])
+                ],
+              )
             ]));
 
     final String dir = (await getApplicationDocumentsDirectory()).path;
@@ -207,11 +314,34 @@ class _GastosDataState extends State<GastosData> {
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
-                      pdfLib.Text('Gastos entre $dinicial e $dfinal',
+                      pdfLib.Text('Receita entre $dinicial e $dfinal',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white))
                     ],
                   )
                 ])));
+  }
+
+  //retorna footer do pdf
+  pdfLib.Widget _buildFooter(pdfLib.Context context) {
+    return pdfLib.Container(
+      color: PdfColors.green,
+      height: 50,
+      child: pdfLib.Row(
+          crossAxisAlignment: pdfLib.CrossAxisAlignment.center,
+          mainAxisAlignment: pdfLib.MainAxisAlignment.spaceBetween,
+          children: [
+            pdfLib.Row(children: [
+              pdfLib.Padding(
+                  padding: pdfLib.EdgeInsets.all(10.0),
+                  child: pdfLib.Text("Gasto Total: $_precoTotal",
+                      style: pdfLib.TextStyle(color: PdfColors.white))),
+              pdfLib.Padding(
+                  padding: pdfLib.EdgeInsets.all(10.0),
+                  child: pdfLib.Text("Receita Total: $_precoTotalReceita",
+                      style: pdfLib.TextStyle(color: PdfColors.white))),
+            ]),
+          ]),
+    );
   }
 }

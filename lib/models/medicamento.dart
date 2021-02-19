@@ -2,17 +2,21 @@ class Medicamento {
   int id;
   String nomeMedicamento;
   double quantidade;
+  double precoUnitario;
+  double precoTotal;
+  String tempoDescarteLeite;
   String tipoDosagem;
   String carenciaMedicamento;
   String dataVencimento;
   String fornecedor;
   String dataAbertura;
+  String dataCompra;
   String principioAtivo;
   String observacao;
 
   Medicamento();
   Medicamento.fromMap(Map map) {
-    id = map["id_medicamento"];
+    id = map["id"];
     nomeMedicamento = map["nomeMedicamento"];
     quantidade = map["quantidade"];
     tipoDosagem = map["tipoDosagem"];
@@ -22,6 +26,10 @@ class Medicamento {
     dataAbertura = map["dataAbertura"];
     principioAtivo = map["principioAtivo"];
     observacao = map["observacao"];
+    precoUnitario = map["precoUnitario"];
+    precoTotal = map["precoTotal"];
+    tempoDescarteLeite = map["tempoDescarteLeite"];
+    dataCompra = map["dataCompra"];
   }
   Map toMap() {
     Map<String, dynamic> map = {
@@ -33,10 +41,14 @@ class Medicamento {
       "fornecedor": fornecedor,
       "dataAbertura": dataAbertura,
       "principioAtivo": principioAtivo,
-      "observacao": observacao
+      "observacao": observacao,
+      "precoUnitario": precoUnitario,
+      "precoTotal": precoTotal,
+      "tempoDescarteLeite": tempoDescarteLeite,
+      "dataCompra": dataCompra
     };
     if (id != null) {
-      map["id_medicamento"] = id;
+      map["id"] = id;
     }
     return map;
   }

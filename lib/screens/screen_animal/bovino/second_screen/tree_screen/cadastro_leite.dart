@@ -51,6 +51,7 @@ class _CadastroLeiteState extends State<CadastroLeite> {
       _ccsController.text = _editedProdLeite.ccs.toString();
       _cbtController.text = _editedProdLeite.cbt.toString();
       _idMesController.text = _editedProdLeite.idMes.toString();
+      dataColeta.text = _editedProdLeite.dataColeta;
     }
   }
 
@@ -97,7 +98,7 @@ class _CadastroLeiteState extends State<CadastroLeite> {
             if (_editedProdLeite.idMes == null) {
               Toast.show("Informe o mês", context,
                   duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
-            } else if (dataColeta.text.isEmpty) {
+            } else if (dataColeta.text.isEmpty || dataColeta.text.length < 10) {
               Toast.show("Informe a data completa", context,
                   duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
             } else if (_quantidadeController.text.isEmpty) {
@@ -175,6 +176,7 @@ class _CadastroLeiteState extends State<CadastroLeite> {
                     keyboardType: TextInputType.number,
                     controller: dataColeta,
                     focusNode: _nameFocus,
+                    maxLength: 10,
                     decoration: InputDecoration(labelText: "Data coleta"),
                     onChanged: (text) {
                       _producaoLeiteEdited = false;

@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:gerenciamento_rural/models/medicamento.dart';
 
-class CadastrarMedicamento extends StatefulWidget {
+class CadastroMedicamento extends StatefulWidget {
+  final Medicamento medicamento;
+  CadastroMedicamento({this.medicamento});
   @override
-  _CadastrarMedicamentoState createState() => _CadastrarMedicamentoState();
+  _CadastroMedicamentoState createState() => _CadastroMedicamentoState();
 }
 
-class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
-  var controleDateVencimento = MaskedTextController(mask: '00-00-0000');
-  var controleDateCompra = MaskedTextController(mask: '00-00-0000');
-  var controleDataAbertura = MaskedTextController(mask: '00-00-0000');
-
+class _CadastroMedicamentoState extends State<CadastroMedicamento> {
   List<TipoMedicamento> _tipos = <TipoMedicamento>[
     const TipoMedicamento("Nenhum"),
     const TipoMedicamento("ml"),
@@ -21,6 +20,9 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
     const TipoMedicamento("gr"),
     const TipoMedicamento("am"),
   ];
+  var controleDateVencimento = MaskedTextController(mask: '00-00-0000');
+  var controleDateCompra = MaskedTextController(mask: '00-00-0000');
+  var controleDataAbertura = MaskedTextController(mask: '00-00-0000');
 
   final _nomeMedicamentoController = TextEditingController();
   final _quantidadeController = TextEditingController();
@@ -37,11 +39,30 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
 
   final _nameFocus = FocusNode();
 
-  bool _loteEdited = false;
-
+  bool _medicamentoEdited = false;
+  Medicamento _editedMedicamento;
   @override
   void initState() {
     super.initState();
+    if (widget.medicamento == null) {
+      _editedMedicamento = Medicamento();
+    } else {
+      _editedMedicamento = Medicamento.fromMap(widget.medicamento.toMap());
+      controleDateVencimento.text = _editedMedicamento.dataVencimento;
+      controleDateCompra.text = _editedMedicamento.dataCompra;
+      controleDataAbertura.text = _editedMedicamento.dataAbertura;
+
+      _nomeMedicamentoController.text = _editedMedicamento.nomeMedicamento;
+      _quantidadeController.text = _editedMedicamento.quantidade.toString();
+      _precoController.text = _editedMedicamento.precoUnitario.toString();
+      _carenciaMedicamento.text = _editedMedicamento.carenciaMedicamento;
+      _fornecedor.text = _editedMedicamento.fornecedor;
+      _principioAtivo.text = _editedMedicamento.principioAtivo;
+      _observacao.text = _editedMedicamento.observacao;
+      _tempoDescarteLeite.text = _editedMedicamento.tempoDescarteLeite;
+      selectedTipo = _editedMedicamento.tipoDosagem;
+      precoTotal = _editedMedicamento.precoTotal;
+    }
   }
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -52,17 +73,20 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
         onWillPop: _requestPop,
         child: Scaffold(
           appBar: AppBar(
-            title: Text("Cadastrar Medicamento"),
+            title: Text(
+                _editedMedicamento.nomeMedicamento ?? "Cadastrar Medicamento"),
             centerTitle: true,
             actions: [],
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               setState(() {
-                int quantidade = int.parse(_quantidadeController.text);
+                double quantidade = double.parse(_quantidadeController.text);
                 double valorUnitario = double.parse(_precoController.text);
                 if (quantidade > 0 && valorUnitario > 0.0) {
                   precoTotal = quantidade * valorUnitario;
+                  _editedMedicamento.precoTotal = precoTotal;
+                  Navigator.pop(context, _editedMedicamento);
                 }
               });
             },
@@ -87,8 +111,10 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
                       focusNode: _nameFocus,
                       decoration: InputDecoration(labelText: "Nome"),
                       onChanged: (text) {
-                        _loteEdited = true;
-                        setState(() {});
+                        _medicamentoEdited = true;
+                        setState(() {
+                          _editedMedicamento.nomeMedicamento = text;
+                        });
                       },
                     ),
                     Row(
@@ -99,8 +125,11 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
                             decoration:
                                 InputDecoration(labelText: "Quantidade"),
                             onChanged: (text) {
-                              _loteEdited = true;
-                              setState(() {});
+                              _medicamentoEdited = true;
+                              setState(() {
+                                _editedMedicamento.quantidade =
+                                    double.parse(text);
+                              });
                             },
                             keyboardType: TextInputType.number,
                           ),
@@ -118,6 +147,7 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
                                 onChanged: (value) {
                                   setState(() {
                                     selectedTipo = value;
+                                    _editedMedicamento.tipoDosagem = value;
                                   });
                                 },
                                 items: _tipos.map((value) {
@@ -138,8 +168,13 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
                       controller: _precoController,
                       decoration: InputDecoration(labelText: "Preço Unitário"),
                       onChanged: (text) {
-                        _loteEdited = true;
-                        setState(() {});
+                        _medicamentoEdited = true;
+                        setState(() {
+                          setState(() {
+                            _editedMedicamento.precoUnitario =
+                                double.parse(text);
+                          });
+                        });
                       },
                       keyboardType: TextInputType.number,
                     ),
@@ -148,8 +183,12 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
                       decoration:
                           InputDecoration(labelText: "Carência Medicamento"),
                       onChanged: (text) {
-                        _loteEdited = true;
-                        setState(() {});
+                        _medicamentoEdited = true;
+                        setState(() {
+                          setState(() {
+                            _editedMedicamento.carenciaMedicamento = text;
+                          });
+                        });
                       },
                       keyboardType: TextInputType.number,
                     ),
@@ -157,8 +196,12 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
                       controller: controleDateCompra,
                       decoration: InputDecoration(labelText: "Data de Compra"),
                       onChanged: (text) {
-                        _loteEdited = true;
-                        setState(() {});
+                        _medicamentoEdited = true;
+                        setState(() {
+                          setState(() {
+                            _editedMedicamento.dataCompra = text;
+                          });
+                        });
                       },
                       keyboardType: TextInputType.number,
                     ),
@@ -167,8 +210,12 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
                       decoration:
                           InputDecoration(labelText: "Data de Vencimento"),
                       onChanged: (text) {
-                        _loteEdited = true;
-                        setState(() {});
+                        _medicamentoEdited = true;
+                        setState(() {
+                          setState(() {
+                            _editedMedicamento.dataVencimento = text;
+                          });
+                        });
                       },
                       keyboardType: TextInputType.number,
                     ),
@@ -176,8 +223,12 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
                       controller: _fornecedor,
                       decoration: InputDecoration(labelText: "Fornecedor"),
                       onChanged: (text) {
-                        _loteEdited = true;
-                        setState(() {});
+                        _medicamentoEdited = true;
+                        setState(() {
+                          setState(() {
+                            _editedMedicamento.fornecedor = text;
+                          });
+                        });
                       },
                       keyboardType: TextInputType.number,
                     ),
@@ -186,8 +237,12 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
                       decoration: InputDecoration(
                           labelText: "Data de Abertura do Medicamento"),
                       onChanged: (text) {
-                        _loteEdited = true;
-                        setState(() {});
+                        _medicamentoEdited = true;
+                        setState(() {
+                          setState(() {
+                            _editedMedicamento.dataAbertura = text;
+                          });
+                        });
                       },
                       keyboardType: TextInputType.number,
                     ),
@@ -195,8 +250,12 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
                       controller: _principioAtivo,
                       decoration: InputDecoration(labelText: "Princípio Ativo"),
                       onChanged: (text) {
-                        _loteEdited = true;
-                        setState(() {});
+                        _medicamentoEdited = true;
+                        setState(() {
+                          setState(() {
+                            _editedMedicamento.principioAtivo = text;
+                          });
+                        });
                       },
                       keyboardType: TextInputType.text,
                     ),
@@ -205,8 +264,12 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
                       decoration: InputDecoration(
                           labelText: "Tempo de Descarte do Leite"),
                       onChanged: (text) {
-                        _loteEdited = true;
-                        setState(() {});
+                        _medicamentoEdited = true;
+                        setState(() {
+                          setState(() {
+                            _editedMedicamento.tempoDescarteLeite = text;
+                          });
+                        });
                       },
                       keyboardType: TextInputType.text,
                     ),
@@ -214,8 +277,12 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
                       controller: _observacao,
                       decoration: InputDecoration(labelText: "Observação"),
                       onChanged: (text) {
-                        _loteEdited = true;
-                        setState(() {});
+                        _medicamentoEdited = true;
+                        setState(() {
+                          setState(() {
+                            _editedMedicamento.observacao = text;
+                          });
+                        });
                       },
                       keyboardType: TextInputType.text,
                     ),
@@ -229,7 +296,7 @@ class _CadastrarMedicamentoState extends State<CadastrarMedicamento> {
   }
 
   Future<bool> _requestPop() {
-    if (_loteEdited) {
+    if (_medicamentoEdited) {
       showDialog(
           context: context,
           builder: (context) {

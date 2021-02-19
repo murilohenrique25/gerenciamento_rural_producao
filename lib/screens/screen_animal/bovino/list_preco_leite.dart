@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/medicamento_db.dart';
-import 'package:gerenciamento_rural/models/medicamento.dart';
-import 'package:gerenciamento_rural/screens/utilitarios/cadastrar_medicamentos.dart';
-import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPageMedicamento.dart';
+import 'package:gerenciamento_rural/helpers/preco_leite_db.dart';
+import 'package:gerenciamento_rural/models/preco_leite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/cadastrar_preco_leite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/pdfViwerPagePrecoLeite.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
@@ -10,24 +10,24 @@ import 'package:path_provider/path_provider.dart';
 
 enum OrderOptions { orderaz, orderza }
 
-class Medicamentos extends StatefulWidget {
+class PrecoLeiteList extends StatefulWidget {
   @override
-  _MedicamentosState createState() => _MedicamentosState();
+  _PrecoLeiteListState createState() => _PrecoLeiteListState();
 }
 
-class _MedicamentosState extends State<Medicamentos> {
+class _PrecoLeiteListState extends State<PrecoLeiteList> {
   TextEditingController editingController = TextEditingController();
-  MedicamentoDB helper = MedicamentoDB();
-  List<Medicamento> items = List();
-  List<Medicamento> medicamentos = List();
-  List<Medicamento> tMedicamentos = List();
+  PrecoLeiteDB helper = PrecoLeiteDB();
+  List<PrecoLeite> items = List();
+  List<PrecoLeite> precoleitelist = List();
+  List<PrecoLeite> tPrecoleitelist = List();
 
   @override
   void initState() {
     super.initState();
-    _getAllMedicamentos();
+    _getAllPRecoLeite();
     items = List();
-    tMedicamentos = List();
+    tPrecoleitelist = List();
   }
 
   @override
@@ -56,11 +56,11 @@ class _MedicamentosState extends State<Medicamentos> {
           IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                _showMedicamentoPage();
+                _showPrecoLeitePage();
               }),
         ],
         centerTitle: true,
-        title: Text("Medicamentos"),
+        title: Text("Lista Preço do Leite"),
       ),
       body: Container(
         child: Column(
@@ -73,8 +73,8 @@ class _MedicamentosState extends State<Medicamentos> {
                 },
                 controller: editingController,
                 decoration: InputDecoration(
-                    labelText: "Buscar Medicamento",
-                    hintText: "Buscar Medicamento",
+                    labelText: "Buscar Por Data",
+                    hintText: "Buscar Por Data",
                     prefixIcon: Icon(Icons.search),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(25.0)))),
@@ -84,9 +84,9 @@ class _MedicamentosState extends State<Medicamentos> {
               child: ListView.builder(
                   shrinkWrap: true,
                   padding: EdgeInsets.all(10.0),
-                  itemCount: medicamentos.length,
+                  itemCount: precoleitelist.length,
                   itemBuilder: (context, index) {
-                    return _medicamentoCard(context, index);
+                    return _precoLeiteCard(context, index);
                   }),
             )
           ],
@@ -95,7 +95,7 @@ class _MedicamentosState extends State<Medicamentos> {
     );
   }
 
-  Widget _medicamentoCard(BuildContext context, int index) {
+  Widget _precoLeiteCard(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
         child: Padding(
@@ -103,7 +103,7 @@ class _MedicamentosState extends State<Medicamentos> {
           child: Row(
             children: [
               Text(
-                "Nome: " + medicamentos[index].nomeMedicamento ?? "",
+                "Data: " + precoleitelist[index].data ?? "",
                 style: TextStyle(fontSize: 14.0),
               ),
               SizedBox(
@@ -114,8 +114,7 @@ class _MedicamentosState extends State<Medicamentos> {
                 width: 15,
               ),
               Text(
-                "Quantidade: " + medicamentos[index].quantidade.toString() ??
-                    "",
+                "Preço: " + precoleitelist[index].preco.toString() ?? "",
                 style: TextStyle(fontSize: 14.0),
               )
             ],
@@ -128,30 +127,30 @@ class _MedicamentosState extends State<Medicamentos> {
     );
   }
 
-  void _getAllMedicamentos() {
+  void _getAllPRecoLeite() {
     items = List();
     helper.getAllItems().then((value) {
       setState(() {
-        medicamentos = value;
-        items.addAll(medicamentos);
+        precoleitelist = value;
+        items.addAll(precoleitelist);
       });
     });
   }
 
-  void _showMedicamentoPage({Medicamento medicamento}) async {
-    final recMedicamento = await Navigator.push(
+  void _showPrecoLeitePage({PrecoLeite precoLeite}) async {
+    final recPrecoLeite = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => CadastroMedicamento(
-                  medicamento: medicamento,
+            builder: (context) => CadastroPrecoLeite(
+                  precoLeite: precoLeite,
                 )));
-    if (recMedicamento != null) {
-      if (medicamento != null) {
-        await helper.updateItem(recMedicamento);
+    if (recPrecoLeite != null) {
+      if (precoLeite != null) {
+        await helper.updateItem(recPrecoLeite);
       } else {
-        await helper.insert(recMedicamento);
+        await helper.insert(recPrecoLeite);
       }
-      _getAllMedicamentos();
+      _getAllPRecoLeite();
     }
   }
 
@@ -176,8 +175,8 @@ class _MedicamentosState extends State<Medicamentos> {
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                          _showMedicamentoPage(
-                              medicamento: medicamentos[index]);
+                          _showPrecoLeitePage(
+                              precoLeite: precoleitelist[index]);
                         },
                       ),
                     ),
@@ -189,9 +188,9 @@ class _MedicamentosState extends State<Medicamentos> {
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
                         ),
                         onPressed: () {
-                          helper.delete(medicamentos[index].id);
+                          helper.delete(precoleitelist[index].id);
                           setState(() {
-                            medicamentos.removeAt(index);
+                            precoleitelist.removeAt(index);
                             Navigator.pop(context);
                           });
                         },
@@ -206,15 +205,15 @@ class _MedicamentosState extends State<Medicamentos> {
   }
 
   _creatPdf(context) async {
-    tMedicamentos = medicamentos;
+    tPrecoleitelist = precoleitelist;
     final pdfLib.Document pdf = pdfLib.Document(deflate: zlib.encode);
     pdf.addPage(pdfLib.MultiPage(
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome', 'Quantidade'],
-                ...tMedicamentos.map((item) =>
-                    [item.nomeMedicamento, item.quantidade.toString()])
+                <String>['Data', 'Preço'],
+                ...tPrecoleitelist
+                    .map((item) => [item.data, item.preco.toString()])
               ])
             ]));
 
@@ -225,23 +224,19 @@ class _MedicamentosState extends State<Medicamentos> {
     file.writeAsBytesSync(pdf.save());
     print("$file");
     Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => PdfViwerPageMedicamento(path: path)));
+        MaterialPageRoute(builder: (_) => PdfViwerPagePrecoLeite(path: path)));
   }
 
   void _orderList(OrderOptions result) {
     switch (result) {
       case OrderOptions.orderaz:
-        medicamentos.sort((a, b) {
-          return a.nomeMedicamento
-              .toLowerCase()
-              .compareTo(b.nomeMedicamento.toLowerCase());
+        precoleitelist.sort((a, b) {
+          return a.preco.compareTo(b.preco);
         });
         break;
       case OrderOptions.orderza:
-        medicamentos.sort((a, b) {
-          return b.nomeMedicamento
-              .toLowerCase()
-              .compareTo(a.nomeMedicamento.toLowerCase());
+        precoleitelist.sort((a, b) {
+          return b.preco.compareTo(a.preco);
         });
         break;
     }
@@ -249,24 +244,24 @@ class _MedicamentosState extends State<Medicamentos> {
   }
 
   void filterSearchResults(String query) {
-    List<Medicamento> dummySearchList = List();
+    List<PrecoLeite> dummySearchList = List();
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Medicamento> dummyListData = List();
+      List<PrecoLeite> dummyListData = List();
       dummySearchList.forEach((item) {
-        if (item.nomeMedicamento.toLowerCase().contains(query.toLowerCase())) {
+        if (item.data.contains(query)) {
           dummyListData.add(item);
         }
       });
       setState(() {
-        medicamentos.clear();
-        medicamentos.addAll(dummyListData);
+        precoleitelist.clear();
+        precoleitelist.addAll(dummyListData);
       });
       return;
     } else {
       setState(() {
-        medicamentos.clear();
-        medicamentos.addAll(items);
+        precoleitelist.clear();
+        precoleitelist.addAll(items);
       });
     }
   }
@@ -293,7 +288,7 @@ class _MedicamentosState extends State<Medicamentos> {
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
-                      pdfLib.Text('Medicamentos',
+                      pdfLib.Text('Preço Leite',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white))
                     ],
