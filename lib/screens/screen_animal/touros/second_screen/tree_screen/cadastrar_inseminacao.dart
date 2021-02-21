@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:gerenciamento_rural/helpers/touro_db.dart';
+import 'package:gerenciamento_rural/helpers/inventario_semen_db.dart';
 import 'package:gerenciamento_rural/helpers/vaca_db.dart';
-import 'package:gerenciamento_rural/models/touro.dart';
+import 'package:gerenciamento_rural/models/inseminacao.dart';
+import 'package:gerenciamento_rural/models/inventario_semen.dart';
 import 'package:gerenciamento_rural/models/vaca.dart';
+import 'package:intl/intl.dart';
+import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class CadastroInseminacao extends StatefulWidget {
+  final Inseminacao inseminacao;
+  CadastroInseminacao({this.inseminacao});
   @override
   _CadastroInseminacaoState createState() => _CadastroInseminacaoState();
 }
 
 class _CadastroInseminacaoState extends State<CadastroInseminacao> {
-  TextEditingController _nomeVacaController = TextEditingController();
-  TextEditingController _semenController = TextEditingController();
-  TextEditingController _inseminadorController = TextEditingController();
-  TextEditingController _obsController = TextEditingController();
+  //final _nomeVacaController = TextEditingController();
+  //final _semenController = TextEditingController();
+  final _inseminadorController = TextEditingController();
+  final _obsController = TextEditingController();
 
   var _dataInse = MaskedTextController(mask: '00-00-0000');
 
@@ -25,8 +30,12 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
   VacaDB helperVaca = VacaDB();
   List<Vaca> totalVacas = List();
 
-  TouroDB helperTouro = TouroDB();
-  List<Touro> totalTouros = List();
+  InventarioSemenDB helperInventario = InventarioSemenDB();
+  List<InventarioSemen> semens = List();
+  bool _inseminacaoEdited = false;
+  Inseminacao _editedInseminacao;
+  InventarioSemen selectedInseminacao;
+  Vaca vaca;
   void _reset() {
     setState(() {
       _formKey = GlobalKey();
@@ -37,129 +46,216 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
   void initState() {
     super.initState();
     _getAllVacas();
-    _getAllTouros();
+    if (widget.inseminacao == null) {
+      _editedInseminacao = Inseminacao();
+    } else {
+      _editedInseminacao = Inseminacao.fromMap(widget.inseminacao.toMap());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldstate,
-      appBar: AppBar(
-        title: Text(
-          "Cadastrar Inseminação",
-          style: TextStyle(fontSize: 15.0),
+    return WillPopScope(
+      onWillPop: _requestPop,
+      child: Scaffold(
+        key: _scaffoldstate,
+        appBar: AppBar(
+          title: Text(
+            "Cadastrar Inseminação",
+            style: TextStyle(fontSize: 15.0),
+          ),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: _reset,
+            )
+          ],
         ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: _reset,
-          )
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Icon(
-                Icons.add_circle,
-                size: 80.0,
-                color: Color.fromARGB(255, 4, 125, 141),
-              ),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                    labelText: "Vaca",
-                    labelStyle:
-                        TextStyle(color: Color.fromARGB(255, 4, 125, 141))),
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
-                controller: _nomeVacaController,
-                // ignore: missing_return
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "Informe o numero da vaca";
-                  }
-                },
-              ),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                    labelText: "Sêmen",
-                    labelStyle:
-                        TextStyle(color: Color.fromARGB(255, 4, 125, 141))),
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
-                controller: _semenController,
-                // ignore: missing_return
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "Informe o sêmen";
-                  }
-                },
-              ),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                    labelText: "Inseminador(a)",
-                    labelStyle:
-                        TextStyle(color: Color.fromARGB(255, 4, 125, 141))),
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
-                controller: _inseminadorController,
-                // ignore: missing_return
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "Informe o(a) inseminador(a)";
-                  }
-                },
-              ),
-              TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                    labelText: "Data",
-                    labelStyle:
-                        TextStyle(color: Color.fromARGB(255, 4, 125, 141))),
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
-                controller: _dataInse,
-                // ignore: missing_return
-              ),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                    labelText: "Observação",
-                    labelStyle:
-                        TextStyle(color: Color.fromARGB(255, 4, 125, 141))),
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
-                controller: _obsController,
-                // ignore: missing_return
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "Informe a Observação";
-                  }
-                },
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-            ],
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            selectedInseminacao.quantidade = selectedInseminacao.quantidade - 1;
+            helperInventario.updateItem(selectedInseminacao);
+            vaca.ultimaInseminacao = _editedInseminacao.data;
+            String num = _editedInseminacao.data.split('-').reversed.join();
+            DateTime dates = DateTime.parse(num);
+            DateTime dateParto = dates.add(new Duration(days: 284));
+            DateTime dateSecagem = dates.add(new Duration(days: 222));
+            var format = new DateFormat("dd-MM-yyyy");
+            String dataParto = format.format(dateParto);
+            String dataSecagem = format.format(dateSecagem);
+            vaca.partoPrevisto = dataParto;
+            vaca.secagemPrevista = dataSecagem;
+
+            helperInventario.updateItem(selectedInseminacao);
+            helperVaca.updateItem(vaca);
+            Navigator.pop(context, _editedInseminacao);
+          },
+          child: Icon(Icons.save),
+          backgroundColor: Colors.green[700],
+        ),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Icon(
+                  Icons.add_circle,
+                  size: 80.0,
+                  color: Color.fromARGB(255, 4, 125, 141),
+                ),
+                SearchableDropdown.single(
+                  items: totalVacas.map((vaca) {
+                    return DropdownMenuItem(
+                      value: vaca,
+                      child: Row(
+                        children: [
+                          Text(vaca.nome),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  value: vaca,
+                  hint: "Selecione um Animal",
+                  searchHint: "Selecione um Animal",
+                  onChanged: (value) {
+                    setState(() {
+                      //selectedInseminacao = value;
+                      vaca = value;
+                      _editedInseminacao.idVaca = value.idVaca;
+                    });
+                  },
+                  doneButton: "Pronto",
+                  displayItem: (item, selected) {
+                    return (Row(children: [
+                      selected
+                          ? Icon(
+                              Icons.radio_button_checked,
+                              color: Colors.grey,
+                            )
+                          : Icon(
+                              Icons.radio_button_unchecked,
+                              color: Colors.grey,
+                            ),
+                      SizedBox(width: 7),
+                      Expanded(
+                        child: item,
+                      ),
+                    ]));
+                  },
+                  isExpanded: true,
+                ),
+                SearchableDropdown.single(
+                  items: semens.map((semen) {
+                    return DropdownMenuItem(
+                      value: semen,
+                      child: Row(
+                        children: [
+                          Text(semen.nomeTouro),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  value: selectedInseminacao,
+                  hint: "Selecione um Sêmen",
+                  searchHint: "Selecione um Sêmen",
+                  onChanged: (value) {
+                    setState(() {
+                      selectedInseminacao = value;
+                      _editedInseminacao.idSemen = value.id;
+                    });
+                  },
+                  doneButton: "Pronto",
+                  displayItem: (item, selected) {
+                    return (Row(children: [
+                      selected
+                          ? Icon(
+                              Icons.radio_button_checked,
+                              color: Colors.grey,
+                            )
+                          : Icon(
+                              Icons.radio_button_unchecked,
+                              color: Colors.grey,
+                            ),
+                      SizedBox(width: 7),
+                      Expanded(
+                        child: item,
+                      ),
+                    ]));
+                  },
+                  isExpanded: true,
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(labelText: "Inseminador"),
+                  controller: _inseminadorController,
+                  onChanged: (value) {
+                    setState(() {
+                      _editedInseminacao.inseminador = value;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: "Data"),
+                  controller: _dataInse,
+                  onChanged: (value) {
+                    setState(() {
+                      _editedInseminacao.data = value;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(labelText: "Observação"),
+                  controller: _obsController,
+                  onChanged: (value) {
+                    setState(() {
+                      _editedInseminacao.observacao = value;
+                    });
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  Future<bool> _requestPop() {
+    _inseminacaoEdited = false;
+    if (_inseminacaoEdited) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Descartar Alterações?"),
+              content: Text("Se sair as alterações serão perdidas."),
+              actions: [
+                FlatButton(
+                  child: Text("Cancelar"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                FlatButton(
+                  child: Text("Sim"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          });
+      return Future.value(false);
+      // ignore: dead_code
+    } else {
+      return Future.value(true);
+    }
   }
 
   void _getAllVacas() {
@@ -168,12 +264,9 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
         totalVacas = list;
       });
     });
-  }
-
-  void _getAllTouros() {
-    helperTouro.getAllVivos().then((list) {
+    helperInventario.getAllItemsEstoque().then((value) {
       setState(() {
-        totalTouros = list;
+        semens = value;
       });
     });
   }

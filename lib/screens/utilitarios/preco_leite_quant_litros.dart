@@ -20,9 +20,11 @@ class PrecoLeiteQuantLitros extends StatefulWidget {
 }
 
 class _PrecoLeiteQuantLitrosState extends State<PrecoLeiteQuantLitros> {
-  List<Leite> totalLeite;
+  List<Leite> totalLeite = List();
   double quantLeite = 0.0;
   double precoTotal = 0.0;
+  double resultado = 0.00;
+  String resultadoS = "";
   String nomeMes;
   @override
   void initState() {
@@ -39,6 +41,8 @@ class _PrecoLeiteQuantLitrosState extends State<PrecoLeiteQuantLitros> {
     if (widget.mes.isNotEmpty) {
       nomeMes = widget.mes;
     }
+    resultado = quantLeite * precoTotal;
+    resultadoS = resultado.toStringAsFixed(2);
   }
 
   @override
@@ -53,7 +57,7 @@ class _PrecoLeiteQuantLitrosState extends State<PrecoLeiteQuantLitros> {
               }),
         ],
         centerTitle: true,
-        title: Text("Lotes"),
+        title: Text("Relatório Geral"),
       ),
       body: Container(
         child: Column(
@@ -64,7 +68,7 @@ class _PrecoLeiteQuantLitrosState extends State<PrecoLeiteQuantLitros> {
                   padding: EdgeInsets.all(10.0),
                   itemCount: totalLeite.length,
                   itemBuilder: (context, index) {
-                    return _loteCard(context, index);
+                    return _coletaCard(context, index);
                   }),
             )
           ],
@@ -73,29 +77,33 @@ class _PrecoLeiteQuantLitrosState extends State<PrecoLeiteQuantLitros> {
     );
   }
 
-  Widget _loteCard(BuildContext context, int index) {
+  Widget _coletaCard(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
-        child: Padding(
-          padding: EdgeInsets.all(10.0),
-          child: Row(
-            children: [
-              Text(
-                "Data Coleta: " + totalLeite[index].dataColeta ?? "",
-                style: TextStyle(fontSize: 14.0),
-              ),
-              SizedBox(
-                width: 15,
-              ),
-              Text(" - "),
-              SizedBox(
-                width: 15,
-              ),
-              Text(
-                "Quantidade: " + totalLeite[index].quantidade.toString() ?? "",
-                style: TextStyle(fontSize: 14.0),
-              )
-            ],
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Padding(
+            padding: EdgeInsets.all(10.0),
+            child: Row(
+              children: [
+                Text(
+                  "Data Coleta: " + totalLeite[index].dataColeta ?? "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                Text(" - "),
+                SizedBox(
+                  width: 15,
+                ),
+                Text(
+                  "Quantidade: " + totalLeite[index].quantidade.toString() ??
+                      "",
+                  style: TextStyle(fontSize: 14.0),
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -106,6 +114,7 @@ class _PrecoLeiteQuantLitrosState extends State<PrecoLeiteQuantLitros> {
     final pdfLib.Document pdf = pdfLib.Document(deflate: zlib.encode);
     pdf.addPage(pdfLib.MultiPage(
         header: _buildHeade,
+        footer: _buildFooter,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
                 <String>['Data', 'Quantidade'],
@@ -126,59 +135,64 @@ class _PrecoLeiteQuantLitrosState extends State<PrecoLeiteQuantLitros> {
 
   pdfLib.Widget _buildHeade(pdfLib.Context context) {
     return pdfLib.Container(
-        color: PdfColors.green,
-        height: 150,
-        child: pdfLib.Padding(
-            padding: pdfLib.EdgeInsets.all(5),
-            child: pdfLib.Row(
-                crossAxisAlignment: pdfLib.CrossAxisAlignment.center,
-                mainAxisAlignment: pdfLib.MainAxisAlignment.spaceBetween,
+      color: PdfColors.green,
+      height: 150,
+      child: pdfLib.Padding(
+        padding: pdfLib.EdgeInsets.all(5),
+        child: pdfLib.Row(
+            crossAxisAlignment: pdfLib.CrossAxisAlignment.center,
+            mainAxisAlignment: pdfLib.MainAxisAlignment.spaceBetween,
+            children: [
+              pdfLib.Column(
+                mainAxisAlignment: pdfLib.MainAxisAlignment.center,
+                crossAxisAlignment: pdfLib.CrossAxisAlignment.start,
                 children: [
-                  pdfLib.Column(
-                    mainAxisAlignment: pdfLib.MainAxisAlignment.center,
-                    crossAxisAlignment: pdfLib.CrossAxisAlignment.start,
-                    children: [
-                      pdfLib.Text('Instituto Federal Goiano',
-                          style: pdfLib.TextStyle(
-                              fontSize: 22, color: PdfColors.white)),
-                      pdfLib.Text(
-                          'Rodovia Geraldo Silva Nascimento Km 2,5, Rod. Gustavo Capanema,\nUrutaí - GO, 75790-000',
-                          style: pdfLib.TextStyle(color: PdfColors.white)),
-                      pdfLib.Text('(64) 3465-1900',
-                          style: pdfLib.TextStyle(color: PdfColors.white)),
-                      pdfLib.Text('Relatório do Mês $nomeMes',
-                          style: pdfLib.TextStyle(
-                              fontSize: 22, color: PdfColors.white))
-                    ],
-                  )
-                ])));
+                  pdfLib.Text('Instituto Federal Goiano',
+                      style: pdfLib.TextStyle(
+                          fontSize: 22, color: PdfColors.white)),
+                  pdfLib.Text(
+                      'Rodovia Geraldo Silva Nascimento Km 2,5, Rod. Gustavo Capanema,\nUrutaí - GO, 75790-000',
+                      style: pdfLib.TextStyle(color: PdfColors.white)),
+                  pdfLib.Text('(64) 3465-1900',
+                      style: pdfLib.TextStyle(color: PdfColors.white)),
+                  pdfLib.Text('Relatório do Mês $nomeMes',
+                      style: pdfLib.TextStyle(
+                          fontSize: 22, color: PdfColors.white))
+                ],
+              )
+            ]),
+      ),
+    );
   }
 
   //retorna footer do pdf
   pdfLib.Widget _buildFooter(pdfLib.Context context) {
     return pdfLib.Container(
       color: PdfColors.green,
-      height: 50,
-      child: pdfLib.Row(
-          crossAxisAlignment: pdfLib.CrossAxisAlignment.center,
-          mainAxisAlignment: pdfLib.MainAxisAlignment.spaceBetween,
-          children: [
-            pdfLib.Column(children: [
-              pdfLib.Padding(
-                  padding: pdfLib.EdgeInsets.all(10.0),
-                  child: pdfLib.Text(
-                      "Quantidade de Litros no mês de $nomeMes Total: $quantLeite",
-                      style: pdfLib.TextStyle(color: PdfColors.white))),
-              pdfLib.Padding(
-                  padding: pdfLib.EdgeInsets.all(10.0),
-                  child: pdfLib.Text("Receita Total: $totalReturn",
-                      style: pdfLib.TextStyle(color: PdfColors.white))),
+      height: 80,
+      child: pdfLib.Padding(
+        padding: pdfLib.EdgeInsets.all(5),
+        child: pdfLib.Row(
+            crossAxisAlignment: pdfLib.CrossAxisAlignment.center,
+            mainAxisAlignment: pdfLib.MainAxisAlignment.spaceBetween,
+            children: [
+              pdfLib.Column(
+                mainAxisAlignment: pdfLib.MainAxisAlignment.center,
+                crossAxisAlignment: pdfLib.CrossAxisAlignment.start,
+                children: [
+                  pdfLib.Text('Quantidade total de leite: $quantLeite L',
+                      style: pdfLib.TextStyle(
+                          fontSize: 18, color: PdfColors.white)),
+                  pdfLib.Text('Preço por litro: $precoTotal',
+                      style: pdfLib.TextStyle(
+                          fontSize: 18, color: PdfColors.white)),
+                  pdfLib.Text('Receita Total: $resultadoS',
+                      style: pdfLib.TextStyle(
+                          fontSize: 18, color: PdfColors.white)),
+                ],
+              )
             ]),
-          ]),
+      ),
     );
-  }
-
-  double totalReturn() {
-    return quantLeite * precoTotal;
   }
 }

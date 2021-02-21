@@ -103,19 +103,11 @@ class _ListaVacasState extends State<ListaVacas> {
             child: Row(
               children: [
                 Text(
-                  "Nome / Nº Brinco: " + totalVacas[index].nome,
+                  "Nome / Nº Brinco: " + totalVacas[index].nome ?? "",
                   style: TextStyle(fontSize: 14.0),
                 ),
                 SizedBox(
                   width: 2,
-                ),
-                Text(" - "),
-                SizedBox(
-                  width: 2,
-                ),
-                Text(
-                  "Raça: " + totalVacas[index].raca,
-                  style: TextStyle(fontSize: 14.0),
                 ),
               ],
             ),

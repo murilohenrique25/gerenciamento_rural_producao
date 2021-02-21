@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/touros/second_screen/list_inseminacoes.dart';
 
-class Inseminacao extends StatefulWidget {
+class InseminacaoScreen extends StatefulWidget {
   @override
-  _InseminacaoState createState() => _InseminacaoState();
+  _InseminacaoScreenState createState() => _InseminacaoScreenState();
 }
 
-class _InseminacaoState extends State<Inseminacao> {
+class _InseminacaoScreenState extends State<InseminacaoScreen> {
   @override
   Widget build(BuildContext context) {
     return Column(

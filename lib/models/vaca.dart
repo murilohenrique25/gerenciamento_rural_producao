@@ -45,4 +45,10 @@ class Vaca extends Animal {
     }
     return map;
   }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return "Vaca(id:$idVaca, dataInseminacao:$ultimaInseminacao)";
+  }
 }

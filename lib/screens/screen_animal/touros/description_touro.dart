@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/touros/inseminacao.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/touros/inseminacao_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/touros/inventario_semen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/touros/touros.dart';
 
@@ -57,7 +57,7 @@ class _DescriptionTouroState extends State<DescriptionTouro> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: Inseminacao(),
+                          child: InseminacaoScreen(),
                         ),
                       ],
                     ),

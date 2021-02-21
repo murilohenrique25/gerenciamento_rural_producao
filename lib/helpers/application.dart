@@ -1,4 +1,4 @@
-String dbName = '19021926.db';
+String dbName = 'final20022021.db';
 int dbVersion = 1;
 
 List<String> dbCreate = [
@@ -135,5 +135,16 @@ List<String> dbCreate = [
     id INTEGER PRIMARY KEY, 
     data TEXT, 
     preco REAL
+    )""",
+  //tb insemincacao
+  """CREATE TABLE inseminacao(
+    id INTEGER PRIMARY KEY, 
+    idVaca INTEGER, 
+    nomeVaca TEXT,
+    idSemen INTEGER,
+    nomeTouro TEXT,
+    data TEXT,
+    observacao TEXT,
+    inseminador TEXT
     )""",
 ];

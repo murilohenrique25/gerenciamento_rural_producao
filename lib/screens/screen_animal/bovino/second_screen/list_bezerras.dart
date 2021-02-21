@@ -106,17 +106,6 @@ class _ListaBezerrasState extends State<ListaBezerras> {
                   "Nome / Nº Brinco: " + totalBezerras[index].nome,
                   style: TextStyle(fontSize: 14.0),
                 ),
-                SizedBox(
-                  width: 2,
-                ),
-                Text(" - "),
-                SizedBox(
-                  width: 2,
-                ),
-                Text(
-                  "Raça: " + totalBezerras[index].raca,
-                  style: TextStyle(fontSize: 14.0),
-                ),
               ],
             ),
           ),

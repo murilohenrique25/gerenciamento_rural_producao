@@ -106,17 +106,6 @@ class _ListaNovilhasState extends State<ListaNovilhas> {
                   "Nome / Nº Brinco: " + totalNovilhas[index].nome,
                   style: TextStyle(fontSize: 14.0),
                 ),
-                SizedBox(
-                  width: 2,
-                ),
-                Text(" - "),
-                SizedBox(
-                  width: 2,
-                ),
-                Text(
-                  "Raça: " + totalNovilhas[index].raca,
-                  style: TextStyle(fontSize: 14.0),
-                ),
               ],
             ),
           ),

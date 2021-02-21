@@ -1,22 +1,22 @@
 import 'package:gerenciamento_rural/helpers/HelperDB.dart';
 import 'package:gerenciamento_rural/helpers/application.dart';
-import 'package:gerenciamento_rural/models/vaca.dart';
+import 'package:gerenciamento_rural/models/inseminacao.dart';
 import 'package:sqflite/sqflite.dart';
 
-class VacaDB extends HelperDB {
-  Vaca vaca;
+class InseminacaoDB extends HelperDB {
+  Inseminacao inseminacao;
   //Singleton
   //
-  static VacaDB _this;
-  factory VacaDB() {
+  static InseminacaoDB _this;
+  factory InseminacaoDB() {
     if (_this == null) {
-      _this = VacaDB.getInstance();
+      _this = InseminacaoDB.getInstance();
     }
     return _this;
   }
   //
   //The instance
-  VacaDB.getInstance() : super();
+  InseminacaoDB.getInstance() : super();
   //
 
   @override
@@ -28,8 +28,8 @@ class VacaDB extends HelperDB {
   @override
   Future<Map> getItem(dynamic where) async {
     Database db = await this.getDb();
-    List<Map> items = await db.query("vaca",
-        where: "idVaca = ?", whereArgs: [where], limit: 1);
+    List<Map> items = await db.query("inseminacao",
+        where: "id = ?", whereArgs: [where], limit: 1);
     Map result = Map();
     if (items.isNotEmpty) {
       result = items.first;
@@ -37,22 +37,22 @@ class VacaDB extends HelperDB {
     return result;
   }
 
-  Future<Vaca> insert(Vaca vaca) async {
+  Future<Inseminacao> insert(Inseminacao inseminacao) async {
     Database db = await this.getDb();
-    vaca.idVaca = await db.insert("vaca", vaca.toMap());
-    return vaca;
+    inseminacao.id = await db.insert("inseminacao", inseminacao.toMap());
+    return inseminacao;
   }
 
   @override
   Future<List<Map>> list() async {
     Database db = await this.getDb();
-    return db.rawQuery("SELECT * FROM vaca orderBy idVaca CRESC");
+    return db.rawQuery("SELECT * FROM inseminacao orderBy id CRESC");
   }
 
   @override
   Future<bool> delete(dynamic id) async {
     Database db = await this.getDb();
-    int rows = await db.delete("vaca", where: "idVaca = ?", whereArgs: [id]);
+    int rows = await db.delete("inseminacao", where: "id = ?", whereArgs: [id]);
 
     return (rows != 0);
   }
@@ -60,21 +60,22 @@ class VacaDB extends HelperDB {
   Future<int> getNumber() async {
     Database db = await this.getDb();
     return Sqflite.firstIntValue(
-        await db.rawQuery("SELECT COUNT(*) FROM vaca"));
+        await db.rawQuery("SELECT COUNT(*) FROM inseminacao"));
   }
 
-  Future<void> updateItem(Vaca vaca) async {
+  Future<int> updateItem(Inseminacao inseminacao) async {
     Database db = await this.getDb();
-    await db.update("vaca", vaca.toMap(),
-        where: "idVaca = ?", whereArgs: [vaca.idVaca]);
+    int p = await db.update("inseminacao", inseminacao.toMap());
+
+    return p;
   }
 
   Future<List> getAllItems() async {
     Database db = await this.getDb();
-    List listMap = await db.rawQuery("SELECT * FROM vaca");
-    List<Vaca> list = List();
+    List listMap = await db.rawQuery("SELECT * FROM inseminacao");
+    List<Inseminacao> list = List();
     for (Map m in listMap) {
-      list.add(Vaca.fromMap(m));
+      list.add(Inseminacao.fromMap(m));
     }
     return list;
   }

@@ -28,11 +28,11 @@ class _CadastroVacaState extends State<CadastroVaca> {
   Vaca _editedVaca;
 
   String numeroData;
-  String dataSecagem;
-  String dataParto;
   String idadeFinal = "";
   String _idadeAnimal = "1 ano";
-
+  String dataInseminacao = "Não inseminada";
+  String dataSecagem = "Não inseminada";
+  String dataParto = "Não inseminada";
   int selectedLotes;
 
   void _reset() {
@@ -57,8 +57,15 @@ class _CadastroVacaState extends State<CadastroVaca> {
       _avoMPaternoController.text = _editedVaca.avoMPaterno;
       numeroData = _editedVaca.dataNascimento;
       _dataNasc.text = numeroData;
-      dataParto = _editedVaca.partoPrevisto;
-      dataSecagem = _editedVaca.secagemPrevista;
+      if (_editedVaca?.ultimaInseminacao?.isNotEmpty ?? false) {
+        dataInseminacao = _editedVaca.ultimaInseminacao;
+      }
+      if (_editedVaca?.partoPrevisto?.isNotEmpty ?? false) {
+        dataParto = _editedVaca.secagemPrevista;
+      }
+      if (_editedVaca?.secagemPrevista?.isNotEmpty ?? false) {
+        dataSecagem = _editedVaca.secagemPrevista;
+      }
       dataUltInsemiController.text = _editedVaca.ultimaInseminacao;
       dataPrePartoController.text = _editedVaca.partoPrevisto;
       dataPrevSecageController.text = _editedVaca.secagemPrevista;
@@ -308,7 +315,7 @@ class _CadastroVacaState extends State<CadastroVaca> {
                 Padding(
                   padding: EdgeInsets.only(top: 10.0, bottom: 5.0),
                   child: Text(
-                    "Última inseminação: Não inseminada",
+                    "Última inseminação: " + dataInseminacao,
                     style: TextStyle(
                         fontSize: 16.0,
                         color: Color.fromARGB(255, 4, 125, 141)),
@@ -317,7 +324,7 @@ class _CadastroVacaState extends State<CadastroVaca> {
                 Padding(
                   padding: EdgeInsets.only(top: 10.0, bottom: 5.0),
                   child: Text(
-                    "Secagem prevista: Não inseminada",
+                    "Secagem prevista: " + dataSecagem,
                     style: TextStyle(
                         fontSize: 16.0,
                         color: Color.fromARGB(255, 4, 125, 141)),
@@ -326,7 +333,7 @@ class _CadastroVacaState extends State<CadastroVaca> {
                 Padding(
                   padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
                   child: Text(
-                    "Parto previsto: Não inseminada",
+                    "Parto previsto: " + dataParto,
                     style: TextStyle(
                         fontSize: 16.0,
                         color: Color.fromARGB(255, 4, 125, 141)),
