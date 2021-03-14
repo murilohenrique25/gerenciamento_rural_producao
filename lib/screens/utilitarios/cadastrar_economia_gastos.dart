@@ -110,7 +110,7 @@ class _CadastroEconomiaGastoState extends State<CadastroEconomiaGasto> {
                   TextField(
                     controller: _nomeLoteController,
                     focusNode: _nameFocus,
-                    decoration: InputDecoration(labelText: "Gasto"),
+                    decoration: InputDecoration(labelText: "Gasto - Descrição"),
                     onChanged: (text) {
                       _gastoEdited = true;
                       setState(() {

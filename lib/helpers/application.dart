@@ -1,4 +1,4 @@
-String dbName = 'final20022021.db';
+String dbName = 'final09032021.db';
 int dbVersion = 1;
 
 List<String> dbCreate = [
@@ -29,6 +29,7 @@ List<String> dbCreate = [
     dataNascimento TEXT,
     partoPrevisto TEXT,
     secagemPrevista TEXT, 
+    diagnosticoGestacao TEXT,
     raca TEXT, 
     idLote INTEGER,
     estado TEXT,
@@ -47,18 +48,21 @@ List<String> dbCreate = [
     pesoNascimento REAL, 
     pesoDesmama REAL, 
     idLote INTEGER,
+    dataNascimento TEXT,
     dataDesmama TEXT,
     dataCobertura TEXT,
     pesoPrimeiraCobertura REAL,
     idadePrimeiraCobertura REAL,
     idadePrimeiroParto REAL,
     diagnosticoGestacao TEXT,
+    estado TEXT,
     pai TEXT,
     mae TEXT,
     avoMMaterno TEXT,
     avoFMaterno TEXT,
     avoMPaterno TEXT,
-    avoFPaterno TEXT
+    avoFPaterno TEXT,
+    virouVaca INTEGER
     )""",
   //tb BEZERRA
   """CREATE TABLE bezerra(
@@ -75,7 +79,9 @@ List<String> dbCreate = [
     avoMMaterno TEXT,
     avoFMaterno TEXT,
     avoMPaterno TEXT,
-    avoFPaterno TEXT
+    avoFPaterno TEXT,
+    virouNovilha INTEGER,
+    estado TEXT
     )""",
   //tabela inventario semen
   """CREATE TABLE inventarioSemen(
@@ -147,4 +153,66 @@ List<String> dbCreate = [
     observacao TEXT,
     inseminador TEXT
     )""",
+  //tb tratamento
+  """CREATE TABLE tratamento(
+    id INTEGER PRIMARY KEY,
+    lote TEXT,
+    idVaca INTEGER, 
+    nomeVaca TEXT,
+    enfermidade TEXT,
+    idMedicamento INTEGER,
+    quantidade REAL,
+    nomeMedicamento TEXT,
+    unidade TEXT,
+    viaAplicacao TEXT,
+    duracao TEXT,
+    inicioTratamento TEXT,
+    fimTratamento TEXT,
+    carencia TEXT,
+    observacao TEXT,
+    tipo INTEGER,
+    FOREIGN KEY (idMedicamento) REFERENCES medicamento(id) 
+    )""",
+  //tb volumoso
+  """CREATE TABLE nutricaoVolumoso(
+    id INTEGER PRIMARY KEY,
+    id_lote INTEGER,
+    nome_lote TEXT,
+    tipo TEXT,
+    pb REAL,
+    ndt REAL,
+    ms REAL,
+    umidade REAL,
+    quantidade_individual REAL,
+    quantidade_total REAL,
+    observacao TEXT,
+    data TEXT,
+    FOREIGN KEY (id_lote) REFERENCES loteTable(id_lote) 
+  )""",
+  //tb volumoso
+  """CREATE TABLE nutricaoConcentrado(
+    id INTEGER PRIMARY KEY,
+    id_lote INTEGER,
+    nome_lote TEXT,
+    ingredientes TEXT,
+    pb REAL,
+    ndt REAL,
+    quantidade_individual REAL,
+    quantidade_total REAL,
+    observacao TEXT,
+    data TEXT,
+    FOREIGN KEY (id_lote) REFERENCES loteTable(id_lote) 
+  )""",
+  //tb volumoso
+  """CREATE TABLE nutricaoSuplementar(
+    id INTEGER PRIMARY KEY,
+    id_lote INTEGER,
+    nome_lote TEXT,
+    ingredientes TEXT,
+    quantidade_individual REAL,
+    quantidade_total REAL,
+    observacao TEXT,
+    data TEXT,
+    FOREIGN KEY (id_lote) REFERENCES loteTable(id_lote) 
+  )"""
 ];

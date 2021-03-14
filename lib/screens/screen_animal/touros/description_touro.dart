@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/touros/inseminacao_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/touros/inventario_semen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/touros/saude_tratamento.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/touros/touros.dart';
 
 class DescriptionTouro extends StatefulWidget {
@@ -77,6 +78,20 @@ class _DescriptionTouroState extends State<DescriptionTouro> {
                         Padding(
                           padding: EdgeInsets.all(10.0),
                           child: InventarioSemenS(),
+                        ),
+                      ],
+                    ),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: _width,
+                          height: _height,
+                          color: Colors.grey[50],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: SaudeTratamento(),
                         ),
                       ],
                     ),

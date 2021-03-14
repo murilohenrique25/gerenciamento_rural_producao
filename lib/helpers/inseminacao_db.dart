@@ -63,11 +63,10 @@ class InseminacaoDB extends HelperDB {
         await db.rawQuery("SELECT COUNT(*) FROM inseminacao"));
   }
 
-  Future<int> updateItem(Inseminacao inseminacao) async {
+  Future<void> updateItem(Inseminacao inseminacao) async {
     Database db = await this.getDb();
-    int p = await db.update("inseminacao", inseminacao.toMap());
-
-    return p;
+    await db.update("inseminacao", inseminacao.toMap(),
+        where: "id = ?", whereArgs: [inseminacao.id]);
   }
 
   Future<List> getAllItems() async {

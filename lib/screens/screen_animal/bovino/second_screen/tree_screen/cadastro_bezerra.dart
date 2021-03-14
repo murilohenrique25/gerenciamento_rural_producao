@@ -6,6 +6,7 @@ import 'package:gerenciamento_rural/models/bezerra.dart';
 import 'package:gerenciamento_rural/models/lote.dart';
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
+import 'package:toast/toast.dart';
 
 class CadastroBezerra extends StatefulWidget {
   final Bezerra bezerra;
@@ -21,11 +22,12 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
   List<Bezerra> bezerras = List();
   final _nameFocus = FocusNode();
 
-  bool _bezerraEdited;
+  bool _bezerraEdited = false;
   Bezerra _editedBezerra;
   String idadeFinal = "";
   String numeroData;
   int selectedLotes;
+  int _radioValue = 0;
 
   final _nomeController = TextEditingController();
   final _pesoController = TextEditingController();
@@ -62,15 +64,27 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
     _getAllLotes();
     if (widget.bezerra == null) {
       _editedBezerra = Bezerra();
+      _editedBezerra.virouNovilha = 0;
+      _editedBezerra.estado = "Vivo";
     } else {
       _editedBezerra = Bezerra.fromMap(widget.bezerra.toMap());
       _nomeController.text = _editedBezerra.nome;
       _racaController.text = _editedBezerra.raca;
-      _pesoDesmamaController.text = _editedBezerra.pesoDesmama.toString();
-      _pesoController.text = _editedBezerra.pesoNascimento.toString();
+      if (_editedBezerra?.pesoDesmama?.isNaN ?? false) {
+        _pesoDesmamaController.text = _editedBezerra.pesoDesmama.toString();
+      }
+      if (_editedBezerra?.pesoNascimento?.isNaN ?? false) {
+        _pesoController.text = _editedBezerra.pesoNascimento.toString();
+      }
+
       _dataDesmamaController.text = _editedBezerra.dataDesmama;
       _paiController.text = _editedBezerra.pai;
       _maeController.text = _editedBezerra.mae;
+      if (_editedBezerra.estado == "Vivo") {
+        _radioValue = 0;
+      } else {
+        _radioValue = 1;
+      }
       _avoMMaternoController.text = _editedBezerra.avoMMaterno;
       _avoFMaternoController.text = _editedBezerra.avoFMaterno;
       _avoFPaternoController.text = _editedBezerra.avoFPaterno;
@@ -195,7 +209,15 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.pop(context, _editedBezerra);
+            if (_nomeController.text.isEmpty) {
+              Toast.show("Nome inválido.", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            } else if (_dataNasc.text.isEmpty) {
+              Toast.show("Data nascimento inválida.", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            } else {
+              Navigator.pop(context, _editedBezerra);
+            }
           },
           child: Icon(Icons.save),
           backgroundColor: Colors.green[700],
@@ -233,8 +255,8 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
                   onChanged: (text) {
                     _bezerraEdited = true;
                     setState(() {
-                      numeroData = text;
-                      _editedBezerra.dataNascimento = text;
+                      numeroData = _dataNasc.text;
+                      _editedBezerra.dataNascimento = _dataNasc.text;
                       idadeFinal = differenceDate();
                     });
                   },
@@ -345,6 +367,34 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
                 ),
                 SizedBox(
                   height: 15.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Radio(
+                        value: 0,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            _editedBezerra.estado = "Vivo";
+                          });
+                        }),
+                    Text("Vivo"),
+                    Radio(
+                        value: 1,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            _editedBezerra.estado = "Morto";
+                          });
+                        }),
+                    Text("Morto"),
+                  ],
+                ),
+                SizedBox(
+                  height: 20.0,
                 ),
               ],
             ),

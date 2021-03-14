@@ -114,7 +114,7 @@ class _EconomiaState extends State<Economia> {
                   width: 15,
                 ),
                 Text(
-                  "Nome: " + gastos[index].nome ?? "",
+                  "Descrição: " + gastos[index].nome ?? "",
                   style: TextStyle(fontSize: 14.0),
                 ),
                 SizedBox(
@@ -127,6 +127,9 @@ class _EconomiaState extends State<Economia> {
                 Text(
                   "Quantidade: " + gastos[index].quantidade.toString() ?? "",
                   style: TextStyle(fontSize: 14.0),
+                ),
+                SizedBox(
+                  width: 15,
                 ),
                 Text(" - "),
                 SizedBox(

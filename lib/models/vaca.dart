@@ -5,6 +5,7 @@ class Vaca extends Animal {
   String ultimaInseminacao;
   String partoPrevisto;
   String secagemPrevista;
+  String diagnosticoGestacao;
 
   Vaca();
   Vaca.fromMap(Map map) {
@@ -19,6 +20,7 @@ class Vaca extends Animal {
     estado = map["estado"];
     pai = map["pai"];
     mae = map["mae"];
+    diagnosticoGestacao = map["diagnosticoGestacao"];
     avoMMaterno = map["avoMMaterno"];
     avoFMaterno = map["avoFMaterno"];
     avoMPaterno = map["avoMPaterno"];
@@ -35,6 +37,8 @@ class Vaca extends Animal {
       "ultimaInseminacao": ultimaInseminacao,
       "pai": pai,
       "mae": mae,
+      "diagnosticoGestacao": diagnosticoGestacao,
+      "estado": estado,
       "avoMMaterno": avoMMaterno,
       "avoFMaterno": avoFMaterno,
       "avoMPaterno": avoMPaterno,
@@ -48,7 +52,6 @@ class Vaca extends Animal {
 
   @override
   String toString() {
-    // TODO: implement toString
     return "Vaca(id:$idVaca, dataInseminacao:$ultimaInseminacao)";
   }
 }

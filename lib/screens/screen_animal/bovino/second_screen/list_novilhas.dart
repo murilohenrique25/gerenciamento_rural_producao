@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/novilha_db.dart';
+import 'package:gerenciamento_rural/helpers/vaca_db.dart';
 import 'package:gerenciamento_rural/models/novilha.dart';
+import 'package:gerenciamento_rural/models/vaca.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/cadastro_novilha.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
@@ -19,6 +22,7 @@ class ListaNovilhas extends StatefulWidget {
 class _ListaNovilhasState extends State<ListaNovilhas> {
   TextEditingController editingController = TextEditingController();
   NovilhaDB helper = NovilhaDB();
+  VacaDB helperVaca = VacaDB();
   List<Novilha> totalNovilhas = List();
   List<Novilha> items = List();
   List<Novilha> novilhas = List();
@@ -194,9 +198,48 @@ class _ListaNovilhasState extends State<ListaNovilhas> {
 
   void _getAllNovilhas() {
     items = List();
+    totalNovilhas = List();
+    List<Novilha> verificaNovilha = List();
+    List<Novilha> verificaNv = List();
+    Vaca vaca = Vaca();
+
     helper.getAllItems().then((list) {
       setState(() {
-        totalNovilhas = list;
+        verificaNovilha = list;
+        verificaNovilha.forEach((element) {
+          if (element.diagnosticoGestacao == "Gestante" ||
+              element.diagnosticoGestacao == "Aborto") {
+            String num = element.dataCobertura.split('-').reversed.join();
+            DateTime dates = DateTime.parse(num);
+            DateTime dateParto = dates.add(new Duration(days: 284));
+            DateTime dateSecagem = dates.add(new Duration(days: 222));
+            var format = new DateFormat("dd-MM-yyyy");
+            String dataParto = format.format(dateParto);
+            String dataSecagem = format.format(dateSecagem);
+            //Criando vaca se a novilha for inseminada
+            vaca.nome = element.nome;
+            vaca.diagnosticoGestacao = element.diagnosticoGestacao;
+            vaca.idLote = element.idLote;
+            vaca.raca = element.raca;
+            vaca.dataNascimento = element.dataNascimento;
+            vaca.partoPrevisto = dataParto;
+            vaca.secagemPrevista = dataSecagem;
+            vaca.avoFMaterno = element.avoFMaterno;
+            vaca.avoFPaterno = element.avoFPaterno;
+            vaca.avoMMaterno = element.avoMMaterno;
+            vaca.avoMPaterno = element.avoMPaterno;
+            helperVaca.insert(vaca);
+            element.virouVaca = 1;
+            helper.updateItem(element);
+          }
+        });
+        verificaNv = verificaNovilha;
+        verificaNv.forEach((element) {
+          if (element.virouVaca == 0) {
+            totalNovilhas.add(element);
+          }
+        });
+
         items.addAll(totalNovilhas);
       });
     });

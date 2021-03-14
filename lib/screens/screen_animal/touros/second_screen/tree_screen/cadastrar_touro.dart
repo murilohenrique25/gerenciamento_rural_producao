@@ -228,13 +228,14 @@ class _CadastroTouroState extends State<CadastroTouro> {
                   },
                 ),
                 TextField(
+                  keyboardType: TextInputType.number,
                   controller: _dataNasc,
                   decoration: InputDecoration(labelText: "Data de Nascimento"),
                   onChanged: (text) {
                     _touroEdited = true;
                     setState(() {
-                      numeroData = text;
-                      _editedTouro.dataNascimento = text;
+                      numeroData = _dataNasc.text;
+                      _editedTouro.dataNascimento = _dataNasc.text;
                       idadeFinal = differenceDate();
                     });
                   },

@@ -29,7 +29,7 @@ class InventarioSemenDB extends HelperDB {
   Future<Map> getItem(dynamic where) async {
     Database db = await this.getDb();
     List<Map> items = await db.query("inventarioSemen",
-        where: "id = ?", whereArgs: [where], limit: 1);
+        where: "id_inventario = ?", whereArgs: [where], limit: 1);
     Map result = Map();
     if (items.isNotEmpty) {
       result = items.first;
@@ -46,14 +46,15 @@ class InventarioSemenDB extends HelperDB {
   @override
   Future<List<Map>> list() async {
     Database db = await this.getDb();
-    return db.rawQuery("SELECT * FROM inventarioSemen orderBy id CRESC");
+    return db
+        .rawQuery("SELECT * FROM inventarioSemen orderBy id_inventario CRESC");
   }
 
   @override
   Future<bool> delete(dynamic id) async {
     Database db = await this.getDb();
-    int rows =
-        await db.delete("inventarioSemen", where: "id = ?", whereArgs: [id]);
+    int rows = await db
+        .delete("inventarioSemen", where: "id_inventario = ?", whereArgs: [id]);
 
     return (rows != 0);
   }
@@ -64,12 +65,18 @@ class InventarioSemenDB extends HelperDB {
         await db.rawQuery("SELECT COUNT(*) FROM inventarioSemen"));
   }
 
-  Future<int> updateItem(InventarioSemen inventariosemen) async {
-    Database db = await this.getDb();
-    int p = await db.update("inventarioSemen", inventariosemen.toMap(),
-        where: "id = ?", whereArgs: [inventariosemen.id]);
+  // Future<int> updateItems(InventarioSemen inventariosemen) async {
+  //   Database db = await this.getDb();
+  //   int p = await db.update("inventarioSemen", inventariosemen.toMap(),
+  //       where: "id = ?", whereArgs: [inventariosemen.id]);
 
-    return p;
+  //   return p;
+  // }
+
+  Future<void> updateItem(InventarioSemen inventariosemen) async {
+    Database db = await this.getDb();
+    await db.update("inventarioSemen", inventariosemen.toMap(),
+        where: "id_inventario = ?", whereArgs: [inventariosemen.id]);
   }
 
   Future<List> getAllItems() async {

@@ -63,11 +63,10 @@ class MedicamentoDB extends HelperDB {
         await db.rawQuery("SELECT COUNT(*) FROM medicamento"));
   }
 
-  Future<int> updateItem(Medicamento medicamento) async {
+  Future<void> updateItem(Medicamento medicamento) async {
     Database db = await this.getDb();
-    int p = await db.update("medicamento", medicamento.toMap());
-
-    return p;
+    await db.update("medicamento", medicamento.toMap(),
+        where: "id = ?", whereArgs: [medicamento.id]);
   }
 
   Future<List> getAllItems() async {

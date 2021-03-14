@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/inventario_semen_db.dart';
+import 'package:gerenciamento_rural/helpers/novilha_db.dart';
 import 'package:gerenciamento_rural/helpers/vaca_db.dart';
 import 'package:gerenciamento_rural/models/inseminacao.dart';
 import 'package:gerenciamento_rural/models/inventario_semen.dart';
+import 'package:gerenciamento_rural/models/novilha.dart';
 import 'package:gerenciamento_rural/models/vaca.dart';
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
@@ -28,14 +30,18 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
       new GlobalKey<ScaffoldState>();
 
   VacaDB helperVaca = VacaDB();
+  NovilhaDB helperNovilha = NovilhaDB();
   List<Vaca> totalVacas = List();
+  List<Novilha> totalNovilhas = List();
 
   InventarioSemenDB helperInventario = InventarioSemenDB();
   List<InventarioSemen> semens = List();
   bool _inseminacaoEdited = false;
   Inseminacao _editedInseminacao;
   InventarioSemen selectedInseminacao;
+  String verificaAnimal;
   Vaca vaca;
+  Novilha novilha;
   void _reset() {
     setState(() {
       _formKey = GlobalKey();
@@ -76,7 +82,6 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
           onPressed: () {
             selectedInseminacao.quantidade = selectedInseminacao.quantidade - 1;
             helperInventario.updateItem(selectedInseminacao);
-            vaca.ultimaInseminacao = _editedInseminacao.data;
             String num = _editedInseminacao.data.split('-').reversed.join();
             DateTime dates = DateTime.parse(num);
             DateTime dateParto = dates.add(new Duration(days: 284));
@@ -84,11 +89,18 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
             var format = new DateFormat("dd-MM-yyyy");
             String dataParto = format.format(dateParto);
             String dataSecagem = format.format(dateSecagem);
-            vaca.partoPrevisto = dataParto;
-            vaca.secagemPrevista = dataSecagem;
 
+            if (verificaAnimal == "vaca") {
+              vaca.ultimaInseminacao = _editedInseminacao.data;
+              vaca.partoPrevisto = dataParto;
+              vaca.secagemPrevista = dataSecagem;
+              helperVaca.updateItem(vaca);
+            } else if (verificaAnimal == "novilha") {
+              novilha.dataCobertura = _editedInseminacao.data;
+              helperNovilha.updateItem(novilha);
+            }
             helperInventario.updateItem(selectedInseminacao);
-            helperVaca.updateItem(vaca);
+
             Navigator.pop(context, _editedInseminacao);
           },
           child: Icon(Icons.save),
@@ -118,13 +130,57 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
                     );
                   }).toList(),
                   value: vaca,
-                  hint: "Selecione um Animal",
-                  searchHint: "Selecione um Animal",
+                  hint: "Selecione uma Vaca",
+                  searchHint: "Selecione uma Vaca",
                   onChanged: (value) {
                     setState(() {
-                      //selectedInseminacao = value;
+                      verificaAnimal = "vaca";
                       vaca = value;
                       _editedInseminacao.idVaca = value.idVaca;
+                      _editedInseminacao.nomeVaca = value.nome;
+                    });
+                  },
+                  doneButton: "Pronto",
+                  displayItem: (item, selected) {
+                    return (Row(children: [
+                      selected
+                          ? Icon(
+                              Icons.radio_button_checked,
+                              color: Colors.grey,
+                            )
+                          : Icon(
+                              Icons.radio_button_unchecked,
+                              color: Colors.grey,
+                            ),
+                      SizedBox(width: 7),
+                      Expanded(
+                        child: item,
+                      ),
+                    ]));
+                  },
+                  isExpanded: true,
+                ),
+                Text("OU"),
+                SearchableDropdown.single(
+                  items: totalNovilhas.map((novilha) {
+                    return DropdownMenuItem(
+                      value: novilha,
+                      child: Row(
+                        children: [
+                          Text(novilha.nome),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  value: novilha,
+                  hint: "Selecione uma Novilha",
+                  searchHint: "Selecione uma Novilha",
+                  onChanged: (value) {
+                    setState(() {
+                      verificaAnimal = "novilha";
+                      novilha = value;
+                      _editedInseminacao.idVaca = value.idNovilha;
+                      _editedInseminacao.nomeVaca = value.nome;
                     });
                   },
                   doneButton: "Pronto",
@@ -165,6 +221,7 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
                     setState(() {
                       selectedInseminacao = value;
                       _editedInseminacao.idSemen = value.id;
+                      _editedInseminacao.nomeTouro = value.nomeTouro;
                     });
                   },
                   doneButton: "Pronto",
@@ -226,7 +283,6 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
   }
 
   Future<bool> _requestPop() {
-    _inseminacaoEdited = false;
     if (_inseminacaoEdited) {
       showDialog(
           context: context,
@@ -267,6 +323,11 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
     helperInventario.getAllItemsEstoque().then((value) {
       setState(() {
         semens = value;
+      });
+    });
+    helperNovilha.getAllItems().then((value) {
+      setState(() {
+        totalNovilhas = value;
       });
     });
   }

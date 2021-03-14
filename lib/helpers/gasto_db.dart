@@ -63,27 +63,15 @@ class GastoDB extends HelperDB {
         await db.rawQuery("SELECT COUNT(*) FROM gasto"));
   }
 
-  Future<int> updateItem(Gasto gasto) async {
+  Future<void> updateItem(Gasto gasto) async {
     Database db = await this.getDb();
-    int p = await db.update("gasto", gasto.toMap());
-
-    return p;
+    await db
+        .update("gasto", gasto.toMap(), where: "id = ?", whereArgs: [gasto.id]);
   }
 
   Future<List> getAllItems() async {
     Database db = await this.getDb();
     List listMap = await db.rawQuery("SELECT * FROM gasto");
-    List<Gasto> list = List();
-    for (Map m in listMap) {
-      list.add(Gasto.fromMap(m));
-    }
-    return list;
-  }
-
-  Future<List> getBetwwenItems(String data1, String data2) async {
-    Database db = await this.getDb();
-    List listMap = await db
-        .rawQuery("SELECT * FROM gasto WHERE data BETWEEN $data1 AND $data2");
     List<Gasto> list = List();
     for (Map m in listMap) {
       list.add(Gasto.fromMap(m));

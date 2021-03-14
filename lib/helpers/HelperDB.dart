@@ -17,6 +17,14 @@ abstract class HelperDB {
         dbCreate.forEach((String sql) {
           db.execute(sql);
         });
+        //   }, onUpgrade: (_database, oldVersion, newVersion) {
+        //     if (oldVersion < newVersion){
+        //     String sql = "DROP TABLE IF EXISTS " + TABLE_PROMOCOES;
+        //     database.execSQL(sql);
+        //     onCreate(database);
+        // }
+
+        //     }
       });
     }
     return this._database;

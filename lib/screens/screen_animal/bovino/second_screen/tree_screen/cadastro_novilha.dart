@@ -6,6 +6,7 @@ import 'package:gerenciamento_rural/models/lote.dart';
 import 'package:gerenciamento_rural/models/novilha.dart';
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
+import 'package:toast/toast.dart';
 
 class CadastroNovilha extends StatefulWidget {
   final Novilha novilha;
@@ -21,18 +22,18 @@ class _CadastroNovilhaState extends State<CadastroNovilha> {
   List<Novilha> novilhas = List();
   final _nameFocus = FocusNode();
 
-  bool _novilhaEdited;
+  bool _novilhaEdited = false;
   Novilha _editedNovilha;
   String idadeFinal = "";
-  String numeroData;
+  String numeroData = "";
   int selectedLotes;
-
+  int _radioValue = 0;
+  int _radioValueGestacao = 0;
   final _nomeController = TextEditingController();
   final _pesoController = TextEditingController();
   final _pesoDesmamaController = TextEditingController();
   final _pesoPrimCoberturaController = TextEditingController();
   final _racaController = TextEditingController();
-  final _diagnosticoGestacaoController = TextEditingController();
   final _paiController = TextEditingController();
   final _maeController = TextEditingController();
   final _avoMMaternoController = TextEditingController();
@@ -45,11 +46,10 @@ class _CadastroNovilhaState extends State<CadastroNovilha> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   var _dataDesmamaController = MaskedTextController(mask: '00-00-0000');
-  var _dataPrimCoberturaController = MaskedTextController(mask: '00-00-0000');
-
+  String dataCobertura = "Não inseminada";
   final df = new DateFormat("dd-MM-yyyy");
 
-  String _idadeAnimal = "1ano e 2meses";
+  String _idadeAnimal = "";
 
   final GlobalKey<ScaffoldState> _scaffoldstate =
       new GlobalKey<ScaffoldState>();
@@ -66,16 +66,41 @@ class _CadastroNovilhaState extends State<CadastroNovilha> {
     _getAllLotes();
     if (widget.novilha == null) {
       _editedNovilha = Novilha();
+      _editedNovilha.virouVaca = 0;
+      _editedNovilha.diagnosticoGestacao = "Vazia";
+      _editedNovilha.estado = "Vivo";
     } else {
       _editedNovilha = Novilha.fromMap(widget.novilha.toMap());
       _nomeController.text = _editedNovilha.nome;
       _racaController.text = _editedNovilha.raca;
-      _pesoDesmamaController.text = _editedNovilha.pesoDesmama.toString();
-      _pesoController.text = _editedNovilha.pesoNascimento.toString();
+      if (_editedNovilha?.pesoNascimento?.isNaN ?? false) {
+        _pesoController.text = _editedNovilha.pesoNascimento.toString();
+      }
+      if (_editedNovilha?.pesoDesmama?.isNaN ?? false) {
+        _pesoDesmamaController.text = _editedNovilha.pesoDesmama.toString();
+      }
+      if (_editedNovilha?.pesoPrimeiraCobertura?.isNaN ?? false) {
+        _pesoPrimCoberturaController.text =
+            _editedNovilha.pesoPrimeiraCobertura.toString();
+      }
+
       _dataDesmamaController.text = _editedNovilha.dataDesmama;
-      _pesoPrimCoberturaController.text =
-          _editedNovilha.pesoPrimeiraCobertura.toString();
-      _diagnosticoGestacaoController.text = _editedNovilha.diagnosticoGestacao;
+
+      if (_editedNovilha.estado == "Vivo") {
+        _radioValue = 0;
+      } else {
+        _radioValue = 1;
+      }
+      if (_editedNovilha.diagnosticoGestacao == "Vazia") {
+        _radioValueGestacao = 0;
+      } else if (_editedNovilha.diagnosticoGestacao == "Gestante") {
+        _radioValueGestacao = 1;
+      } else {
+        _radioValueGestacao = 2;
+      }
+      if (_editedNovilha?.dataCobertura?.isNotEmpty ?? false) {
+        dataCobertura = _editedNovilha.dataCobertura;
+      }
       _paiController.text = _editedNovilha.pai;
       _maeController.text = _editedNovilha.mae;
       _avoMMaternoController.text = _editedNovilha.avoMMaterno;
@@ -202,7 +227,17 @@ class _CadastroNovilhaState extends State<CadastroNovilha> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.pop(context, _editedNovilha);
+            if (_nomeController.text.isEmpty) {
+              Toast.show("Nome inválido.", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            } else if (_dataNasc.text.isEmpty) {
+              Toast.show("Data nascimento inválida.", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            } else {
+              Navigator.pop(context, _editedNovilha);
+              Toast.show("Salvo!", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            }
           },
           child: Icon(Icons.save),
           backgroundColor: Colors.green[700],
@@ -240,8 +275,8 @@ class _CadastroNovilhaState extends State<CadastroNovilha> {
                   onChanged: (text) {
                     _novilhaEdited = true;
                     setState(() {
-                      numeroData = text;
-                      _editedNovilha.dataNascimento = text;
+                      numeroData = _dataNasc.text;
+                      _editedNovilha.dataNascimento = _dataNasc.text;
                       idadeFinal = differenceDate();
                     });
                   },
@@ -344,17 +379,14 @@ class _CadastroNovilhaState extends State<CadastroNovilha> {
                     });
                   },
                 ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _dataPrimCoberturaController,
-                  decoration:
-                      InputDecoration(labelText: "Data primeira cobertura"),
-                  onChanged: (text) {
-                    _novilhaEdited = true;
-                    setState(() {
-                      _editedNovilha.dataCobertura = text;
-                    });
-                  },
+                Padding(
+                  padding: EdgeInsets.only(top: 10.0, bottom: 5.0),
+                  child: Text(
+                    "Data primeira cobertura: " + dataCobertura,
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141)),
+                  ),
                 ),
                 TextField(
                   keyboardType: TextInputType.text,
@@ -368,17 +400,43 @@ class _CadastroNovilhaState extends State<CadastroNovilha> {
                     });
                   },
                 ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _diagnosticoGestacaoController,
-                  decoration:
-                      InputDecoration(labelText: "Diagnóstico de Gestação"),
-                  onChanged: (text) {
-                    _novilhaEdited = true;
-                    setState(() {
-                      _editedNovilha.diagnosticoGestacao = text;
-                    });
-                  },
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Radio(
+                        value: 0,
+                        groupValue: _radioValueGestacao,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValueGestacao = value;
+                            _editedNovilha.diagnosticoGestacao = "Vazia";
+                          });
+                        }),
+                    Text("Vazia"),
+                    Radio(
+                        value: 1,
+                        groupValue: _radioValueGestacao,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValueGestacao = value;
+                            _editedNovilha.diagnosticoGestacao = "Gestante";
+                          });
+                        }),
+                    Text("Gestante"),
+                    Radio(
+                        value: 2,
+                        groupValue: _radioValueGestacao,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValueGestacao = value;
+                            _editedNovilha.diagnosticoGestacao = "Aborto";
+                          });
+                        }),
+                    Text("Aborto"),
+                  ],
+                ),
+                SizedBox(
+                  height: 20.0,
                 ),
                 RaisedButton(
                   onPressed: () {
@@ -388,6 +446,34 @@ class _CadastroNovilhaState extends State<CadastroNovilha> {
                 ),
                 SizedBox(
                   height: 15.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Radio(
+                        value: 0,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            _editedNovilha.estado = "Vivo";
+                          });
+                        }),
+                    Text("Vivo"),
+                    Radio(
+                        value: 1,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            _editedNovilha.estado = "Morto";
+                          });
+                        }),
+                    Text("Morto"),
+                  ],
+                ),
+                SizedBox(
+                  height: 20.0,
                 ),
               ],
             ),

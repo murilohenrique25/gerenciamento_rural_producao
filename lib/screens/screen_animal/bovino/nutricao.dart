@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/cadastrar_nutricao.dart';
 
 class Nutricao extends StatefulWidget {
   @override
@@ -14,7 +15,10 @@ class _NutricaoState extends State<Nutricao> {
       children: [
         GestureDetector(
           onTap: () {
-            setState(() {});
+            setState(() {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => CadastrarNutricao()));
+            });
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),

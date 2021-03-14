@@ -10,6 +10,7 @@ class Novilha extends Animal {
   double idadePrimeiraCobertura;
   double idadePrimeiroParto;
   String diagnosticoGestacao;
+  int virouVaca;
 
   Novilha();
   Novilha.fromMap(Map map) {
@@ -17,6 +18,7 @@ class Novilha extends Animal {
     nome = map["nome"];
     raca = map["raca"];
     pesoNascimento = map["pesoNascimento"];
+    dataNascimento = map["dataNascimento"];
     pesoDesmama = map["pesoDesmama"];
     dataDesmama = map["dataDesmama"];
     dataCobertura = map["dataCobertura"];
@@ -27,15 +29,18 @@ class Novilha extends Animal {
     diagnosticoGestacao = map["diagnosticoGestacao"];
     pai = map["pai"];
     mae = map["mae"];
+    estado = map["estado"];
     avoMMaterno = map["avoMMaterno"];
     avoFMaterno = map["avoFMaterno"];
     avoMPaterno = map["avoMPaterno"];
     avoFPaterno = map["avoFPaterno"];
+    virouVaca = map["virouVaca"];
   }
   Map toMap() {
     Map<String, dynamic> map = {
       "nome": nome,
       "pesoNascimento": pesoNascimento,
+      "dataNascimento": dataNascimento,
       "raca": raca,
       "pesoDesmama": pesoDesmama,
       "dataDesmama": dataDesmama,
@@ -46,10 +51,12 @@ class Novilha extends Animal {
       "diagnosticoGestacao": diagnosticoGestacao,
       "pai": pai,
       "mae": mae,
+      "estado": estado,
       "avoMMaterno": avoMMaterno,
       "avoFMaterno": avoFMaterno,
       "avoMPaterno": avoMPaterno,
-      "avoFPaterno": avoFPaterno
+      "avoFPaterno": avoFPaterno,
+      "virouVaca": virouVaca
     };
     if (idNovilha != null) {
       map["idNovilha"] = idNovilha;

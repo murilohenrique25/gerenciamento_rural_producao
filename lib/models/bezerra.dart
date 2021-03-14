@@ -5,6 +5,7 @@ class Bezerra extends Animal {
   double pesoNascimento;
   double pesoDesmama;
   String dataDesmama;
+  int virouNovilha;
 
   Bezerra();
   Bezerra.fromMap(Map map) {
@@ -18,10 +19,12 @@ class Bezerra extends Animal {
     dataDesmama = map["dataDesmama"];
     pai = map["pai"];
     mae = map["mae"];
+    estado = map["estado"];
     avoMMaterno = map["avoMMaterno"];
     avoFMaterno = map["avoFMaterno"];
     avoMPaterno = map["avoMPaterno"];
     avoFPaterno = map["avoFPaterno"];
+    virouNovilha = map["virouNovilha"];
   }
 
   Map toMap() {
@@ -35,10 +38,12 @@ class Bezerra extends Animal {
       "dataDesmama": dataDesmama,
       "pai": pai,
       "mae": mae,
+      "estado": estado,
       "avoMMaterno": avoMMaterno,
       "avoFMaterno": avoFMaterno,
       "avoMPaterno": avoMPaterno,
-      "avoFPaterno": avoFPaterno
+      "avoFPaterno": avoFPaterno,
+      "virouNovilha": virouNovilha
     };
     if (idBezerra != null) {
       map["idBezerra"] = idBezerra;

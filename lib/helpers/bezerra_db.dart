@@ -64,16 +64,20 @@ class BezerraDB extends HelperDB {
         await db.rawQuery("SELECT COUNT(*) FROM bezerra"));
   }
 
-  Future<int> updateItem(Bezerra bezerra) async {
+  ///<sumary>
+  ///Método responsavel por atualizar item
+  ///</sumary>
+  ///<param name="bezerra"> Um tipo de animal.</param>
+  Future<void> updateItem(Bezerra bezerra) async {
     Database db = await this.getDb();
-    int p = await db.update("bezerra", bezerra.toMap());
-
-    return p;
+    await db.update("bezerra", bezerra.toMap(),
+        where: "idBezerra = ?", whereArgs: [bezerra.idBezerra]);
   }
 
   Future<List> getAllItems() async {
     Database db = await this.getDb();
-    List listMap = await db.rawQuery("SELECT * FROM bezerra");
+    List listMap =
+        await db.rawQuery("SELECT * FROM bezerra WHERE virouNovilha == 0");
     List<Bezerra> list = List();
     for (Map m in listMap) {
       list.add(Bezerra.fromMap(m));

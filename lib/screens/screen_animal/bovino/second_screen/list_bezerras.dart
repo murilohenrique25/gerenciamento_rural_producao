@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/bezerra_db.dart';
+import 'package:gerenciamento_rural/helpers/novilha_db.dart';
 import 'package:gerenciamento_rural/models/bezerra.dart';
+import 'package:gerenciamento_rural/models/novilha.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/cadastro_bezerra.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
 import 'package:pdf/pdf.dart';
@@ -19,6 +21,7 @@ class ListaBezerras extends StatefulWidget {
 class _ListaBezerrasState extends State<ListaBezerras> {
   TextEditingController editingController = TextEditingController();
   BezerraDB helper = BezerraDB();
+  NovilhaDB helperNovilha = NovilhaDB();
   List<Bezerra> totalBezerras = List();
   List<Bezerra> items = List();
   List<Bezerra> bezerras = List();
@@ -193,10 +196,45 @@ class _ListaBezerrasState extends State<ListaBezerras> {
   }
 
   void _getAllBezerras() {
+    totalBezerras = List();
     items = List();
+    List<Bezerra> verificaBezerra = List();
+    List<Bezerra> verificaVN = List();
+    Novilha novilha = Novilha();
     helper.getAllItems().then((list) {
       setState(() {
-        totalBezerras = list;
+        verificaBezerra = list;
+        String num = "";
+        DateTime dt = DateTime.now();
+        verificaBezerra.forEach((element) {
+          if (element.dataNascimento.isNotEmpty) {
+            num = element.dataNascimento.split('-').reversed.join();
+            DateTime date = DateTime.parse(num);
+            int quant = dt.difference(date).inDays;
+            if (quant >= 120) {
+              novilha.pesoDesmama = element.pesoDesmama;
+              novilha.pesoNascimento = element.pesoNascimento;
+              novilha.nome = element.nome;
+              novilha.dataNascimento = element.dataNascimento;
+              novilha.diagnosticoGestacao = "Vazia";
+              novilha.virouVaca = 0;
+              novilha.avoFMaterno = element.avoFMaterno;
+              novilha.avoMMaterno = element.avoMMaterno;
+              novilha.avoMPaterno = element.avoMPaterno;
+              novilha.avoFPaterno = element.avoFPaterno;
+              element.virouNovilha = 1;
+              helper.updateItem(element);
+              helperNovilha.insert(novilha);
+            }
+          }
+        });
+        verificaVN = verificaBezerra;
+        verificaVN.forEach((element) {
+          if (element.virouNovilha == 0) {
+            totalBezerras.add(element);
+          }
+        });
+
         items.addAll(totalBezerras);
       });
     });

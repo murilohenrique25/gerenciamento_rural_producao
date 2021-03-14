@@ -3,7 +3,6 @@ import 'package:gerenciamento_rural/screens/screen_animal/bovino/cadastro_animal
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/nutricao.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/producao_leite.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/rebanho.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/reproducao.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/saude_tratamento.dart';
 
 class DescriptionBovinoLeite extends StatefulWidget {
@@ -104,20 +103,6 @@ class _DescriptionBovinoLeiteState extends State<DescriptionBovinoLeite> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          width: _width,
-                          height: _height,
-                          color: Colors.grey[50],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: Reproducao(),
-                        ),
-                      ],
-                    ),
                     Stack(
                       alignment: Alignment.center,
                       children: [

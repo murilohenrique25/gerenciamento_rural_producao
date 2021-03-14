@@ -181,7 +181,7 @@ class _CadastroLeiteState extends State<CadastroLeite> {
                     onChanged: (text) {
                       _producaoLeiteEdited = false;
                       setState(() {
-                        _editedProdLeite.dataColeta = text;
+                        _editedProdLeite.dataColeta = dataColeta.text;
                       });
                     },
                   ),

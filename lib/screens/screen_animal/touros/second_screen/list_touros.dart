@@ -109,14 +109,6 @@ class _ListTourosState extends State<ListTouros> {
               SizedBox(
                 width: 15,
               ),
-              Text(" - "),
-              SizedBox(
-                width: 15,
-              ),
-              Text(
-                "Raça: " + touros[index].raca ?? "",
-                style: TextStyle(fontSize: 14.0),
-              )
             ],
           ),
         ),

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/lote_db.dart';
-import 'package:gerenciamento_rural/helpers/vaca_db.dart';
 import 'package:gerenciamento_rural/models/lote.dart';
 import 'package:gerenciamento_rural/models/vaca.dart';
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
+import 'package:toast/toast.dart';
 
 class CadastroVaca extends StatefulWidget {
   final Vaca vaca;
@@ -18,8 +18,6 @@ class CadastroVaca extends StatefulWidget {
 class _CadastroVacaState extends State<CadastroVaca> {
   LoteDB helperLote = LoteDB();
   List<Lote> lotes = List();
-
-  VacaDB helper = VacaDB();
   List<Vaca> vacas = List();
   final _nameFocus = FocusNode();
   Lote lote = Lote();
@@ -27,6 +25,8 @@ class _CadastroVacaState extends State<CadastroVaca> {
 
   Vaca _editedVaca;
 
+  int _radioValue = 0;
+  int _radioValueGestacao = 0;
   String numeroData;
   String idadeFinal = "";
   String _idadeAnimal = "1 ano";
@@ -45,6 +45,8 @@ class _CadastroVacaState extends State<CadastroVaca> {
     _getAllLotes();
     if (widget.vaca == null) {
       _editedVaca = Vaca();
+      _editedVaca.diagnosticoGestacao = "Vazia";
+      _editedVaca.estado = "Vivo";
     } else {
       _editedVaca = Vaca.fromMap(widget.vaca.toMap());
       _nomeController.text = _editedVaca.nome;
@@ -57,11 +59,16 @@ class _CadastroVacaState extends State<CadastroVaca> {
       _avoMPaternoController.text = _editedVaca.avoMPaterno;
       numeroData = _editedVaca.dataNascimento;
       _dataNasc.text = numeroData;
+      if (_editedVaca.estado == "Vivo") {
+        _radioValue = 0;
+      } else {
+        _radioValue = 1;
+      }
       if (_editedVaca?.ultimaInseminacao?.isNotEmpty ?? false) {
         dataInseminacao = _editedVaca.ultimaInseminacao;
       }
       if (_editedVaca?.partoPrevisto?.isNotEmpty ?? false) {
-        dataParto = _editedVaca.secagemPrevista;
+        dataParto = _editedVaca.partoPrevisto;
       }
       if (_editedVaca?.secagemPrevista?.isNotEmpty ?? false) {
         dataSecagem = _editedVaca.secagemPrevista;
@@ -206,7 +213,15 @@ class _CadastroVacaState extends State<CadastroVaca> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.pop(context, _editedVaca);
+            if (_nomeController.text.isEmpty) {
+              Toast.show("Nome inválido.", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            } else if (_dataNasc.text.isEmpty) {
+              Toast.show("Data nascimento inválida.", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            } else {
+              Navigator.pop(context, _editedVaca);
+            }
           },
           child: Icon(Icons.save),
           backgroundColor: Colors.green[700],
@@ -244,8 +259,8 @@ class _CadastroVacaState extends State<CadastroVaca> {
                   onChanged: (text) {
                     _vacasEdited = true;
                     setState(() {
-                      numeroData = text;
-                      _editedVaca.dataNascimento = text;
+                      numeroData = _dataNasc.text;
+                      _editedVaca.dataNascimento = _dataNasc.text;
                       idadeFinal = differenceDate();
                     });
                   },
@@ -339,6 +354,41 @@ class _CadastroVacaState extends State<CadastroVaca> {
                         color: Color.fromARGB(255, 4, 125, 141)),
                   ),
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Radio(
+                        value: 0,
+                        groupValue: _radioValueGestacao,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValueGestacao = value;
+                            _editedVaca.diagnosticoGestacao = "Vazia";
+                          });
+                        }),
+                    Text("Vazia"),
+                    Radio(
+                        value: 1,
+                        groupValue: _radioValueGestacao,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValueGestacao = value;
+                            _editedVaca.diagnosticoGestacao = "Gestante";
+                          });
+                        }),
+                    Text("Gestante"),
+                    Radio(
+                        value: 2,
+                        groupValue: _radioValueGestacao,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValueGestacao = value;
+                            _editedVaca.diagnosticoGestacao = "Aborto";
+                          });
+                        }),
+                    Text("Aborto"),
+                  ],
+                ),
                 RaisedButton(
                   onPressed: () {
                     _showMyDialog();
@@ -347,6 +397,34 @@ class _CadastroVacaState extends State<CadastroVaca> {
                 ),
                 SizedBox(
                   height: 15.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Radio(
+                        value: 0,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            _editedVaca.estado = "Vivo";
+                          });
+                        }),
+                    Text("Vivo"),
+                    Radio(
+                        value: 1,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            _editedVaca.estado = "Morto";
+                          });
+                        }),
+                    Text("Morto"),
+                  ],
+                ),
+                SizedBox(
+                  height: 20.0,
                 ),
               ],
             ),

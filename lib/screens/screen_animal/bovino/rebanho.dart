@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/info_rebanho.dart';
 
 class Rebanho extends StatelessWidget {
   @override
@@ -6,7 +7,10 @@ class Rebanho extends StatelessWidget {
     return Column(
       children: [
         GestureDetector(
-          onTap: () {},
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => InfoRebanho()));
+          },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),
             child: Stack(

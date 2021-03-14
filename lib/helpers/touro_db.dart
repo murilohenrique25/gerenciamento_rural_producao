@@ -63,11 +63,10 @@ class TouroDB extends HelperDB {
         await db.rawQuery("SELECT COUNT(*) FROM touro"));
   }
 
-  Future<int> updateItem(Touro touro) async {
+  Future<void> updateItem(Touro touro) async {
     Database db = await this.getDb();
-    int p = await db.update("touro", touro.toMap());
-
-    return p;
+    await db.update("touro", touro.toMap(),
+        where: "idTouro = ?", whereArgs: [touro.idTouro]);
   }
 
   Future<List> getAllItems() async {

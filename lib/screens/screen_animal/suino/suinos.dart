@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/description_suinos.dart';
 
 class Suinos extends StatefulWidget {
   @override
@@ -13,10 +14,10 @@ class _SuinosState extends State<Suinos> {
         children: [
           GestureDetector(
             onTap: () {
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (BuildContext context) => Reproducao()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => DescriptionSuinos()));
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15.0),

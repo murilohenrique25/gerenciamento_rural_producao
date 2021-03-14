@@ -65,11 +65,10 @@ class LeiteDB extends HelperDB {
         await db.rawQuery("SELECT COUNT(*) FROM leiteTable"));
   }
 
-  Future<int> updateItem(Leite leite) async {
+  Future<void> updateItem(Leite leite) async {
     Database db = await this.getDb();
-    int p = await db.update("leiteTable", leite.toMap());
-
-    return p;
+    await db.update("leiteTable", leite.toMap(),
+        where: "id_leite = ?", whereArgs: [leite.id]);
   }
 
   Future<List> getAllItems() async {

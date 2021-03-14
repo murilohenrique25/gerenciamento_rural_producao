@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/description_coleta_leite.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/description_prod_leite.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/description_receita_leite.dart';
 
 class DescriptionInfoLeite extends StatefulWidget {
   @override
@@ -63,27 +62,6 @@ class _DescriptionInfoLeiteState extends State<DescriptionInfoLeite> {
                     ),
                   ],
                 ),
-                //Segunda linha
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          width: _width,
-                          height: _height,
-                          color: Colors.grey[50],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: DescriptionReceitaLeite(),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                //Terceira linha
               ],
             )
           ],

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/medicamento_db.dart';
-import 'package:gerenciamento_rural/models/medicamento.dart';
-import 'package:gerenciamento_rural/screens/utilitarios/cadastrar_medicamentos.dart';
-import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPageMedicamento.dart';
+import 'package:gerenciamento_rural/helpers/tratamento_db.dart';
+import 'package:gerenciamento_rural/models/tratamento.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/medicamentos/cadastrar_tratamento.dart';
+import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPage.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
@@ -10,24 +10,24 @@ import 'package:path_provider/path_provider.dart';
 
 enum OrderOptions { orderaz, orderza }
 
-class Medicamentos extends StatefulWidget {
+class TratamentoList extends StatefulWidget {
   @override
-  _MedicamentosState createState() => _MedicamentosState();
+  _TratamentoListState createState() => _TratamentoListState();
 }
 
-class _MedicamentosState extends State<Medicamentos> {
+class _TratamentoListState extends State<TratamentoList> {
   TextEditingController editingController = TextEditingController();
-  MedicamentoDB helper = MedicamentoDB();
-  List<Medicamento> items = List();
-  List<Medicamento> medicamentos = List();
-  List<Medicamento> tMedicamentos = List();
+  TratamentoDB helper = TratamentoDB();
+  List<Tratamento> items = List();
+  List<Tratamento> tratamentos = List();
+  List<Tratamento> tTratamentos = List();
 
   @override
   void initState() {
     super.initState();
-    _getAllMedicamentos();
+    _getAllTratamentos();
     items = List();
-    tMedicamentos = List();
+    tTratamentos = List();
   }
 
   @override
@@ -56,11 +56,11 @@ class _MedicamentosState extends State<Medicamentos> {
           IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                _showMedicamentoPage();
+                _showTratamentoPage();
               }),
         ],
         centerTitle: true,
-        title: Text("Medicamentos"),
+        title: Text("Tratamentos"),
       ),
       body: Container(
         child: Column(
@@ -73,8 +73,8 @@ class _MedicamentosState extends State<Medicamentos> {
                 },
                 controller: editingController,
                 decoration: InputDecoration(
-                    labelText: "Buscar Medicamento",
-                    hintText: "Buscar Medicamento",
+                    labelText: "Buscar Tratamento",
+                    hintText: "Buscar Tratamento",
                     prefixIcon: Icon(Icons.search),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(25.0)))),
@@ -84,9 +84,9 @@ class _MedicamentosState extends State<Medicamentos> {
               child: ListView.builder(
                   shrinkWrap: true,
                   padding: EdgeInsets.all(10.0),
-                  itemCount: medicamentos.length,
+                  itemCount: tratamentos.length,
                   itemBuilder: (context, index) {
-                    return _medicamentoCard(context, index);
+                    return _tratamentoCard(context, index);
                   }),
             )
           ],
@@ -95,7 +95,7 @@ class _MedicamentosState extends State<Medicamentos> {
     );
   }
 
-  Widget _medicamentoCard(BuildContext context, int index) {
+  Widget _tratamentoCard(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
         child: Padding(
@@ -103,7 +103,7 @@ class _MedicamentosState extends State<Medicamentos> {
           child: Row(
             children: [
               Text(
-                "Nome: " + medicamentos[index].nomeMedicamento ?? "",
+                "Nome: " + tratamentos[index].nomeMedicamento ?? "",
                 style: TextStyle(fontSize: 14.0),
               ),
               SizedBox(
@@ -114,8 +114,7 @@ class _MedicamentosState extends State<Medicamentos> {
                 width: 15,
               ),
               Text(
-                "Quantidade: " + medicamentos[index].quantidade.toString() ??
-                    "",
+                "Animal: " + tratamentos[index].nomeAnimal ?? "",
                 style: TextStyle(fontSize: 14.0),
               )
             ],
@@ -128,30 +127,30 @@ class _MedicamentosState extends State<Medicamentos> {
     );
   }
 
-  void _getAllMedicamentos() {
+  void _getAllTratamentos() {
     items = List();
-    helper.getAllItems().then((value) {
+    helper.getAllItemsFemeas().then((value) {
       setState(() {
-        medicamentos = value;
-        items.addAll(medicamentos);
+        tratamentos = value;
+        items.addAll(tratamentos);
       });
     });
   }
 
-  void _showMedicamentoPage({Medicamento medicamento}) async {
-    final recMedicamento = await Navigator.push(
+  void _showTratamentoPage({Tratamento tratamento}) async {
+    final recTratamento = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => CadastroMedicamento(
-                  medicamento: medicamento,
+            builder: (context) => CadastroTratamento(
+                  tratamento: tratamento,
                 )));
-    if (recMedicamento != null) {
-      if (medicamento != null) {
-        await helper.updateItem(recMedicamento);
+    if (recTratamento != null) {
+      if (tratamento != null) {
+        await helper.updateItem(recTratamento);
       } else {
-        await helper.insert(recMedicamento);
+        await helper.insert(recTratamento);
       }
-      _getAllMedicamentos();
+      _getAllTratamentos();
     }
   }
 
@@ -176,8 +175,7 @@ class _MedicamentosState extends State<Medicamentos> {
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                          _showMedicamentoPage(
-                              medicamento: medicamentos[index]);
+                          _showTratamentoPage(tratamento: tratamentos[index]);
                         },
                       ),
                     ),
@@ -189,9 +187,9 @@ class _MedicamentosState extends State<Medicamentos> {
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
                         ),
                         onPressed: () {
-                          helper.delete(medicamentos[index].id);
+                          helper.delete(tratamentos[index].id);
                           setState(() {
-                            medicamentos.removeAt(index);
+                            tratamentos.removeAt(index);
                             Navigator.pop(context);
                           });
                         },
@@ -206,39 +204,39 @@ class _MedicamentosState extends State<Medicamentos> {
   }
 
   _creatPdf(context) async {
-    tMedicamentos = medicamentos;
+    tTratamentos = tratamentos;
     final pdfLib.Document pdf = pdfLib.Document(deflate: zlib.encode);
     pdf.addPage(pdfLib.MultiPage(
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome', 'Quantidade'],
-                ...tMedicamentos.map((item) =>
-                    [item.nomeMedicamento, item.quantidade.toString()])
+                <String>['Nome', 'Animal'],
+                ...tTratamentos
+                    .map((item) => [item.nomeMedicamento, item.nomeAnimal])
               ])
             ]));
 
     final String dir = (await getApplicationDocumentsDirectory()).path;
 
-    final String path = '$dir/pdfLotes.pdf';
+    final String path = '$dir/pdfTratamento.pdf';
     final File file = File(path);
     file.writeAsBytesSync(pdf.save());
     print("$file");
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => PdfViwerPageMedicamento(path: path)));
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => PdfViwerPage(path: path)));
   }
 
   void _orderList(OrderOptions result) {
     switch (result) {
       case OrderOptions.orderaz:
-        medicamentos.sort((a, b) {
+        tratamentos.sort((a, b) {
           return a.nomeMedicamento
               .toLowerCase()
               .compareTo(b.nomeMedicamento.toLowerCase());
         });
         break;
       case OrderOptions.orderza:
-        medicamentos.sort((a, b) {
+        tratamentos.sort((a, b) {
           return b.nomeMedicamento
               .toLowerCase()
               .compareTo(a.nomeMedicamento.toLowerCase());
@@ -249,24 +247,24 @@ class _MedicamentosState extends State<Medicamentos> {
   }
 
   void filterSearchResults(String query) {
-    List<Medicamento> dummySearchList = List();
+    List<Tratamento> dummySearchList = List();
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Medicamento> dummyListData = List();
+      List<Tratamento> dummyListData = List();
       dummySearchList.forEach((item) {
         if (item.nomeMedicamento.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
         }
       });
       setState(() {
-        medicamentos.clear();
-        medicamentos.addAll(dummyListData);
+        tratamentos.clear();
+        tratamentos.addAll(dummyListData);
       });
       return;
     } else {
       setState(() {
-        medicamentos.clear();
-        medicamentos.addAll(items);
+        tratamentos.clear();
+        tratamentos.addAll(items);
       });
     }
   }
@@ -293,7 +291,7 @@ class _MedicamentosState extends State<Medicamentos> {
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
-                      pdfLib.Text('Medicamentos',
+                      pdfLib.Text('Tratamentos',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white))
                     ],

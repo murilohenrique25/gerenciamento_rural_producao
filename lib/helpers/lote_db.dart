@@ -64,11 +64,10 @@ class LoteDB extends HelperDB {
         await db.rawQuery("SELECT COUNT(*) FROM loteTable"));
   }
 
-  Future<int> updateItem(Lote lote) async {
+  Future<void> updateItem(Lote lote) async {
     Database db = await this.getDb();
-    int p = await db.update("loteTable", lote.toMap());
-
-    return p;
+    await db.update("loteTable", lote.toMap(),
+        where: "id_lote = ?", whereArgs: [lote.id]);
   }
 
   Future<List> getAllItems() async {

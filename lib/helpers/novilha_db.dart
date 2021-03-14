@@ -64,11 +64,10 @@ class NovilhaDB extends HelperDB {
         await db.rawQuery("SELECT COUNT(*) FROM novilha"));
   }
 
-  Future<int> updateItem(Novilha novilha) async {
+  Future<void> updateItem(Novilha novilha) async {
     Database db = await this.getDb();
-    int p = await db.update("novilha", novilha.toMap());
-
-    return p;
+    await db.update("novilha", novilha.toMap(),
+        where: "idNovilha = ?", whereArgs: [novilha.idNovilha]);
   }
 
   Future<List> getAllItems() async {
