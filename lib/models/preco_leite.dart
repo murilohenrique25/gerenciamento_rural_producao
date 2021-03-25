@@ -23,6 +23,6 @@ class PrecoLeite {
 
   @override
   String toString() {
-    return "Lote(id:$id, name: $preco, codigoExterno : $data)";
+    return "PrecoLeite(id:$id, name: $preco, codigoExterno : $data)";
   }
 }

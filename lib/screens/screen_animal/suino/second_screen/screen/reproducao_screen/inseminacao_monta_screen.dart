@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/reproducao_screen/registers/cadastro_inseminacao_monta.dart';
 
 class InseminacaoMontaScreen extends StatefulWidget {
   @override
@@ -14,8 +15,10 @@ class _InseminacaoMontaScreenState extends State<InseminacaoMontaScreen> {
       children: [
         GestureDetector(
           onTap: () {
-            // Navigator.push(context,
-            //     MaterialPageRoute(builder: (context) => ListaBezerras()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => CadastroInseminacaoMonta()));
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),

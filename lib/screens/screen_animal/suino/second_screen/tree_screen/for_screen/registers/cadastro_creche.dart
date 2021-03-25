@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:gerenciamento_rural/models/cachaco.dart';
 import 'package:gerenciamento_rural/models/creche.dart';
+import 'package:gerenciamento_rural/models/matriz.dart';
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:toast/toast.dart';
@@ -14,7 +16,9 @@ class CadastroCreche extends StatefulWidget {
 
 class _CadastroCrecheState extends State<CadastroCreche> {
   String idadeFinal = "";
-  List lotes = [];
+  List<Matriz> matrizes = List();
+  List<Cachaco> cachacos = List();
+  List<String> estado = ["Aleitamento", "Creche", "Terminação", "Abatidos"];
   final _ninhadaController = TextEditingController();
   final _pesoController = TextEditingController();
   final _pesoDesmamaController = TextEditingController();
@@ -28,6 +32,7 @@ class _CadastroCrecheState extends State<CadastroCreche> {
   final _vivosController = TextEditingController();
   final _mortosController = TextEditingController();
   final _quantidadeController = TextEditingController();
+  final _estadoController = TextEditingController();
   final _loteController = TextEditingController();
   final _baiaController = TextEditingController();
   var _dataNasc = MaskedTextController(mask: '00-00-0000');
@@ -39,7 +44,11 @@ class _CadastroCrecheState extends State<CadastroCreche> {
   final df = new DateFormat("dd-MM-yyyy");
 
   String _idadeAnimal = "1ano e 2meses";
+  Creche _editedCreche;
+  bool _crecheEdited = false;
 
+  Cachaco cachaco = Cachaco();
+  Matriz matriz = Matriz();
   final GlobalKey<ScaffoldState> _scaffoldstate =
       new GlobalKey<ScaffoldState>();
 
@@ -53,38 +62,30 @@ class _CadastroCrecheState extends State<CadastroCreche> {
   void initState() {
     super.initState();
     _getAllLotes();
-    // if (widget.aleitamento == null) {
-    //   _editedBezerra = Bezerra();
-    //   _editedBezerra.virouNovilha = 0;
-    //   _editedBezerra.estado = "Vivo";
-    // } else {
-    //   _editedBezerra = Bezerra.fromMap(widget.aleitamento.toMap());
-    //   _ninhadaController.text = _editedBezerra.nome;
-    //   _racaController.text = _editedBezerra.raca;
-    //   if (_editedBezerra?.pesoDesmama?.isNaN ?? false) {
-    //     _pesoDesmamaController.text = _editedBezerra.pesoDesmama.toString();
-    //   }
-    //   if (_editedBezerra?.pesoNascimento?.isNaN ?? false) {
-    //     _pesoController.text = _editedBezerra.pesoNascimento.toString();
-    //   }
-
-    //   _dataDesmamaController.text = _editedBezerra.dataDesmama;
-    //   _paiController.text = _editedBezerra.pai;
-    //   _maeController.text = _editedBezerra.mae;
-    //   if (_editedBezerra.estado == "Vivo") {
-    //     _radioValue = 0;
-    //   } else {
-    //     _radioValue = 1;
-    //   }
-    //   _avoMMaternoController.text = _editedBezerra.avoMMaterno;
-    //   _avoFMaternoController.text = _editedBezerra.avoFMaterno;
-    //   _avoFPaternoController.text = _editedBezerra.avoFPaterno;
-    //   _avoMPaternoController.text = _editedBezerra.avoMPaterno;
-    //   selectedLotes = _editedBezerra.idLote;
-    //   numeroData = _editedBezerra.dataNascimento;
-    //   _dataNasc.text = numeroData;
-    //   idadeFinal = differenceDate();
-    // }
+    if (widget.creche == null) {
+      _editedCreche = Creche();
+      _editedCreche.estado = estado[1];
+      _estadoController.text = estado[1];
+    } else {
+      _editedCreche = Creche.fromMap(widget.creche.toMap());
+      _ninhadaController.text = _editedCreche.nomeAnimal;
+      _pesoController.text = _editedCreche.pesoNascimento;
+      _pesoDesmamaController.text = _editedCreche.pesoDesmama;
+      _racaController.text = _editedCreche.raca;
+      _paiController.text = _editedCreche.pai;
+      _maeController.text = _editedCreche.mae;
+      _obsController.text = _editedCreche.observacao;
+      _identificacaoController.text = _editedCreche.identificacao;
+      _sexoMachoController.text = _editedCreche.sexoM;
+      _sexoFemeaController.text = _editedCreche.sexoF;
+      _vivosController.text = _editedCreche.vivos;
+      _mortosController.text = _editedCreche.mortos;
+      _quantidadeController.text = _editedCreche.quantidade.toString();
+      _estadoController.text = _editedCreche.estado;
+      _loteController.text = _editedCreche.lote;
+      _baiaController.text = _editedCreche.baia;
+      _dataNasc.text = _editedCreche.dataNascimento;
+    }
   }
 
   Future<void> _showMyDialog() async {
@@ -93,21 +94,95 @@ class _CadastroCrecheState extends State<CadastroCreche> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Pedigree'),
+          title: Text('Geneologia'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _paiController,
-                  decoration: InputDecoration(labelText: "Pai"),
-                  onChanged: (text) {},
+                SearchableDropdown.single(
+                  items: cachacos.map((cachaco) {
+                    return DropdownMenuItem(
+                      value: cachaco,
+                      child: Row(
+                        children: [
+                          Text(cachaco.nomeAnimal),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  value: cachaco,
+                  hint: "Selecione um cachaço",
+                  searchHint: "Selecione um cachaço",
+                  onChanged: (value) {
+                    _crecheEdited = true;
+                    setState(() {
+                      _editedCreche.mae = value.nomeAnimal;
+                    });
+                  },
+                  doneButton: "Pronto",
+                  displayItem: (item, selected) {
+                    return (Row(children: [
+                      selected
+                          ? Icon(
+                              Icons.radio_button_checked,
+                              color: Colors.grey,
+                            )
+                          : Icon(
+                              Icons.radio_button_unchecked,
+                              color: Colors.grey,
+                            ),
+                      SizedBox(width: 7),
+                      Expanded(
+                        child: item,
+                      ),
+                    ]));
+                  },
+                  isExpanded: true,
                 ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _maeController,
-                  decoration: InputDecoration(labelText: "Mãe"),
-                  onChanged: (text) {},
+                SizedBox(
+                  height: 10.0,
+                ),
+                SearchableDropdown.single(
+                  items: matrizes.map((matriz) {
+                    return DropdownMenuItem(
+                      value: matriz,
+                      child: Row(
+                        children: [
+                          Text(matriz.nomeAnimal),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  value: matriz,
+                  hint: "Selecione uma matriz",
+                  searchHint: "Selecione uma matriz",
+                  onChanged: (value) {
+                    _crecheEdited = true;
+                    setState(() {
+                      _editedCreche.pai = value.nomeAnimal;
+                    });
+                  },
+                  doneButton: "Pronto",
+                  displayItem: (item, selected) {
+                    return (Row(children: [
+                      selected
+                          ? Icon(
+                              Icons.radio_button_checked,
+                              color: Colors.grey,
+                            )
+                          : Icon(
+                              Icons.radio_button_unchecked,
+                              color: Colors.grey,
+                            ),
+                      SizedBox(width: 7),
+                      Expanded(
+                        child: item,
+                      ),
+                    ]));
+                  },
+                  isExpanded: true,
+                ),
+                SizedBox(
+                  height: 10.0,
                 ),
               ],
             ),
@@ -133,7 +208,7 @@ class _CadastroCrecheState extends State<CadastroCreche> {
         key: _scaffoldstate,
         appBar: AppBar(
           title: Text(
-            "Cadastrar Creche",
+            "Cadastrar Aleitamento",
             style: TextStyle(fontSize: 15.0),
           ),
           centerTitle: true,
@@ -209,25 +284,24 @@ class _CadastroCrecheState extends State<CadastroCreche> {
                   height: 20.0,
                 ),
                 SearchableDropdown.single(
-                  items: lotes.map((lote) {
+                  items: estado.map((estado) {
                     return DropdownMenuItem(
-                      value: lote.id,
+                      value: estado,
                       child: Row(
                         children: [
-                          Text(lote.name),
+                          Text(estado),
                         ],
                       ),
                     );
                   }).toList(),
-                  value: "lote",
+                  value: estado,
                   hint: "Selecione um Estado",
                   searchHint: "Selecione um Estado",
                   onChanged: (value) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.idLote = value;
-                    //   selectedLotes = value;
-                    // });
+                    _crecheEdited = true;
+                    setState(() {
+                      _editedCreche.estado = value;
+                    });
                   },
                   doneButton: "Pronto",
                   displayItem: (item, selected) {
@@ -388,7 +462,7 @@ class _CadastroCrecheState extends State<CadastroCreche> {
                   onPressed: () {
                     _showMyDialog();
                   },
-                  child: Text("Pedigree"),
+                  child: Text("Geneologia"),
                 ),
                 SizedBox(
                   height: 15.0,
@@ -405,7 +479,7 @@ class _CadastroCrecheState extends State<CadastroCreche> {
   }
 
   Future<bool> _requestPop() {
-    if (false) {
+    if (_crecheEdited) {
       showDialog(
           context: context,
           builder: (context) {

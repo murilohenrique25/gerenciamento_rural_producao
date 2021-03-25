@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/reproducao_screen/registers/cadastro_estoque_semen.dart';
 
 class EstoqueSemenScreen extends StatefulWidget {
   @override
@@ -14,8 +15,10 @@ class _EstoqueSemenScreenState extends State<EstoqueSemenScreen> {
       children: [
         GestureDetector(
           onTap: () {
-            // Navigator.push(context,
-            //     MaterialPageRoute(builder: (context) => ListaBezerras()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => CadastroEstoqueSemenSuino()));
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),

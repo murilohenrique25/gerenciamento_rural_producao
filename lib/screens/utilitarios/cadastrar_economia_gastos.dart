@@ -10,6 +10,8 @@ class CadastroEconomiaGasto extends StatefulWidget {
 }
 
 class _CadastroEconomiaGastoState extends State<CadastroEconomiaGasto> {
+  List<String> tipos = ["Nenhum", "Bovinos De Leite", "Touros", "Suínos"];
+  String valorTipo;
   final _nomeLoteController = TextEditingController();
   final _valorController = TextEditingController();
   final _quantidadeController = TextEditingController();

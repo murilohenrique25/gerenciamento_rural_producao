@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/list_bezerras.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/tree_screen/info_rebanho_suinos.dart';
 
 class DadosRebanhoSuinoScreen extends StatefulWidget {
   @override
@@ -17,7 +17,7 @@ class _DadosRebanhoSuinoScreenState extends State<DadosRebanhoSuinoScreen> {
         GestureDetector(
           onTap: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ListaBezerras()));
+                MaterialPageRoute(builder: (context) => InfoRebanhoSuinos()));
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),

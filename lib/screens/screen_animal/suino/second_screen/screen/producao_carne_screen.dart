@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/list_bezerras.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/producao_carne/registers/cadastro_producao_carne_suina.dart';
 
 class ProducaoCarneSuinoScreen extends StatefulWidget {
   @override
@@ -16,8 +16,10 @@ class _ProducaoCarneSuinoScreenState extends State<ProducaoCarneSuinoScreen> {
       children: [
         GestureDetector(
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ListaBezerras()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => CadastroProducaoCarneSuina()));
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),
@@ -41,7 +43,7 @@ class _ProducaoCarneSuinoScreenState extends State<ProducaoCarneSuinoScreen> {
                       //   size: 21.0,
                       // ),
                       Text(
-                        "Producão de\nCarne",
+                        "Produção de\nCarne",
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 16.5,

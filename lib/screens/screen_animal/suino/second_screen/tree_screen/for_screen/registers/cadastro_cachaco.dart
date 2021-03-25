@@ -87,7 +87,7 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Pedigree'),
+          title: Text('Genealogia'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -310,7 +310,7 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                   onPressed: () {
                     _showMyDialog();
                   },
-                  child: Text("Pedigree"),
+                  child: Text("Genealogia"),
                 ),
                 SizedBox(
                   height: 15.0,
@@ -338,6 +338,16 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                           });
                         }),
                     Text("Morto"),
+                    Radio(
+                        value: 2,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            estado = "Vendido";
+                          });
+                        }),
+                    Text("Vendido"),
                   ],
                 ),
                 SizedBox(

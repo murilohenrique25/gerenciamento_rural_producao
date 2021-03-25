@@ -1,11 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/dados_rebanho_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/economia_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/nutricao_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/plantel_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/producao_carne_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/reproducao_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/tratamentos_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/tree_screen/screen/aleitamento_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/tree_screen/screen/cachacos_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/tree_screen/screen/creche_screen.dart';

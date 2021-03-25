@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/list_preco_leite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/tree_screen/list_preco_carne.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/economias_gastos.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/lotes.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/relatorios/relatorios.dart';
@@ -43,6 +44,8 @@ class CustomDrawer extends StatelessWidget {
               DrawerTile(Icons.arrow_right, "Gastos", Economia()),
               DrawerTile(Icons.arrow_right, "Relatorios", Relatorios()),
               DrawerTile(Icons.arrow_right, "Preço do Leite", PrecoLeiteList()),
+              DrawerTile(Icons.arrow_right, "Preço da Carne Suína",
+                  PrecoCarneSuinaList()),
             ],
           ),
         ],

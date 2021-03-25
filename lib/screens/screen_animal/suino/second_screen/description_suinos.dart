@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/dados_rebanho_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/economia_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/medicamentos_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/nutricao_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/plantel_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/producao_carne_screen.dart';
@@ -126,7 +127,7 @@ class _DescriptionSuinosState extends State<DescriptionSuinos> {
                         ),
                         Padding(
                             padding: EdgeInsets.all(10.0),
-                            child: ProducaoCarneSuinoScreen()),
+                            child: MedicamentoSuinoScreen()),
                       ],
                     ),
                   ],
@@ -134,6 +135,20 @@ class _DescriptionSuinosState extends State<DescriptionSuinos> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: _width,
+                          height: _height,
+                          color: Colors.grey[50],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: ProducaoCarneSuinoScreen(),
+                        ),
+                      ],
+                    ),
                     Stack(
                       alignment: Alignment.center,
                       children: [
