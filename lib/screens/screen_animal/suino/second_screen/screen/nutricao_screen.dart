@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/nutricao_screen/registers/cadastro_nutricao_suino.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/nutricao_screen/nutricao_list.dart';
 
 class NutricaoSuinoScreen extends StatefulWidget {
   @override
@@ -15,10 +15,8 @@ class _NutricaoSuinoScreenState extends State<NutricaoSuinoScreen> {
       children: [
         GestureDetector(
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => CadastroNutricaoSuino()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ListaNutricaoSuina()));
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),

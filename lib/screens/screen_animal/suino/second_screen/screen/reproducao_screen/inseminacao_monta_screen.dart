@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/reproducao_screen/registers/cadastro_inseminacao_monta.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/reproducao_screen/inseminacao_suina_list.dart';
 
 class InseminacaoMontaScreen extends StatefulWidget {
   @override
@@ -18,7 +18,7 @@ class _InseminacaoMontaScreenState extends State<InseminacaoMontaScreen> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => CadastroInseminacaoMonta()));
+                    builder: (context) => ListaInseminacaoSuina()));
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),

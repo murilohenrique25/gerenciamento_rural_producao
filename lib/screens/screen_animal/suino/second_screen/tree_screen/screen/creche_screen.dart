@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/tree_screen/for_screen/registers/cadastro_creche.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/tree_screen/for_screen/list_creche.dart';
 
 class CrecheSuinoScreen extends StatefulWidget {
   @override
@@ -16,7 +16,7 @@ class _CrecheSuinoScreenState extends State<CrecheSuinoScreen> {
         GestureDetector(
           onTap: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => CadastroCreche()));
+                MaterialPageRoute(builder: (context) => ListaCreche()));
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),

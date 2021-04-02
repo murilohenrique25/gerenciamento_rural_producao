@@ -15,8 +15,9 @@ class CadastroMatriz extends StatefulWidget {
 
 class _CadastroMatrizState extends State<CadastroMatriz> {
   String idadeFinal = "";
-  String numPartos = "1";
-  List situacao = [];
+  String numeroData = "";
+  int numPartos = 0;
+  String nomeD = "";
   List<String> diagnosticos = ["Vazia", "Prenha", "Aborto"];
   String diagnostico = "";
   int _radioValue = 0;
@@ -26,7 +27,6 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
   final _racaController = TextEditingController();
   final _paiController = TextEditingController();
   final _maeController = TextEditingController();
-  final _estadoController = TextEditingController();
   final _baiaController = TextEditingController();
   final _loteController = TextEditingController();
   final _diasprenhaController = TextEditingController();
@@ -51,11 +51,11 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
   @override
   void initState() {
     super.initState();
-    _getAllLotes();
     if (widget.matriz == null) {
       _editedMatriz = Matriz();
       _editedMatriz.estado = "Vivo";
     } else {
+      _editedMatriz = Matriz.fromMap(widget.matriz.toMap());
       _nomeController.text = _editedMatriz.nomeAnimal;
       _origemController.text = _editedMatriz.origem;
       _racaController.text = _editedMatriz.raca;
@@ -68,10 +68,15 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
       } else {
         _radioValue = 2;
       }
+
+      _diasprenhaController.text = _editedMatriz.diasPrenha.toString();
+      nomeD = _editedMatriz.diagnosticoGestacao;
+      numPartos = _editedMatriz.numeroPartos;
       _baiaController.text = _editedMatriz.baia;
       _loteController.text = _editedMatriz.lote;
       _diasprenhaController.text = _editedMatriz.diasPrenha.toString();
-      _dataNasc.text = _editedMatriz.dataNascimento;
+      numeroData = _editedMatriz.dataNascimento;
+      _dataNasc.text = numeroData;
     }
   }
 
@@ -89,13 +94,23 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                   keyboardType: TextInputType.text,
                   controller: _paiController,
                   decoration: InputDecoration(labelText: "Pai"),
-                  onChanged: (text) {},
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.pai = text;
+                    });
+                  },
                 ),
                 TextField(
                   keyboardType: TextInputType.text,
                   controller: _maeController,
                   decoration: InputDecoration(labelText: "Mãe"),
-                  onChanged: (text) {},
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.mae = text;
+                    });
+                  },
                 ),
               ],
             ),
@@ -141,7 +156,10 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
               Toast.show("Data nascimento inválida.", context,
                   duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
             } else {
-              // Navigator.pop(context, _editedBezerra);
+              if (_diasprenhaController.text == null) {
+                _editedMatriz.diasPrenha = 0;
+              }
+              Navigator.pop(context, _editedMatriz);
             }
           },
           child: Icon(Icons.save),
@@ -165,19 +183,24 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                 TextField(
                   controller: _nomeController,
                   decoration: InputDecoration(labelText: "Nome ou Número"),
-                  onChanged: (text) {},
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.nomeAnimal = text;
+                    });
+                  },
                 ),
                 TextField(
                   controller: _dataNasc,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(labelText: "Data de Nascimento"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   numeroData = _dataNasc.text;
-                    //   _editedBezerra.dataNascimento = _dataNasc.text;
-                    //   idadeFinal = differenceDate();
-                    // });
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.dataNascimento = text;
+                      numeroData = _dataNasc.text;
+                      idadeFinal = differenceDate();
+                    });
                   },
                 ),
                 SizedBox(
@@ -191,25 +214,14 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                   height: 20.0,
                 ),
                 TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _estadoController,
-                  decoration: InputDecoration(labelText: "Estado"),
-                  onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
-                  },
-                ),
-                TextField(
                   keyboardType: TextInputType.number,
                   controller: _baiaController,
                   decoration: InputDecoration(labelText: "Baia"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.baia = text;
+                    });
                   },
                 ),
                 TextField(
@@ -217,42 +229,21 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                   controller: _racaController,
                   decoration: InputDecoration(labelText: "Raça"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.raca = text;
+                    });
                   },
-                ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _estadoController,
-                  decoration: InputDecoration(labelText: "Estado"),
-                  onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
-                  },
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                Text("Parto previsto:  $idadeFinal",
-                    style: TextStyle(
-                        fontSize: 16.0,
-                        color: Color.fromARGB(255, 4, 125, 141))),
-                SizedBox(
-                  height: 20.0,
                 ),
                 TextField(
                   keyboardType: TextInputType.number,
                   controller: _origemController,
                   decoration: InputDecoration(labelText: "Origem"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.pesoNascimento = double.parse(text);
-                    // });
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.origem = text;
+                    });
                   },
                 ),
                 TextField(
@@ -260,58 +251,11 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                   controller: _loteController,
                   decoration: InputDecoration(labelText: "Lote"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.pesoNascimento = double.parse(text);
-                    // });
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.lote = text;
+                    });
                   },
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                SearchableDropdown.single(
-                  items: situacao.map((situacao) {
-                    return DropdownMenuItem(
-                      value: situacao.id,
-                      child: Row(
-                        children: [
-                          Text(situacao.name),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: "situacao",
-                  hint: "Selecione uma situação",
-                  searchHint: "Selecione uma situação",
-                  onChanged: (value) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.idLote = value;
-                    //   selectedLotes = value;
-                    // });
-                  },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
-                ),
-                SizedBox(
-                  height: 20.0,
                 ),
                 SearchableDropdown.single(
                   items: diagnosticos.map((d) {
@@ -328,11 +272,10 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                   hint: "Selecione um diagnostico",
                   searchHint: "Selecione um diagnostico",
                   onChanged: (value) {
+                    _matrizEdited = true;
                     setState(() {
-                      diagnostico = value;
-                      if (value != "Prenha") {
-                        _diasprenhaController.text = "";
-                      }
+                      _editedMatriz.diagnosticoGestacao = value;
+                      nomeD = value;
                     });
                   },
                   doneButton: "Pronto",
@@ -358,14 +301,24 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                 SizedBox(
                   height: 20.0,
                 ),
+                Text("Diagnóstico selecionado:  $nomeD",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                SizedBox(
+                  height: 10.0,
+                ),
                 TextField(
-                  enabled: diagnostico == "Prenha" ? true : false,
+                  enabled: nomeD == "Prenha" ? true : false,
                   keyboardType: TextInputType.number,
                   controller: _diasprenhaController,
                   decoration:
                       InputDecoration(labelText: "Dias que está prenha"),
                   onChanged: (text) {
-                    setState(() {});
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.diasPrenha = int.parse(text);
+                    });
                   },
                 ),
                 SizedBox(
@@ -396,7 +349,7 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                         onChanged: (int value) {
                           setState(() {
                             _radioValue = value;
-                            estado = "Viva";
+                            _editedMatriz.estado = "Viva";
                           });
                         }),
                     Text("Vivo"),
@@ -406,7 +359,7 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                         onChanged: (int value) {
                           setState(() {
                             _radioValue = value;
-                            estado = "Morta";
+                            _editedMatriz.estado = "Morta";
                           });
                         }),
                     Text("Morto"),
@@ -416,7 +369,7 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                         onChanged: (int value) {
                           setState(() {
                             _radioValue = value;
-                            estado = "Vendida";
+                            _editedMatriz.estado = "Vendida";
                           });
                         }),
                     Text("Vendida"),
@@ -468,9 +421,9 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
   String differenceDate() {
     String num = "";
     DateTime dt = DateTime.now();
-    // if (numeroData.isNotEmpty) {
-    //   num = numeroData.split('-').reversed.join();
-    // }
+    if (numeroData.isNotEmpty) {
+      num = numeroData.split('-').reversed.join();
+    }
 
     DateTime date = DateTime.parse(num);
     int quant = dt.difference(date).inDays;
@@ -500,13 +453,5 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
       _idadeAnimal = "6 ano e $dias dias";
     }
     return _idadeAnimal;
-  }
-
-  void _getAllLotes() {
-    // helperLote.getAllItems().then((list) {
-    //   setState(() {
-    //     lotes = list;
-    //   });
-    // });
   }
 }

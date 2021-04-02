@@ -1,22 +1,22 @@
 import 'package:gerenciamento_rural/helpers/HelperDB.dart';
 import 'package:gerenciamento_rural/helpers/application.dart';
-import 'package:gerenciamento_rural/models/aleitamento.dart';
+import 'package:gerenciamento_rural/models/abatidos.dart';
 import 'package:sqflite/sqflite.dart';
 
-class AleitamentoDB extends HelperDB {
-  Aleitamento aleitamento;
+class AbatidosDB extends HelperDB {
+  Abatido abatido;
   //Singleton
   //
-  static AleitamentoDB _this;
-  factory AleitamentoDB() {
+  static AbatidosDB _this;
+  factory AbatidosDB() {
     if (_this == null) {
-      _this = AleitamentoDB.getInstance();
+      _this = AbatidosDB.getInstance();
     }
     return _this;
   }
   //
   //The instance
-  AleitamentoDB.getInstance() : super();
+  AbatidosDB.getInstance() : super();
   //
 
   @override
@@ -28,7 +28,7 @@ class AleitamentoDB extends HelperDB {
   @override
   Future<Map> getItem(dynamic where) async {
     Database db = await this.getDb();
-    List<Map> items = await db.query("aleitamento",
+    List<Map> items = await db.query("abatido",
         where: "id = ?", whereArgs: [where], limit: 1);
     Map result = Map();
     if (items.isNotEmpty) {
@@ -37,22 +37,22 @@ class AleitamentoDB extends HelperDB {
     return result;
   }
 
-  Future<Aleitamento> insert(Aleitamento aleitamento) async {
+  Future<Abatido> insert(Abatido abatido) async {
     Database db = await this.getDb();
-    aleitamento.id = await db.insert("aleitamento", aleitamento.toMap());
-    return aleitamento;
+    abatido.id = await db.insert("abatido", abatido.toMap());
+    return abatido;
   }
 
   @override
   Future<List<Map>> list() async {
     Database db = await this.getDb();
-    return db.rawQuery("SELECT * FROM aleitamento orderBy id CRESC");
+    return db.rawQuery("SELECT * FROM abatido orderBy id CRESC");
   }
 
   @override
   Future<bool> delete(dynamic id) async {
     Database db = await this.getDb();
-    int rows = await db.delete("aleitamento", where: "id = ?", whereArgs: [id]);
+    int rows = await db.delete("abatido", where: "id = ?", whereArgs: [id]);
 
     return (rows != 0);
   }
@@ -60,22 +60,21 @@ class AleitamentoDB extends HelperDB {
   Future<int> getNumber() async {
     Database db = await this.getDb();
     return Sqflite.firstIntValue(
-        await db.rawQuery("SELECT COUNT(*) FROM aleitamento"));
+        await db.rawQuery("SELECT COUNT(*) FROM abatido"));
   }
 
-  Future<void> updateItem(Aleitamento aleitamento) async {
+  Future<void> updateItem(Abatido abatido) async {
     Database db = await this.getDb();
-    await db.update("aleitamento", aleitamento.toMap(),
-        where: "id = ?", whereArgs: [aleitamento.id]);
+    await db.update("abatido", abatido.toMap(),
+        where: "id = ?", whereArgs: [abatido.id]);
   }
 
   Future<List> getAllItems() async {
     Database db = await this.getDb();
-    List listMap =
-        await db.rawQuery("SELECT * FROM aleitamento WHERE mudar_plantel == 0");
-    List<Aleitamento> list = List();
+    List listMap = await db.rawQuery("SELECT * FROM abatido");
+    List<Abatido> list = List();
     for (Map m in listMap) {
-      list.add(Aleitamento.fromMap(m));
+      list.add(Abatido.fromMap(m));
     }
     return list;
   }

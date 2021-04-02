@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_rural/helpers/preco_carne_suina_db.dart';
 import 'package:gerenciamento_rural/models/preco_carne_suina.dart';
 import 'package:gerenciamento_rural/models/producao_carne_suina.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:toast/toast.dart';
 
 class CadastroProducaoCarneSuina extends StatefulWidget {
-  final ProducaoCarneSuina precoCarneSuina;
-  CadastroProducaoCarneSuina({this.precoCarneSuina});
+  final ProducaoCarneSuina producaoCarneSuina;
+  CadastroProducaoCarneSuina({this.producaoCarneSuina});
   @override
   _CadastroProducaoCarneSuinaState createState() =>
       _CadastroProducaoCarneSuinaState();
@@ -14,20 +15,25 @@ class CadastroProducaoCarneSuina extends StatefulWidget {
 
 class _CadastroProducaoCarneSuinaState
     extends State<CadastroProducaoCarneSuina> {
+  PrecoCarneSuinaDB _precoCarneSuinaDB = PrecoCarneSuinaDB();
   List<PrecoCarneSuina> precoCarne = List();
-  PrecoCarneSuina precoCarneSuina = PrecoCarneSuina();
+  PrecoCarneSuina precoCarneSuina;
   final precoController = TextEditingController();
-
-  bool _precoCarneEdited = false;
-  PrecoCarneSuina _editedPrecoCarne;
+  String nomeMes = "Vazio";
+  double nomePreco = 0.0;
+  bool _producaoCarneEdited = false;
+  ProducaoCarneSuina _editedProducaoCarne;
 
   @override
   void initState() {
     super.initState();
-    if (widget.precoCarneSuina == null) {
-      _editedPrecoCarne = PrecoCarneSuina();
+    _getAllPreco();
+    if (widget.producaoCarneSuina == null) {
+      _editedProducaoCarne = ProducaoCarneSuina();
     } else {
-      precoController.text = _editedPrecoCarne.preco.toString();
+      precoController.text = _editedProducaoCarne.preco.toString();
+      nomeMes = _editedProducaoCarne.data;
+      nomePreco = _editedProducaoCarne.preco;
     }
   }
 
@@ -43,15 +49,20 @@ class _CadastroProducaoCarneSuinaState
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             setState(() {
-              if (_editedPrecoCarne.preco.isNaN) {
+              if (_editedProducaoCarne.preco.isNaN) {
                 Toast.show("Informe o preço", context,
                     duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
-              } else if (_editedPrecoCarne.data.isEmpty ||
-                  _editedPrecoCarne.data.length < 7) {
+              } else if (_editedProducaoCarne.data == "" ||
+                  _editedProducaoCarne.data.length < 7) {
                 Toast.show("Informe a data", context,
                     duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+              } else if (_editedProducaoCarne.quantidade == null) {
+                Toast.show("Informe a quantidade", context,
+                    duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
               } else {
-                Navigator.pop(context, _editedPrecoCarne);
+                double t = _editedProducaoCarne.quantidade * nomePreco;
+                _editedProducaoCarne.total = t;
+                Navigator.pop(context, _editedProducaoCarne);
               }
             });
           },
@@ -76,8 +87,9 @@ class _CadastroProducaoCarneSuinaState
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(labelText: "Quantidade"),
                   onChanged: (text) {
+                    _producaoCarneEdited = true;
                     setState(() {
-                      _editedPrecoCarne.preco = double.parse(text);
+                      _editedProducaoCarne.quantidade = double.parse(text);
                     });
                   },
                 ),
@@ -96,9 +108,12 @@ class _CadastroProducaoCarneSuinaState
                   hint: "Selecione um mês",
                   searchHint: "Selecione um mês",
                   onChanged: (value) {
+                    _producaoCarneEdited = true;
                     setState(() {
-                      precoCarneSuina.data = value.data;
-                      precoCarneSuina.preco = value.preco;
+                      _editedProducaoCarne.data = value.data;
+                      nomeMes = value.data;
+                      _editedProducaoCarne.preco = value.preco;
+                      nomePreco = value.preco;
                     });
                   },
                   doneButton: "Pronto",
@@ -124,6 +139,14 @@ class _CadastroProducaoCarneSuinaState
                 SizedBox(
                   height: 5.0,
                 ),
+                Text(
+                    "Mês selecionado:  $nomeMes\nPreço selecionado: $nomePreco",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                SizedBox(
+                  height: 10.0,
+                ),
               ],
             ),
           ),
@@ -132,8 +155,16 @@ class _CadastroProducaoCarneSuinaState
     );
   }
 
+  void _getAllPreco() {
+    _precoCarneSuinaDB.getAllItems().then((value) {
+      setState(() {
+        precoCarne = value;
+      });
+    });
+  }
+
   Future<bool> _requestPop() {
-    if (_precoCarneEdited) {
+    if (_producaoCarneEdited) {
       showDialog(
           context: context,
           builder: (context) {

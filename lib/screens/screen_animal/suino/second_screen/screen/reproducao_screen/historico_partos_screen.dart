@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/reproducao_screen/historico_parto_suino_list.dart';
 
 class HistoricoPartoScreen extends StatefulWidget {
   @override
@@ -14,8 +15,10 @@ class _HistoricoPartoScreenState extends State<HistoricoPartoScreen> {
       children: [
         GestureDetector(
           onTap: () {
-            // Navigator.push(context,
-            //     MaterialPageRoute(builder: (context) => ListaBezerras()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ListaHistoricoPartoSuino()));
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),

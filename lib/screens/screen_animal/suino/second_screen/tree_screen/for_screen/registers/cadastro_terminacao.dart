@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:gerenciamento_rural/helpers/abatidos_db.dart';
+import 'package:gerenciamento_rural/helpers/cachaco_db.dart';
+import 'package:gerenciamento_rural/helpers/matriz_db.dart';
+import 'package:gerenciamento_rural/helpers/terminacao_db.dart';
+import 'package:gerenciamento_rural/models/abatidos.dart';
 import 'package:gerenciamento_rural/models/cachaco.dart';
 import 'package:gerenciamento_rural/models/matriz.dart';
 import 'package:gerenciamento_rural/models/terminacao.dart';
@@ -16,9 +21,15 @@ class CadastroTerminacao extends StatefulWidget {
 
 class _CadastroTerminacaoState extends State<CadastroTerminacao> {
   String idadeFinal = "";
+  String numeroData = "";
+  String nomeMatriz = "Vazio";
+  String nomeCachaco = "Vazio";
+  String nomeEstado = "Vazio";
   List<Matriz> matrizes = List();
   List<Cachaco> cachacos = List();
-  List<String> estado = ["Aleitamento", "Creche", "Terminação", "Abatidos"];
+  MatrizDB matrizDB = MatrizDB();
+  CachacoDB cachacoDB = CachacoDB();
+  List<String> estado = ["Terminação", "Abatidos"];
   final _ninhadaController = TextEditingController();
   final _pesoController = TextEditingController();
   final _pesoDesmamaController = TextEditingController();
@@ -35,7 +46,10 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
   final _estadoController = TextEditingController();
   final _loteController = TextEditingController();
   final _baiaController = TextEditingController();
+  final _pesoAbateController = TextEditingController();
+  final _pesoMedioController = TextEditingController();
   var _dataNasc = MaskedTextController(mask: '00-00-0000');
+  var _dataAbate = MaskedTextController(mask: '00-00-0000');
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -45,7 +59,7 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
 
   String _idadeAnimal = "1ano e 2meses";
   Terminacao _editedTerminacao;
-  bool _terminacaoEdited = false;
+  bool _termiancaoEdited = false;
 
   Cachaco cachaco = Cachaco();
   Matriz matriz = Matriz();
@@ -64,11 +78,12 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
     _getAllLotes();
     if (widget.terminacao == null) {
       _editedTerminacao = Terminacao();
-      _editedTerminacao.estado = estado[2];
-      _estadoController.text = estado[2];
+      _editedTerminacao.estado = estado[0];
+      _estadoController.text = estado[0];
+      _editedTerminacao.mudarPlantel = 0;
     } else {
       _editedTerminacao = Terminacao.fromMap(widget.terminacao.toMap());
-      _ninhadaController.text = _editedTerminacao.nomeAnimal;
+      _ninhadaController.text = _editedTerminacao.nome;
       _pesoController.text = _editedTerminacao.pesoNascimento;
       _pesoDesmamaController.text = _editedTerminacao.pesoDesmama;
       _racaController.text = _editedTerminacao.raca;
@@ -84,37 +99,107 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
       _estadoController.text = _editedTerminacao.estado;
       _loteController.text = _editedTerminacao.lote;
       _baiaController.text = _editedTerminacao.baia;
-      _dataNasc.text = _editedTerminacao.dataNascimento;
+      matriz.nomeAnimal = _editedTerminacao.mae;
+      cachaco.nomeAnimal = _editedTerminacao.pai;
+      numeroData = _editedTerminacao.dataNascimento;
+      _dataNasc.text = numeroData;
+      idadeFinal = differenceDate();
     }
   }
 
-  Future<void> _showMyDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Geneologia'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: _requestPop,
+      child: Scaffold(
+        key: _scaffoldstate,
+        appBar: AppBar(
+          title: Text(
+            "Cadastrar Terminação",
+            style: TextStyle(fontSize: 15.0),
+          ),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: _reset,
+            )
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            if (_ninhadaController.text.isEmpty) {
+              Toast.show("Ninhada inválido.", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            }
+            // else if (_dataNasc.text.isEmpty) {
+            //   Toast.show("Data nascimento inválida.", context,
+            //       duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            // }
+            else {
+              if (_editedTerminacao.estado == "Terminacao") {
+                Navigator.pop(context, _editedTerminacao);
+              } else if (_editedTerminacao.estado == "Abatidos") {
+                TerminacaoDB terminacaoDB = TerminacaoDB();
+                AbatidosDB abatidosDB = AbatidosDB();
+                Abatido abatido;
+                _editedTerminacao.mudarPlantel = 1;
+                terminacaoDB.updateItem(_editedTerminacao);
+                abatido = Abatido.fromMap(_editedTerminacao.toMap());
+                abatidosDB.insert(abatido);
+                Navigator.pushNamed(context, 'plantel');
+              }
+            }
+          },
+          child: Icon(Icons.save),
+          backgroundColor: Colors.green[700],
+        ),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Icon(
+                  Icons.add_circle,
+                  size: 80.0,
+                  color: Color.fromARGB(255, 4, 125, 141),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                TextField(
+                  controller: _ninhadaController,
+                  decoration: InputDecoration(labelText: "Ninhada"),
+                  onChanged: (text) {
+                    _termiancaoEdited = true;
+                    setState(() {
+                      _editedTerminacao.nome = text;
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
                 SearchableDropdown.single(
-                  items: cachacos.map((cachaco) {
+                  items: matrizes.map((matriz) {
                     return DropdownMenuItem(
-                      value: cachaco,
+                      value: matriz,
                       child: Row(
                         children: [
-                          Text(cachaco.nomeAnimal),
+                          Text(matriz.nomeAnimal),
                         ],
                       ),
                     );
                   }).toList(),
-                  value: cachaco,
-                  hint: "Selecione um cachaço",
-                  searchHint: "Selecione um cachaço",
+                  value: matriz,
+                  hint: "Selecione uma matriz",
+                  searchHint: "Selecione uma matriz",
                   onChanged: (value) {
-                    _terminacaoEdited = true;
+                    _termiancaoEdited = true;
                     setState(() {
+                      nomeMatriz = value.nomeAnimal;
                       _editedTerminacao.mae = value.nomeAnimal;
                     });
                   },
@@ -141,23 +226,31 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                 SizedBox(
                   height: 10.0,
                 ),
+                Text("Matriz selecionada:  $nomeMatriz",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                SizedBox(
+                  height: 10.0,
+                ),
                 SearchableDropdown.single(
-                  items: matrizes.map((matriz) {
+                  items: cachacos.map((cachaco) {
                     return DropdownMenuItem(
-                      value: matriz,
+                      value: cachaco,
                       child: Row(
                         children: [
-                          Text(matriz.nomeAnimal),
+                          Text(cachaco.nomeAnimal),
                         ],
                       ),
                     );
                   }).toList(),
-                  value: matriz,
-                  hint: "Selecione uma matriz",
-                  searchHint: "Selecione uma matriz",
+                  value: cachaco,
+                  hint: "Selecione um cachaço",
+                  searchHint: "Selecione um cachaço",
                   onChanged: (value) {
-                    _terminacaoEdited = true;
+                    _termiancaoEdited = true;
                     setState(() {
+                      nomeCachaco = value.nomeAnimal;
                       _editedTerminacao.pai = value.nomeAnimal;
                     });
                   },
@@ -184,94 +277,25 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                 SizedBox(
                   height: 10.0,
                 ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Feito'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _requestPop,
-      child: Scaffold(
-        key: _scaffoldstate,
-        appBar: AppBar(
-          title: Text(
-            "Cadastrar Aleitamento",
-            style: TextStyle(fontSize: 15.0),
-          ),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              icon: Icon(Icons.refresh),
-              onPressed: _reset,
-            )
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            if (_ninhadaController.text.isEmpty) {
-              Toast.show("Ninhada inválido.", context,
-                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
-            } else if (_dataNasc.text.isEmpty) {
-              Toast.show("Data nascimento inválida.", context,
-                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
-            } else {
-              // Navigator.pop(context, _editedBezerra);
-            }
-          },
-          child: Icon(Icons.save),
-          backgroundColor: Colors.green[700],
-        ),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Icon(
-                  Icons.add_circle,
-                  size: 80.0,
-                  color: Color.fromARGB(255, 4, 125, 141),
-                ),
+                Text("Cachaço selecionado:  $nomeCachaco",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
                 SizedBox(
-                  height: 20,
-                ),
-                TextField(
-                  controller: _ninhadaController,
-                  decoration: InputDecoration(labelText: "Ninhada"),
-                  onChanged: (text) {},
+                  height: 10.0,
                 ),
                 TextField(
                   controller: _dataNasc,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(labelText: "Data de Nascimento"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   numeroData = _dataNasc.text;
-                    //   _editedBezerra.dataNascimento = _dataNasc.text;
-                    //   idadeFinal = differenceDate();
-                    // });
+                    _termiancaoEdited = true;
+                    setState(() {
+                      numeroData = _dataNasc.text;
+                      _editedTerminacao.dataNascimento = _dataNasc.text;
+                      idadeFinal = differenceDate();
+                    });
                   },
-                ),
-                TextField(
-                  controller: _quantidadeController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: "Quantidade"),
-                  onChanged: (text) {},
                 ),
                 SizedBox(
                   height: 15.0,
@@ -282,6 +306,17 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                         color: Color.fromARGB(255, 4, 125, 141))),
                 SizedBox(
                   height: 20.0,
+                ),
+                TextField(
+                  controller: _quantidadeController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: "Quantidade"),
+                  onChanged: (text) {
+                    _termiancaoEdited = true;
+                    setState(() {
+                      _editedTerminacao.quantidade = int.parse(text);
+                    });
+                  },
                 ),
                 SearchableDropdown.single(
                   items: estado.map((estado) {
@@ -298,8 +333,9 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                   hint: "Selecione um Estado",
                   searchHint: "Selecione um Estado",
                   onChanged: (value) {
-                    _terminacaoEdited = true;
+                    _termiancaoEdited = true;
                     setState(() {
+                      nomeEstado = value;
                       _editedTerminacao.estado = value;
                     });
                   },
@@ -326,15 +362,22 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                 SizedBox(
                   height: 10.0,
                 ),
+                Text("Estado selecionado:  $nomeEstado",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                SizedBox(
+                  height: 10.0,
+                ),
                 TextField(
                   keyboardType: TextInputType.text,
                   controller: _identificacaoController,
                   decoration: InputDecoration(labelText: "Identificação"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _termiancaoEdited = true;
+                    setState(() {
+                      _editedTerminacao.identificacao = text;
+                    });
                   },
                 ),
                 TextField(
@@ -342,10 +385,10 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                   controller: _vivosController,
                   decoration: InputDecoration(labelText: "Vivos"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _termiancaoEdited = true;
+                    setState(() {
+                      _editedTerminacao.vivos = text;
+                    });
                   },
                 ),
                 TextField(
@@ -353,10 +396,10 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                   controller: _mortosController,
                   decoration: InputDecoration(labelText: "Mortos"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _termiancaoEdited = true;
+                    setState(() {
+                      _editedTerminacao.mortos = text;
+                    });
                   },
                 ),
                 TextField(
@@ -364,10 +407,10 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                   controller: _sexoMachoController,
                   decoration: InputDecoration(labelText: "Machos"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _termiancaoEdited = true;
+                    setState(() {
+                      _editedTerminacao.sexoM = text;
+                    });
                   },
                 ),
                 TextField(
@@ -375,21 +418,21 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                   controller: _sexoFemeaController,
                   decoration: InputDecoration(labelText: "Fêmeas"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _termiancaoEdited = true;
+                    setState(() {
+                      _editedTerminacao.sexoF = text;
+                    });
                   },
                 ),
                 TextField(
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   controller: _baiaController,
                   decoration: InputDecoration(labelText: "Baia"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _termiancaoEdited = true;
+                    setState(() {
+                      _editedTerminacao.baia = text;
+                    });
                   },
                 ),
                 TextField(
@@ -397,10 +440,10 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                   controller: _racaController,
                   decoration: InputDecoration(labelText: "Raça"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _termiancaoEdited = true;
+                    setState(() {
+                      _editedTerminacao.raca = text;
+                    });
                   },
                 ),
                 TextField(
@@ -408,10 +451,10 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                   controller: _loteController,
                   decoration: InputDecoration(labelText: "Lote"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _termiancaoEdited = true;
+                    setState(() {
+                      _editedTerminacao.lote = text;
+                    });
                   },
                 ),
                 TextField(
@@ -419,10 +462,10 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                   controller: _pesoController,
                   decoration: InputDecoration(labelText: "Peso ao nascimento"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.pesoNascimento = double.parse(text);
-                    // });
+                    _termiancaoEdited = true;
+                    setState(() {
+                      _editedTerminacao.pesoNascimento = text;
+                    });
                   },
                 ),
                 TextField(
@@ -430,10 +473,10 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                   controller: _pesoDesmamaController,
                   decoration: InputDecoration(labelText: "Peso na desmama"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.pesoDesmama = double.parse(text);
-                    // });
+                    _termiancaoEdited = true;
+                    setState(() {
+                      _editedTerminacao.pesoDesmama = text;
+                    });
                   },
                 ),
                 TextField(
@@ -441,10 +484,10 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                   controller: _dataDesmamaController,
                   decoration: InputDecoration(labelText: "Data da desmama"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.dataDesmama = text;
-                    // });
+                    _termiancaoEdited = true;
+                    setState(() {
+                      _editedTerminacao.dataDesmama = text;
+                    });
                   },
                 ),
                 TextField(
@@ -452,20 +495,44 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                   controller: _obsController,
                   decoration: InputDecoration(labelText: "Observação"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.dataDesmama = text;
-                    // });
+                    _termiancaoEdited = true;
+                    setState(() {
+                      _editedTerminacao.observacao = text;
+                    });
                   },
                 ),
-                RaisedButton(
-                  onPressed: () {
-                    _showMyDialog();
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAbate,
+                  decoration: InputDecoration(labelText: "Data Abate"),
+                  onChanged: (text) {
+                    _termiancaoEdited = true;
+                    setState(() {
+                      _editedTerminacao.dataAbate = text;
+                    });
                   },
-                  child: Text("Geneologia"),
                 ),
-                SizedBox(
-                  height: 15.0,
+                TextField(
+                  keyboardType: TextInputType.number,
+                  controller: _pesoAbateController,
+                  decoration: InputDecoration(labelText: "Peso Abate"),
+                  onChanged: (text) {
+                    _termiancaoEdited = true;
+                    setState(() {
+                      _editedTerminacao.pesoAbate = double.parse(text);
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.number,
+                  controller: _pesoMedioController,
+                  decoration: InputDecoration(labelText: "Peso Médio"),
+                  onChanged: (text) {
+                    _termiancaoEdited = true;
+                    setState(() {
+                      _editedTerminacao.pesoMedio = double.parse(text);
+                    });
+                  },
                 ),
                 SizedBox(
                   height: 20.0,
@@ -479,7 +546,7 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
   }
 
   Future<bool> _requestPop() {
-    if (_terminacaoEdited) {
+    if (_termiancaoEdited) {
       showDialog(
           context: context,
           builder: (context) {
@@ -513,9 +580,9 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
   String differenceDate() {
     String num = "";
     DateTime dt = DateTime.now();
-    // if (numeroData.isNotEmpty) {
-    //   num = numeroData.split('-').reversed.join();
-    // }
+    if (numeroData.isNotEmpty) {
+      num = numeroData.split('-').reversed.join();
+    }
 
     DateTime date = DateTime.parse(num);
     int quant = dt.difference(date).inDays;
@@ -548,10 +615,15 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
   }
 
   void _getAllLotes() {
-    // helperLote.getAllItems().then((list) {
-    //   setState(() {
-    //     lotes = list;
-    //   });
-    // });
+    matrizDB.getAllItems().then((value) {
+      setState(() {
+        matrizes = value;
+      });
+    });
+    cachacoDB.getAllItems().then((value) {
+      setState(() {
+        cachacos = value;
+      });
+    });
   }
 }

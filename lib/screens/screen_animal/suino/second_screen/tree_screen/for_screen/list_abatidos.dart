@@ -1,33 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/aleitamento_db.dart';
-import 'package:gerenciamento_rural/models/aleitamento.dart';
+import 'package:gerenciamento_rural/helpers/abatidos_db.dart';
+import 'package:gerenciamento_rural/models/abatidos.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/tree_screen/for_screen/registers/cadastro_aleitamento.dart';
+
 import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
-import 'package:toast/toast.dart';
 
 enum OrderOptions { orderaz, orderza }
 
-class ListaAleitamentos extends StatefulWidget {
+class ListaAbatidos extends StatefulWidget {
   @override
-  _ListaAleitamentosState createState() => _ListaAleitamentosState();
+  _ListaAbatidosState createState() => _ListaAbatidosState();
 }
 
-class _ListaAleitamentosState extends State<ListaAleitamentos> {
+class _ListaAbatidosState extends State<ListaAbatidos> {
   TextEditingController editingController = TextEditingController();
-  AleitamentoDB helper = AleitamentoDB();
-  List<Aleitamento> items = List();
-  List<Aleitamento> aleitamentos = List();
-  List<Aleitamento> tAleitamentos = List();
+  AbatidosDB helper = AbatidosDB();
+  List<Abatido> items = List();
+  List<Abatido> abatidos = List();
+  List<Abatido> tAbatidos = List();
   @override
   void initState() {
     super.initState();
-    _getAllAleitamento();
+    _getAllTerminacao();
     items = List();
-    tAleitamentos = List();
+    tAbatidos = List();
   }
 
   @override
@@ -53,14 +52,9 @@ class _ListaAleitamentosState extends State<ListaAleitamentos> {
               onPressed: () {
                 _creatPdf(context);
               }),
-          IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                _showTotalAleitamentosPage();
-              }),
         ],
         centerTitle: true,
-        title: Text("Aleitamentos"),
+        title: Text("Abatidos"),
       ),
       body: Container(
         child: Column(
@@ -82,9 +76,9 @@ class _ListaAleitamentosState extends State<ListaAleitamentos> {
             ),
             Expanded(
                 child: ListView.builder(
-                    itemCount: aleitamentos.length,
+                    itemCount: abatidos.length,
                     itemBuilder: (context, index) {
-                      return _totalAleitamentoCard(context, index);
+                      return _totalTerminacaoCard(context, index);
                     }))
           ],
         ),
@@ -92,7 +86,7 @@ class _ListaAleitamentosState extends State<ListaAleitamentos> {
     );
   }
 
-  Widget _totalAleitamentoCard(BuildContext context, int index) {
+  Widget _totalTerminacaoCard(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
         child: Padding(
@@ -102,7 +96,7 @@ class _ListaAleitamentosState extends State<ListaAleitamentos> {
             child: Row(
               children: [
                 Text(
-                  "Nome da Ninhada: " + aleitamentos[index].nome ?? "",
+                  "Nome da Ninhada: " + abatidos[index].nome ?? "",
                   style: TextStyle(fontSize: 14.0),
                 ),
               ],
@@ -110,99 +104,21 @@ class _ListaAleitamentosState extends State<ListaAleitamentos> {
           ),
         ),
       ),
-      onTap: () {
-        _showOptions(context, index);
-      },
     );
   }
 
-  void _showOptions(BuildContext context, int index) {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return BottomSheet(
-            onClosing: () {},
-            builder: (context) {
-              return Container(
-                padding: EdgeInsets.all(10.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
-                        child: Text(
-                          "Editar",
-                          style: TextStyle(color: Colors.red, fontSize: 20.0),
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                          _showTotalAleitamentosPage(
-                              aleitamento: aleitamentos[index]);
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
-                        child: Text(
-                          "Excluir",
-                          style: TextStyle(color: Colors.red, fontSize: 20.0),
-                        ),
-                        onPressed: () {
-                          try {
-                            helper.delete(aleitamentos[index].id);
-                          } catch (e) {
-                            Toast.show("$Exception($e)", context,
-                                duration: Toast.LENGTH_SHORT,
-                                gravity: Toast.CENTER);
-                          }
-
-                          setState(() {
-                            aleitamentos.removeAt(index);
-                            Navigator.pop(context);
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        });
-  }
-
-  void _showTotalAleitamentosPage({Aleitamento aleitamento}) async {
-    final recCachaco = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CadastroAleitamento(
-            aleitamento: aleitamento,
-          ),
-        ));
-    if (recCachaco != null) {
-      if (aleitamento != null) {
-        await helper.updateItem(recCachaco);
-      } else {
-        await helper.insert(recCachaco);
-      }
-      _getAllAleitamento();
-    }
-  }
-
-  void _getAllAleitamento() {
+  void _getAllTerminacao() {
     items = List();
     helper.getAllItems().then((list) {
       setState(() {
-        aleitamentos = list;
-        items.addAll(aleitamentos);
+        abatidos = list;
+        items.addAll(abatidos);
       });
     });
   }
 
   _creatPdf(context) async {
-    tAleitamentos = aleitamentos;
+    tAbatidos = abatidos;
     final pdfLib.Document pdf = pdfLib.Document(deflate: zlib.encode);
     pdf.addPage(pdfLib.MultiPage(
         header: _buildHeade,
@@ -215,7 +131,7 @@ class _ListaAleitamentosState extends State<ListaAleitamentos> {
                   'Machos',
                   'Fêmeas'
                 ],
-                ...aleitamentos.map((item) => [
+                ...abatidos.map((item) => [
                       item.nome,
                       item.vivos,
                       item.mortos,
@@ -227,7 +143,7 @@ class _ListaAleitamentosState extends State<ListaAleitamentos> {
 
     final String dir = (await getApplicationDocumentsDirectory()).path;
 
-    final String path = '$dir/pdfCachacos.pdf';
+    final String path = '$dir/pdfAbt.pdf';
     final File file = File(path);
     file.writeAsBytesSync(pdf.save());
     print("$file");
@@ -238,14 +154,14 @@ class _ListaAleitamentosState extends State<ListaAleitamentos> {
   void _orderList(OrderOptions result) {
     switch (result) {
       case OrderOptions.orderaz:
-        aleitamentos.sort((a, b) {
+        abatidos.sort((a, b) {
           return a.nomeAnimal
               .toLowerCase()
               .compareTo(b.nomeAnimal.toLowerCase());
         });
         break;
       case OrderOptions.orderza:
-        aleitamentos.sort((a, b) {
+        abatidos.sort((a, b) {
           return b.nomeAnimal
               .toLowerCase()
               .compareTo(a.nomeAnimal.toLowerCase());
@@ -257,24 +173,24 @@ class _ListaAleitamentosState extends State<ListaAleitamentos> {
 
   //filtrar resultado com o texto passado
   void filterSearchResults(String query) {
-    List<Aleitamento> dummySearchList = List();
+    List<Abatido> dummySearchList = List();
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Aleitamento> dummyListData = List();
+      List<Abatido> dummyListData = List();
       dummySearchList.forEach((item) {
         if (item.nomeAnimal.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
         }
       });
       setState(() {
-        aleitamentos.clear();
-        aleitamentos.addAll(dummyListData);
+        abatidos.clear();
+        abatidos.addAll(dummyListData);
       });
       return;
     } else {
       setState(() {
-        aleitamentos.clear();
-        aleitamentos.addAll(items);
+        abatidos.clear();
+        abatidos.addAll(items);
       });
     }
   }
@@ -301,7 +217,7 @@ class _ListaAleitamentosState extends State<ListaAleitamentos> {
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
-                      pdfLib.Text('Aleitamentos',
+                      pdfLib.Text('Abatidos',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white))
                     ],

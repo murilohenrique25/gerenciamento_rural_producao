@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:gerenciamento_rural/helpers/bezerra_db.dart';
-import 'package:gerenciamento_rural/helpers/medicamento_db.dart';
-import 'package:gerenciamento_rural/helpers/novilha_db.dart';
-import 'package:gerenciamento_rural/helpers/vaca_db.dart';
-import 'package:gerenciamento_rural/models/bezerra.dart';
+import 'package:gerenciamento_rural/helpers/cachaco_db.dart';
+import 'package:gerenciamento_rural/helpers/matriz_db.dart';
+import 'package:gerenciamento_rural/helpers/medicamento_suino_db.dart';
+import 'package:gerenciamento_rural/models/cachaco.dart';
+import 'package:gerenciamento_rural/models/matriz.dart';
 import 'package:gerenciamento_rural/models/medicamento.dart';
-import 'package:gerenciamento_rural/models/novilha.dart';
 import 'package:gerenciamento_rural/models/tratamento.dart';
-import 'package:gerenciamento_rural/models/vaca.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/medicamentos/tratamento_list.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
+import 'package:toast/toast.dart';
 
 class CadastroTratamentoSuino extends StatefulWidget {
   final Tratamento tratamento;
@@ -21,18 +19,17 @@ class CadastroTratamentoSuino extends StatefulWidget {
 }
 
 class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
-  MedicamentoDB medicamentoDB = MedicamentoDB();
-  VacaDB vacaDB = VacaDB();
-  NovilhaDB novilhaDB = NovilhaDB();
-  BezerraDB bezerraDB = BezerraDB();
+  MedicamentoSuinoDB medicamentoDB = MedicamentoSuinoDB();
+  CachacoDB _cachacoDB = CachacoDB();
+  MatrizDB _matrizDB = MatrizDB();
 
-  List<Vaca> _vacas = List();
-  List<Novilha> _novilhas = List();
-  List<Bezerra> _bezerras = List();
-  List<Medicamento> _medicamento = List();
+  List<Cachaco> _cachacos = List();
+  List<Matriz> _matrizes = List();
+  List<Medicamento> _medicamentos = List();
 
-  String selectedECC;
-  final _nomeVacaController = TextEditingController();
+  String nomeAnimal = "Vazio";
+  String nomeMedicamento = "Vazio";
+  final _nomeAnimalController = TextEditingController();
   final _idVacaController = TextEditingController();
   final _numeroLoteController = TextEditingController();
   final _enfermidadeController = TextEditingController();
@@ -44,27 +41,23 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
   final _carenciaController = TextEditingController();
   final _obsController = TextEditingController();
 
-  List<TratamentoList> listaMedicamento;
-  Vaca vac;
-  Novilha nov;
-  Bezerra bez;
   Medicamento med;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _tratamentoEdited = false;
   Tratamento _editedTratamento;
-
+  Cachaco cachaco;
+  Matriz matriz;
   @override
   void initState() {
     super.initState();
-    _vacas = List();
-    _novilhas = List();
-    _bezerras = List();
-    _medicamento = List();
+    _cachacos = List();
+    _matrizes = List();
+    _medicamentos = List();
     if (widget.tratamento == null) {
       _editedTratamento = Tratamento();
     } else {
       _editedTratamento = Tratamento.fromMap(widget.tratamento.toMap());
-      _nomeVacaController.text = _editedTratamento.nomeAnimal;
+      _nomeAnimalController.text = _editedTratamento.nomeAnimal;
       _idVacaController.text = _editedTratamento.idAnimal.toString();
       _numeroLoteController.text = _editedTratamento.lote;
       _enfermidadeController.text = _editedTratamento.enfermidade;
@@ -91,8 +84,15 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              _editedTratamento.tipo = 1;
-              Navigator.pop(context, _editedTratamento);
+              if (med.quantidade >= _editedTratamento.quantidade) {
+                med.quantidade = med.quantidade - _editedTratamento.quantidade;
+                medicamentoDB.updateItem(med);
+                Navigator.pop(context, _editedTratamento);
+              } else {
+                Toast.show(
+                    "Estoque insuficiente.\nEstoque:${med.quantidade}", context,
+                    duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+              }
             },
             child: Icon(Icons.save),
             backgroundColor: Colors.green[700],
@@ -111,23 +111,24 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
                       color: Color.fromARGB(255, 4, 125, 141),
                     ),
                     SearchableDropdown.single(
-                      items: _vacas.map((vaca) {
+                      items: _cachacos.map((cachaco) {
                         return DropdownMenuItem(
-                          value: vaca,
+                          value: cachaco,
                           child: Row(
                             children: [
-                              Text(vaca.nome),
+                              Text(cachaco.nomeAnimal),
                             ],
                           ),
                         );
                       }).toList(),
-                      value: vac,
-                      hint: "Selecione vaca",
-                      searchHint: "Selecione vaca",
+                      value: cachaco,
+                      hint: "Selecione cachaço",
+                      searchHint: "Selecione cachaço",
                       onChanged: (value) {
                         setState(() {
-                          _editedTratamento.idAnimal = value.idVaca;
-                          _editedTratamento.nomeAnimal = value.nomeVaca;
+                          _editedTratamento.idAnimal = value.idAnimal;
+                          _editedTratamento.nomeAnimal = value.nomeAnimal;
+                          nomeAnimal = value.nomeAnimal;
                         });
                       },
                       doneButton: "Pronto",
@@ -155,23 +156,24 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
                     ),
                     Text("OU"),
                     SearchableDropdown.single(
-                      items: _novilhas.map((novilha) {
+                      items: _matrizes.map((matriz) {
                         return DropdownMenuItem(
-                          value: novilha,
+                          value: matriz,
                           child: Row(
                             children: [
-                              Text(novilha.nome),
+                              Text(matriz.nomeAnimal),
                             ],
                           ),
                         );
                       }).toList(),
-                      value: nov,
-                      hint: "Selecione novilha",
-                      searchHint: "Selecione novilha",
+                      value: matriz,
+                      hint: "Selecione matriz",
+                      searchHint: "Selecione matriz",
                       onChanged: (value) {
                         setState(() {
-                          _editedTratamento.idAnimal = value.idNovilha;
-                          _editedTratamento.nomeAnimal = value.nome;
+                          _editedTratamento.idAnimal = value.idAnimal;
+                          _editedTratamento.nomeAnimal = value.nomeAnimal;
+                          nomeAnimal = value.nomeAnimal;
                         });
                       },
                       doneButton: "Pronto",
@@ -195,51 +197,14 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
                       isExpanded: true,
                     ),
                     SizedBox(
-                      height: 5.0,
+                      height: 10.0,
                     ),
-                    Text("OU"),
-                    SearchableDropdown.single(
-                      items: _bezerras.map((bezerra) {
-                        return DropdownMenuItem(
-                          value: bezerra,
-                          child: Row(
-                            children: [
-                              Text(bezerra.nome),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: bez,
-                      hint: "Selecione bezerra",
-                      searchHint: "Selecione bezerra",
-                      onChanged: (value) {
-                        setState(() {
-                          _editedTratamento.idAnimal = value.idBezerra;
-                          _editedTratamento.nomeAnimal = value.nome;
-                        });
-                      },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
-                    ),
+                    Text("Animal:  $nomeAnimal",
+                        style: TextStyle(
+                            fontSize: 16.0,
+                            color: Color.fromARGB(255, 4, 125, 141))),
                     SizedBox(
-                      height: 5.0,
+                      height: 10.0,
                     ),
                     TextField(
                       controller: _numeroLoteController,
@@ -260,7 +225,7 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
                     ),
                     SizedBox(height: 5.0),
                     SearchableDropdown.single(
-                      items: _medicamento.map((medicamento) {
+                      items: _medicamentos.map((medicamento) {
                         return DropdownMenuItem(
                           value: medicamento,
                           child: Row(
@@ -275,9 +240,11 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
                       searchHint: "Selecione um medicamento",
                       onChanged: (value) {
                         setState(() {
-                          _editedTratamento.idMedicamento = value.idMedicamento;
+                          med = value;
+                          _editedTratamento.idMedicamento = value.id;
                           _editedTratamento.nomeMedicamento =
                               value.nomeMedicamento;
+                          nomeMedicamento = value.nomeMedicamento;
                         });
                       },
                       doneButton: "Pronto",
@@ -301,7 +268,14 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
                       isExpanded: true,
                     ),
                     SizedBox(
-                      height: 5.0,
+                      height: 10.0,
+                    ),
+                    Text("Medicamento selecionado:  $nomeMedicamento",
+                        style: TextStyle(
+                            fontSize: 16.0,
+                            color: Color.fromARGB(255, 4, 125, 141))),
+                    SizedBox(
+                      height: 10.0,
                     ),
                     TextField(
                       controller: _quantidadeController,
@@ -309,7 +283,7 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
                       onChanged: (text) {
                         _tratamentoEdited = true;
                         setState(() {
-                          _editedTratamento.quantidade = text as double;
+                          _editedTratamento.quantidade = double.parse(text);
                         });
                       },
                     ),
@@ -417,24 +391,19 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
   }
 
   void _carregaDados() {
-    vacaDB.getAllItems().then((value) {
+    _cachacoDB.getAllItems().then((value) {
       setState(() {
-        _vacas = value;
+        _cachacos = value;
       });
     });
-    novilhaDB.getAllItems().then((value) {
+    _matrizDB.getAllItems().then((value) {
       setState(() {
-        _novilhas = value;
-      });
-    });
-    bezerraDB.getAllItems().then((value) {
-      setState(() {
-        _bezerras = value;
+        _matrizes = value;
       });
     });
     medicamentoDB.getAllItems().then((value) {
       setState(() {
-        _medicamento = value;
+        _medicamentos = value;
       });
     });
   }

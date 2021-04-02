@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/tree_screen/description_plantel.dart';
 import 'package:gerenciamento_rural/widgets/intro_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -8,12 +9,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Controle de Gestão Animal",
+      title: "Control IF Goiano",
       theme: ThemeData(
         primarySwatch: Colors.blue,
         primaryColor: Color.fromARGB(255, 4, 125, 141),
       ),
       debugShowCheckedModeBanner: false,
+      routes: {'plantel': (context) => DescriptionPlantelSuinos()},
       home: MyHomePageScreen(),
       localizationsDelegates: [GlobalMaterialLocalizations.delegate],
       supportedLocales: [

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:gerenciamento_rural/helpers/inventario_semen_suina_db.dart';
+import 'package:gerenciamento_rural/helpers/cachaco_db.dart';
 import 'package:gerenciamento_rural/models/cachaco.dart';
 import 'package:gerenciamento_rural/models/inventario_semen_suino.dart';
 import 'package:intl/intl.dart';
@@ -17,12 +17,13 @@ class CadastroEstoqueSemenSuino extends StatefulWidget {
 
 class _CadastroEstoqueSemenSuinoState extends State<CadastroEstoqueSemenSuino> {
   String tipo;
-  InventarioSemenSuinaDB helper = InventarioSemenSuinaDB();
-  List<Cachaco> cachacos = List();
+  CachacoDB helper = CachacoDB();
+  List<Cachaco> cachacos;
   bool _inventarioEdited = false;
   InventarioSemenSuina _editedInventario;
   Cachaco cachaco = Cachaco();
   String idadeFinal = "";
+  String nomeCachaco = "Vazio";
   final _vigorController = TextEditingController();
   final _obsController = TextEditingController();
   final _palhetaController = TextEditingController();
@@ -184,8 +185,15 @@ class _CadastroEstoqueSemenSuinoState extends State<CadastroEstoqueSemenSuino> {
                 SizedBox(
                   height: 10.0,
                 ),
+                Text("Cachaço selecionado:  $nomeCachaco",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                SizedBox(
+                  height: 10.0,
+                ),
                 TextField(
-                  keyboardType: TextInputType.text,
+                  keyboardType: TextInputType.number,
                   controller: _quantidadeController,
                   decoration: InputDecoration(labelText: "Quantidade"),
                   onChanged: (text) {

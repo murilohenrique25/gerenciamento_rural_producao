@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/gasto_suino_db.dart';
 import 'package:gerenciamento_rural/models/gasto.dart';
-import 'package:gerenciamento_rural/screens/utilitarios/cadastrar_economia_gastos.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/economia/registers/cadastrar_economia_gastos.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;

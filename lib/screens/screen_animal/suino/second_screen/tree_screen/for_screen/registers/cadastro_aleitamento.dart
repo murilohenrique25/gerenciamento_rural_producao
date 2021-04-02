@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:gerenciamento_rural/helpers/aleitamento_db.dart';
+import 'package:gerenciamento_rural/helpers/cachaco_db.dart';
+import 'package:gerenciamento_rural/helpers/creche_db.dart';
+import 'package:gerenciamento_rural/helpers/historico_parto_suino_db.dart';
+import 'package:gerenciamento_rural/helpers/matriz_db.dart';
 import 'package:gerenciamento_rural/models/aleitamento.dart';
 import 'package:gerenciamento_rural/models/cachaco.dart';
+import 'package:gerenciamento_rural/models/creche.dart';
+import 'package:gerenciamento_rural/models/historico_parto_suino.dart';
 import 'package:gerenciamento_rural/models/matriz.dart';
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
@@ -16,9 +23,15 @@ class CadastroAleitamento extends StatefulWidget {
 
 class _CadastroAleitamentoState extends State<CadastroAleitamento> {
   String idadeFinal = "";
+  String numeroData = "";
+  String nomeMatriz = "Vazio";
+  String nomeCachaco = "Vazio";
+  String nomeEstado = "Vazio";
   List<Matriz> matrizes = List();
   List<Cachaco> cachacos = List();
-  List<String> estado = ["Aleitamento", "Creche", "Terminação", "Abatidos"];
+  MatrizDB matrizDB = MatrizDB();
+  CachacoDB cachacoDB = CachacoDB();
+  List<String> estado = ["Aleitamento", "Creche"];
   final _ninhadaController = TextEditingController();
   final _pesoController = TextEditingController();
   final _pesoDesmamaController = TextEditingController();
@@ -66,9 +79,10 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
       _editedAleitamento = Aleitamento();
       _editedAleitamento.estado = estado[0];
       _estadoController.text = estado[0];
+      _editedAleitamento.mudarPlantel = 0;
     } else {
       _editedAleitamento = Aleitamento.fromMap(widget.aleitamento.toMap());
-      _ninhadaController.text = _editedAleitamento.nomeAnimal;
+      _ninhadaController.text = _editedAleitamento.nome;
       _pesoController.text = _editedAleitamento.pesoNascimento;
       _pesoDesmamaController.text = _editedAleitamento.pesoDesmama;
       _racaController.text = _editedAleitamento.raca;
@@ -84,120 +98,12 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
       _estadoController.text = _editedAleitamento.estado;
       _loteController.text = _editedAleitamento.lote;
       _baiaController.text = _editedAleitamento.baia;
-      _dataNasc.text = _editedAleitamento.dataNascimento;
+      matriz.nomeAnimal = _editedAleitamento.mae;
+      cachaco.nomeAnimal = _editedAleitamento.pai;
+      numeroData = _editedAleitamento.dataNascimento;
+      _dataNasc.text = numeroData;
+      idadeFinal = differenceDate();
     }
-  }
-
-  Future<void> _showMyDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Geneologia'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                SearchableDropdown.single(
-                  items: cachacos.map((cachaco) {
-                    return DropdownMenuItem(
-                      value: cachaco,
-                      child: Row(
-                        children: [
-                          Text(cachaco.nomeAnimal),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: cachaco,
-                  hint: "Selecione um cachaço",
-                  searchHint: "Selecione um cachaço",
-                  onChanged: (value) {
-                    _aleitamentoEdited = true;
-                    setState(() {
-                      _editedAleitamento.mae = value.nomeAnimal;
-                    });
-                  },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
-                ),
-                SizedBox(
-                  height: 10.0,
-                ),
-                SearchableDropdown.single(
-                  items: matrizes.map((matriz) {
-                    return DropdownMenuItem(
-                      value: matriz,
-                      child: Row(
-                        children: [
-                          Text(matriz.nomeAnimal),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: matriz,
-                  hint: "Selecione uma matriz",
-                  searchHint: "Selecione uma matriz",
-                  onChanged: (value) {
-                    _aleitamentoEdited = true;
-                    setState(() {
-                      _editedAleitamento.pai = value.nomeAnimal;
-                    });
-                  },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
-                ),
-                SizedBox(
-                  height: 10.0,
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Feito'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -227,8 +133,63 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
             } else if (_dataNasc.text.isEmpty) {
               Toast.show("Data nascimento inválida.", context,
                   duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            } else if (_paiController.text.isEmpty) {
+              Toast.show("Cachaço inválido.", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            } else if (_maeController.text.isEmpty) {
+              Toast.show("Matriz inválida.", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            } else if (_quantidadeController.text.isEmpty) {
+              Toast.show("Quantidade inválida.", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            } else if (_sexoMachoController.text.isEmpty) {
+              Toast.show(
+                  "Machos inválidos.\nSe não houver nenhum digite 0", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            } else if (_sexoFemeaController.text.isEmpty) {
+              Toast.show(
+                  "Fêmeas inválidas.\nSe não houver nenhuma digite 0", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            } else if (_vivosController.text.isEmpty) {
+              Toast.show(
+                  "Vivos inválidos.\nSe não houver nenhum digite 0", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            } else if (_mortosController.text.isEmpty) {
+              Toast.show(
+                  "Mortos inválidos.\nSe não houver nenhum digite 0", context,
+                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
             } else {
-              // Navigator.pop(context, _editedBezerra);
+              if (_editedAleitamento.estado == "Aleitamento") {
+                HistoricoPartoSuinoDB helper = HistoricoPartoSuinoDB();
+                HistoricoPartoSuino historico = HistoricoPartoSuino();
+                historico.nome = _editedAleitamento.nome;
+                historico.mae = _editedAleitamento.mae;
+                historico.pai = _editedAleitamento.pai;
+                historico.dataNascimento = _editedAleitamento.dataNascimento;
+                historico.quantidade = _editedAleitamento.quantidade;
+                historico.vivos = _editedAleitamento.vivos;
+                historico.mortos = _editedAleitamento.mortos;
+                historico.sexoF = _editedAleitamento.sexoF;
+                historico.sexoM = _editedAleitamento.sexoM;
+                helper.insert(historico);
+                if (matriz.numeroPartos == null) {
+                  matriz.numeroPartos = 1;
+                } else {
+                  matriz.numeroPartos += 1;
+                }
+                matrizDB.updateItem(matriz);
+                Navigator.pop(context, _editedAleitamento);
+              } else if (_editedAleitamento.estado == "Creche") {
+                AleitamentoDB aleitamentoDB = AleitamentoDB();
+                CrecheDB crecheDB = CrecheDB();
+                Creche creche;
+                _editedAleitamento.mudarPlantel = 1;
+                aleitamentoDB.updateItem(_editedAleitamento);
+                creche = Creche.fromMap(_editedAleitamento.toMap());
+                creche.mudarPlantel = 0;
+                crecheDB.insert(creche);
+                Navigator.pop(context, _editedAleitamento);
+              }
             }
           },
           child: Icon(Icons.save),
@@ -252,55 +213,36 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
                 TextField(
                   controller: _ninhadaController,
                   decoration: InputDecoration(labelText: "Ninhada"),
-                  onChanged: (text) {},
-                ),
-                TextField(
-                  controller: _dataNasc,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: "Data de Nascimento"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   numeroData = _dataNasc.text;
-                    //   _editedBezerra.dataNascimento = _dataNasc.text;
-                    //   idadeFinal = differenceDate();
-                    // });
+                    _aleitamentoEdited = true;
+                    setState(() {
+                      _editedAleitamento.nome = text;
+                    });
                   },
                 ),
-                TextField(
-                  controller: _quantidadeController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: "Quantidade"),
-                  onChanged: (text) {},
-                ),
                 SizedBox(
-                  height: 15.0,
-                ),
-                Text("Idade do animal:  $idadeFinal",
-                    style: TextStyle(
-                        fontSize: 16.0,
-                        color: Color.fromARGB(255, 4, 125, 141))),
-                SizedBox(
-                  height: 20.0,
+                  height: 10.0,
                 ),
                 SearchableDropdown.single(
-                  items: estado.map((estado) {
+                  items: matrizes.map((matriz) {
                     return DropdownMenuItem(
-                      value: estado,
+                      value: matriz,
                       child: Row(
                         children: [
-                          Text(estado),
+                          Text(matriz.nomeAnimal),
                         ],
                       ),
                     );
                   }).toList(),
-                  value: estado,
-                  hint: "Selecione um Estado",
-                  searchHint: "Selecione um Estado",
+                  value: matriz,
+                  hint: "Selecione uma matriz",
+                  searchHint: "Selecione uma matriz",
                   onChanged: (value) {
                     _aleitamentoEdited = true;
                     setState(() {
-                      _editedAleitamento.estado = value;
+                      matriz = value;
+                      _editedAleitamento.mae = value.nomeAnimal;
+                      nomeMatriz = value.nomeAnimal;
                     });
                   },
                   doneButton: "Pronto",
@@ -326,15 +268,158 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
                 SizedBox(
                   height: 10.0,
                 ),
+                Text("Matriz selecionada:  $nomeMatriz",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                SizedBox(
+                  height: 10.0,
+                ),
+                SearchableDropdown.single(
+                  items: cachacos.map((cachaco) {
+                    return DropdownMenuItem(
+                      value: cachaco,
+                      child: Row(
+                        children: [
+                          Text(cachaco.nomeAnimal),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  value: cachaco,
+                  hint: "Selecione um cachaço",
+                  searchHint: "Selecione um cachaço",
+                  onChanged: (value) {
+                    _aleitamentoEdited = true;
+                    setState(() {
+                      _editedAleitamento.pai = value.nomeAnimal;
+                      nomeCachaco = value.nomeAnimal;
+                    });
+                  },
+                  doneButton: "Pronto",
+                  displayItem: (item, selected) {
+                    return (Row(children: [
+                      selected
+                          ? Icon(
+                              Icons.radio_button_checked,
+                              color: Colors.grey,
+                            )
+                          : Icon(
+                              Icons.radio_button_unchecked,
+                              color: Colors.grey,
+                            ),
+                      SizedBox(width: 7),
+                      Expanded(
+                        child: item,
+                      ),
+                    ]));
+                  },
+                  isExpanded: true,
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Text("Cachaço selecionado:  $nomeCachaco",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                SizedBox(
+                  height: 10.0,
+                ),
+                TextField(
+                  controller: _dataNasc,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: "Data de Nascimento"),
+                  onChanged: (text) {
+                    _aleitamentoEdited = true;
+                    setState(() {
+                      numeroData = _dataNasc.text;
+                      _editedAleitamento.dataNascimento = _dataNasc.text;
+                      idadeFinal = differenceDate();
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 15.0,
+                ),
+                Text("Idade do animal:  $idadeFinal",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                SizedBox(
+                  height: 20.0,
+                ),
+                TextField(
+                  controller: _quantidadeController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: "Quantidade"),
+                  onChanged: (text) {
+                    _aleitamentoEdited = true;
+                    setState(() {
+                      _editedAleitamento.quantidade = int.parse(text);
+                    });
+                  },
+                ),
+                SearchableDropdown.single(
+                  items: estado.map((estado) {
+                    return DropdownMenuItem(
+                      value: estado,
+                      child: Row(
+                        children: [
+                          Text(estado),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  value: estado,
+                  hint: "Selecione um Estado",
+                  searchHint: "Selecione um Estado",
+                  onChanged: (value) {
+                    _aleitamentoEdited = true;
+                    setState(() {
+                      _editedAleitamento.estado = value;
+                      nomeEstado = value;
+                    });
+                  },
+                  doneButton: "Pronto",
+                  displayItem: (item, selected) {
+                    return (Row(children: [
+                      selected
+                          ? Icon(
+                              Icons.radio_button_checked,
+                              color: Colors.grey,
+                            )
+                          : Icon(
+                              Icons.radio_button_unchecked,
+                              color: Colors.grey,
+                            ),
+                      SizedBox(width: 7),
+                      Expanded(
+                        child: item,
+                      ),
+                    ]));
+                  },
+                  isExpanded: true,
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Text("Estado selecionado:  $nomeEstado",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                SizedBox(
+                  height: 10.0,
+                ),
                 TextField(
                   keyboardType: TextInputType.text,
                   controller: _identificacaoController,
                   decoration: InputDecoration(labelText: "Identificação"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _aleitamentoEdited = true;
+                    setState(() {
+                      _editedAleitamento.identificacao = text;
+                    });
                   },
                 ),
                 TextField(
@@ -342,10 +427,10 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
                   controller: _vivosController,
                   decoration: InputDecoration(labelText: "Vivos"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _aleitamentoEdited = true;
+                    setState(() {
+                      _editedAleitamento.vivos = text;
+                    });
                   },
                 ),
                 TextField(
@@ -353,10 +438,10 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
                   controller: _mortosController,
                   decoration: InputDecoration(labelText: "Mortos"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _aleitamentoEdited = true;
+                    setState(() {
+                      _editedAleitamento.mortos = text;
+                    });
                   },
                 ),
                 TextField(
@@ -364,10 +449,10 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
                   controller: _sexoMachoController,
                   decoration: InputDecoration(labelText: "Machos"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _aleitamentoEdited = true;
+                    setState(() {
+                      _editedAleitamento.sexoM = text;
+                    });
                   },
                 ),
                 TextField(
@@ -375,21 +460,21 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
                   controller: _sexoFemeaController,
                   decoration: InputDecoration(labelText: "Fêmeas"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _aleitamentoEdited = true;
+                    setState(() {
+                      _editedAleitamento.sexoF = text;
+                    });
                   },
                 ),
                 TextField(
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   controller: _baiaController,
                   decoration: InputDecoration(labelText: "Baia"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _aleitamentoEdited = true;
+                    setState(() {
+                      _editedAleitamento.baia = text;
+                    });
                   },
                 ),
                 TextField(
@@ -397,10 +482,10 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
                   controller: _racaController,
                   decoration: InputDecoration(labelText: "Raça"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _aleitamentoEdited = true;
+                    setState(() {
+                      _editedAleitamento.raca = text;
+                    });
                   },
                 ),
                 TextField(
@@ -408,10 +493,10 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
                   controller: _loteController,
                   decoration: InputDecoration(labelText: "Lote"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _aleitamentoEdited = true;
+                    setState(() {
+                      _editedAleitamento.lote = text;
+                    });
                   },
                 ),
                 TextField(
@@ -419,10 +504,10 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
                   controller: _pesoController,
                   decoration: InputDecoration(labelText: "Peso ao nascimento"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.pesoNascimento = double.parse(text);
-                    // });
+                    _aleitamentoEdited = true;
+                    setState(() {
+                      _editedAleitamento.pesoNascimento = text;
+                    });
                   },
                 ),
                 TextField(
@@ -430,10 +515,10 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
                   controller: _pesoDesmamaController,
                   decoration: InputDecoration(labelText: "Peso na desmama"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.pesoDesmama = double.parse(text);
-                    // });
+                    _aleitamentoEdited = true;
+                    setState(() {
+                      _editedAleitamento.pesoDesmama = text;
+                    });
                   },
                 ),
                 TextField(
@@ -441,10 +526,10 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
                   controller: _dataDesmamaController,
                   decoration: InputDecoration(labelText: "Data da desmama"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.dataDesmama = text;
-                    // });
+                    _aleitamentoEdited = true;
+                    setState(() {
+                      _editedAleitamento.dataDesmama = text;
+                    });
                   },
                 ),
                 TextField(
@@ -452,20 +537,11 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
                   controller: _obsController,
                   decoration: InputDecoration(labelText: "Observação"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.dataDesmama = text;
-                    // });
+                    _aleitamentoEdited = true;
+                    setState(() {
+                      _editedAleitamento.observacao = text;
+                    });
                   },
-                ),
-                RaisedButton(
-                  onPressed: () {
-                    _showMyDialog();
-                  },
-                  child: Text("Geneologia"),
-                ),
-                SizedBox(
-                  height: 15.0,
                 ),
                 SizedBox(
                   height: 20.0,
@@ -513,9 +589,9 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
   String differenceDate() {
     String num = "";
     DateTime dt = DateTime.now();
-    // if (numeroData.isNotEmpty) {
-    //   num = numeroData.split('-').reversed.join();
-    // }
+    if (numeroData.isNotEmpty) {
+      num = numeroData.split('-').reversed.join();
+    }
 
     DateTime date = DateTime.parse(num);
     int quant = dt.difference(date).inDays;
@@ -548,10 +624,15 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
   }
 
   void _getAllLotes() {
-    // helperLote.getAllItems().then((list) {
-    //   setState(() {
-    //     lotes = list;
-    //   });
-    // });
+    matrizDB.getAllItems().then((value) {
+      setState(() {
+        matrizes = value;
+      });
+    });
+    cachacoDB.getAllItems().then((value) {
+      setState(() {
+        cachacos = value;
+      });
+    });
   }
 }

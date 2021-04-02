@@ -1,22 +1,22 @@
 import 'package:gerenciamento_rural/helpers/HelperDB.dart';
 import 'package:gerenciamento_rural/helpers/application.dart';
-import 'package:gerenciamento_rural/models/aleitamento.dart';
+import 'package:gerenciamento_rural/models/nutricao_suina.dart';
 import 'package:sqflite/sqflite.dart';
 
-class AleitamentoDB extends HelperDB {
-  Aleitamento aleitamento;
+class NutricaoSuinaDB extends HelperDB {
+  NutricaoSuina nutricaoSuina;
   //Singleton
   //
-  static AleitamentoDB _this;
-  factory AleitamentoDB() {
+  static NutricaoSuinaDB _this;
+  factory NutricaoSuinaDB() {
     if (_this == null) {
-      _this = AleitamentoDB.getInstance();
+      _this = NutricaoSuinaDB.getInstance();
     }
     return _this;
   }
   //
   //The instance
-  AleitamentoDB.getInstance() : super();
+  NutricaoSuinaDB.getInstance() : super();
   //
 
   @override
@@ -28,7 +28,7 @@ class AleitamentoDB extends HelperDB {
   @override
   Future<Map> getItem(dynamic where) async {
     Database db = await this.getDb();
-    List<Map> items = await db.query("aleitamento",
+    List<Map> items = await db.query("nutricaoSuina",
         where: "id = ?", whereArgs: [where], limit: 1);
     Map result = Map();
     if (items.isNotEmpty) {
@@ -37,22 +37,23 @@ class AleitamentoDB extends HelperDB {
     return result;
   }
 
-  Future<Aleitamento> insert(Aleitamento aleitamento) async {
+  Future<NutricaoSuina> insert(NutricaoSuina nutricaoSuina) async {
     Database db = await this.getDb();
-    aleitamento.id = await db.insert("aleitamento", aleitamento.toMap());
-    return aleitamento;
+    nutricaoSuina.id = await db.insert("nutricaoSuina", nutricaoSuina.toMap());
+    return nutricaoSuina;
   }
 
   @override
   Future<List<Map>> list() async {
     Database db = await this.getDb();
-    return db.rawQuery("SELECT * FROM aleitamento orderBy id CRESC");
+    return db.rawQuery("SELECT * FROM nutricaoSuina orderBy id CRESC");
   }
 
   @override
   Future<bool> delete(dynamic id) async {
     Database db = await this.getDb();
-    int rows = await db.delete("aleitamento", where: "id = ?", whereArgs: [id]);
+    int rows =
+        await db.delete("nutricaoSuina", where: "id = ?", whereArgs: [id]);
 
     return (rows != 0);
   }
@@ -60,22 +61,21 @@ class AleitamentoDB extends HelperDB {
   Future<int> getNumber() async {
     Database db = await this.getDb();
     return Sqflite.firstIntValue(
-        await db.rawQuery("SELECT COUNT(*) FROM aleitamento"));
+        await db.rawQuery("SELECT COUNT(*) FROM nutricaoSuina"));
   }
 
-  Future<void> updateItem(Aleitamento aleitamento) async {
+  Future<void> updateItem(NutricaoSuina nutricaoSuina) async {
     Database db = await this.getDb();
-    await db.update("aleitamento", aleitamento.toMap(),
-        where: "id = ?", whereArgs: [aleitamento.id]);
+    await db.update("nutricaoSuina", nutricaoSuina.toMap(),
+        where: "id = ?", whereArgs: [nutricaoSuina.id]);
   }
 
   Future<List> getAllItems() async {
     Database db = await this.getDb();
-    List listMap =
-        await db.rawQuery("SELECT * FROM aleitamento WHERE mudar_plantel == 0");
-    List<Aleitamento> list = List();
+    List listMap = await db.rawQuery("SELECT * FROM nutricaoSuina");
+    List<NutricaoSuina> list = List();
     for (Map m in listMap) {
-      list.add(Aleitamento.fromMap(m));
+      list.add(NutricaoSuina.fromMap(m));
     }
     return list;
   }

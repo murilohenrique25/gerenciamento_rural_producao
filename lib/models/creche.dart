@@ -1,10 +1,13 @@
 import 'package:gerenciamento_rural/models/suino.dart';
 
 class Creche extends Suinos {
+  int mudarPlantel;
+  String nome;
   Creche();
   Creche.fromMap(Map map) {
+    // id = map["id"];
     idAnimal = map["id_animal"];
-    nomeAnimal = map["nome_animal"];
+    nome = map["nome"];
     dataNascimento = map["data_nascimento"];
     quantidade = map["quantidade"];
     estado = map["estado"];
@@ -18,15 +21,17 @@ class Creche extends Suinos {
     sexoF = map["sexoF"];
     sexoM = map["sexoM"];
     baia = map["baia"];
-    pesoNascimento = map["pesoNascimento"];
-    pesoDesmama = map["pesoDesmama"];
-    dataDesmama = map["dataDesmama"];
+    pesoNascimento = map["peso_nascimento"];
+    pesoDesmama = map["peso_desmama"];
+    dataDesmama = map["data_desmama"];
     observacao = map["observacao"];
+    mudarPlantel = map["mudar_palantel"];
   }
 
   Map toMap() {
     Map<String, dynamic> map = {
-      "nome_animal": nomeAnimal,
+      "id_animal": idAnimal,
+      "nome": nome,
       "data_nascimento": dataNascimento,
       "quantidade": quantidade,
       "estado": estado,
@@ -40,19 +45,20 @@ class Creche extends Suinos {
       "sexoF": sexoF,
       "sexoM": sexoM,
       "baia": baia,
-      "pesoNascimento": pesoNascimento,
-      "pesoDesmama": pesoDesmama,
-      "dataDesmama": dataDesmama,
+      "peso_nascimento": pesoNascimento,
+      "peso_desmama": pesoDesmama,
+      "data_desmama": dataDesmama,
       "observacao": observacao,
+      "mudar_plantel": mudarPlantel
     };
-    if (idAnimal != null) {
-      map["id_animal"] = idAnimal;
+    if (id != null) {
+      map["id"] = id;
     }
     return map;
   }
 
   @override
   String toString() {
-    return "Aleitamento(id:$idAnimal, nome: $nomeAnimal, codigoExterno : $quantidade)";
+    return "Aleitamento(id:$idAnimal, nome: $nome, codigoExterno : $quantidade)";
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/tratamento_db.dart';
+import 'package:gerenciamento_rural/helpers/tratamento_suino_db.dart';
 import 'package:gerenciamento_rural/models/tratamento.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/medicamentos/cadastrar_tratamento.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/tratamentos/registers/cadastrar_tratamento_suino.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPage.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -17,7 +17,7 @@ class TratamentoSuinoList extends StatefulWidget {
 
 class _TratamentoSuinoListState extends State<TratamentoSuinoList> {
   TextEditingController editingController = TextEditingController();
-  TratamentoDB helper = TratamentoDB();
+  TratamentoSuinoDB helper = TratamentoSuinoDB();
   List<Tratamento> items = List();
   List<Tratamento> tratamentos = List();
   List<Tratamento> tTratamentos = List();
@@ -103,7 +103,7 @@ class _TratamentoSuinoListState extends State<TratamentoSuinoList> {
           child: Row(
             children: [
               Text(
-                "Nome: " + tratamentos[index].nomeMedicamento ?? "",
+                "Medicamento: " + tratamentos[index].nomeMedicamento ?? "",
                 style: TextStyle(fontSize: 14.0),
               ),
               SizedBox(
@@ -129,7 +129,7 @@ class _TratamentoSuinoListState extends State<TratamentoSuinoList> {
 
   void _getAllTratamentos() {
     items = List();
-    helper.getAllItemsFemeas().then((value) {
+    helper.getAllItems().then((value) {
       setState(() {
         tratamentos = value;
         items.addAll(tratamentos);
@@ -141,7 +141,7 @@ class _TratamentoSuinoListState extends State<TratamentoSuinoList> {
     final recTratamento = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => CadastroTratamento(
+            builder: (context) => CadastroTratamentoSuino(
                   tratamento: tratamento,
                 )));
     if (recTratamento != null) {

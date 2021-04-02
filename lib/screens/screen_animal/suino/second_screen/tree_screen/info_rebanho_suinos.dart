@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/bezerra_db.dart';
-import 'package:gerenciamento_rural/helpers/novilha_db.dart';
-import 'package:gerenciamento_rural/helpers/touro_db.dart';
-import 'package:gerenciamento_rural/helpers/vaca_db.dart';
-import 'package:gerenciamento_rural/models/bezerra.dart';
-import 'package:gerenciamento_rural/models/novilha.dart';
-import 'package:gerenciamento_rural/models/touro.dart';
-import 'package:gerenciamento_rural/models/vaca.dart';
+import 'package:gerenciamento_rural/helpers/abatidos_db.dart';
+import 'package:gerenciamento_rural/helpers/aleitamento_db.dart';
+import 'package:gerenciamento_rural/helpers/cachaco_db.dart';
+import 'package:gerenciamento_rural/helpers/creche_db.dart';
+import 'package:gerenciamento_rural/helpers/matriz_db.dart';
+import 'package:gerenciamento_rural/helpers/terminacao_db.dart';
+import 'package:gerenciamento_rural/models/abatidos.dart';
+import 'package:gerenciamento_rural/models/aleitamento.dart';
+import 'package:gerenciamento_rural/models/cachaco.dart';
+import 'package:gerenciamento_rural/models/creche.dart';
+import 'package:gerenciamento_rural/models/matriz.dart';
+import 'package:gerenciamento_rural/models/terminacao.dart';
 
 class InfoRebanhoSuinos extends StatefulWidget {
   @override
@@ -14,35 +18,36 @@ class InfoRebanhoSuinos extends StatefulWidget {
 }
 
 class _InfoRebanhoSuinosState extends State<InfoRebanhoSuinos> {
-  TouroDB touroDB = TouroDB();
-  VacaDB vacaDB = VacaDB();
-  NovilhaDB novilhaDB = NovilhaDB();
-  BezerraDB bezerraDB = BezerraDB();
+  CachacoDB cachacoDB = CachacoDB();
+  MatrizDB matrizDB = MatrizDB();
+  AleitamentoDB aleitamentoDB = AleitamentoDB();
+  CrecheDB crecheDB = CrecheDB();
+  TerminacaoDB terminacaoDB = TerminacaoDB();
+  AbatidosDB abatidosDB = AbatidosDB();
 
-  List<Touro> listTouro = List();
-  List<Vaca> listVaca = List();
-  List<Novilha> listNovilha = List();
-  List<Novilha> listNovilhaInseminada = List();
-  List<Bezerra> listBezerra = List();
-  int totalVacas = 0;
-  int totalNovilhas = 0;
-  int totalBezerras = 0;
-  int totalTouro = 0;
-  int quantVacasInseminadadas = 0;
-  int quantVacasGestantes = 0;
-  int quantVacasVazias = 0;
-  double porcentVacaInseminada = 0.0;
-  double porcentVacaGestantes = 0.0;
-  double porcentVacaVazias = 0.0;
+  List<Cachaco> listCachaco = List();
+  List<Matriz> listMatriz = List();
+  List<Aleitamento> listAleitamento = List();
+  List<Creche> listCreche = List();
+  List<Terminacao> listTerminacao = List();
+  List<Abatido> listAbatido = List();
+
+  int totalCachaco = 0;
+  int totalMatriz = 0;
+  int totalAleitamento = 0;
+  int totalCreche = 0;
+  int totalTerminacao = 0;
+  int totalAbatidos = 0;
 
   @override
   void initState() {
     super.initState();
-    listTouro = List();
-    listVaca = List();
-    listNovilha = List();
-    listBezerra = List();
-    listNovilhaInseminada = List();
+    listCachaco = List();
+    listMatriz = List();
+    listAleitamento = List();
+    listCreche = List();
+    listTerminacao = List();
+    listAbatido = List();
     _carregarDados();
   }
 
@@ -55,6 +60,9 @@ class _InfoRebanhoSuinosState extends State<InfoRebanhoSuinos> {
       ),
       body: Column(
         children: [
+          Padding(
+            padding: EdgeInsets.only(top: 15.0),
+          ),
           Row(
             children: [
               Expanded(
@@ -63,7 +71,7 @@ class _InfoRebanhoSuinosState extends State<InfoRebanhoSuinos> {
                   height: 80.0,
                   child: Center(
                     child: Text(
-                      "Matrizes\n$totalTouro",
+                      "Matrizes\n$totalMatriz",
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -78,7 +86,7 @@ class _InfoRebanhoSuinosState extends State<InfoRebanhoSuinos> {
                   color: Colors.green,
                   child: Center(
                     child: Text(
-                      "Cachaços\n$totalVacas",
+                      "Cachaços\n$totalCachaco",
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -93,7 +101,7 @@ class _InfoRebanhoSuinosState extends State<InfoRebanhoSuinos> {
                   color: Colors.yellow,
                   child: Center(
                     child: Text(
-                      "Aleitamento\n$totalNovilhas",
+                      "Aleitamento\n$totalAleitamento",
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -112,7 +120,7 @@ class _InfoRebanhoSuinosState extends State<InfoRebanhoSuinos> {
                   height: 80.0,
                   child: Center(
                     child: Text(
-                      "Creche\n$totalBezerras",
+                      "Creche\n$totalCreche",
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -127,7 +135,7 @@ class _InfoRebanhoSuinosState extends State<InfoRebanhoSuinos> {
                   color: Colors.indigo,
                   child: Center(
                     child: Text(
-                      "Terminação\n0",
+                      "Terminação\n$totalTerminacao",
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -142,7 +150,7 @@ class _InfoRebanhoSuinosState extends State<InfoRebanhoSuinos> {
                   color: Colors.teal,
                   child: Center(
                     child: Text(
-                      "Abatidos\n0",
+                      "Abatidos\n$totalAbatidos",
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -159,64 +167,40 @@ class _InfoRebanhoSuinosState extends State<InfoRebanhoSuinos> {
   }
 
   void _carregarDados() {
-    touroDB.getAllVivos().then((value) {
+    cachacoDB.getAllItems().then((value) {
       setState(() {
-        listTouro = (value);
-        totalTouro = listTouro.length;
+        listCachaco = (value);
+        totalCachaco = listCachaco.length;
       });
     });
-    vacaDB.getAllItems().then((value) {
+    matrizDB.getAllItems().then((value) {
       setState(() {
-        listVaca = value;
-        totalVacas = listVaca.length;
-        listVaca.forEach((element) {
-          if (element.diagnosticoGestacao == "Gestante") {
-            quantVacasGestantes += 1;
-          }
-          if (element.diagnosticoGestacao == "Vazia" ||
-              element.diagnosticoGestacao == "Aborto") {
-            quantVacasVazias += 1;
-          }
-          if (element.ultimaInseminacao != null) {
-            quantVacasInseminadadas += 1;
-          }
-        });
+        listMatriz = value;
+        totalMatriz = listMatriz.length;
       });
     });
-    novilhaDB.getAllItems().then((value) {
+    aleitamentoDB.getAllItems().then((value) {
       setState(() {
-        listNovilha = value;
-        totalNovilhas = listNovilha.length;
-        listNovilha.forEach((element) {
-          if (element.dataCobertura != null) {
-            quantVacasInseminadadas += 1;
-          }
-        });
+        listAleitamento = value;
+        totalAleitamento = listAleitamento.length;
       });
     });
-    bezerraDB.getAllItems().then((value) {
+    crecheDB.getAllItems().then((value) {
       setState(() {
-        listBezerra = value;
-        totalBezerras = listBezerra.length;
+        listCreche = value;
+        totalCreche = listCreche.length;
       });
     });
-    vacaDB.getNumber().then((value) {
-      totalVacas = value;
-
-      novilhaDB.getNumber().then((value) {
-        totalNovilhas = value;
-        porcentVacaGestantes = (quantVacasGestantes / totalVacas) * 100;
-        porcentVacaInseminada = (quantVacasInseminadadas / totalVacas) * 100;
-        porcentVacaVazias = (quantVacasVazias / totalVacas) * 100;
-        if (porcentVacaGestantes.isNaN) {
-          porcentVacaGestantes = 0;
-        }
-        if (porcentVacaInseminada.isNaN) {
-          porcentVacaInseminada = 0;
-        }
-        if (porcentVacaVazias.isNaN) {
-          porcentVacaVazias = 0;
-        }
+    terminacaoDB.getAllItems().then((value) {
+      setState(() {
+        listTerminacao = value;
+        totalTerminacao = listTerminacao.length;
+      });
+    });
+    abatidosDB.getAllItems().then((value) {
+      setState(() {
+        listAbatido = value;
+        totalAbatidos = listAbatido.length;
       });
     });
   }

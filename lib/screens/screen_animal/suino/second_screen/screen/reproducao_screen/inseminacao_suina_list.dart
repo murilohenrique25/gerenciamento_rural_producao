@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/producao_carne_suina_db.dart';
-import 'package:gerenciamento_rural/models/producao_carne_suina.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/producao_carne/registers/cadastro_producao_carne_suina.dart';
+import 'package:gerenciamento_rural/helpers/inseminacao_suina_db.dart';
+import 'package:gerenciamento_rural/models/inseminacao_suino.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/reproducao_screen/registers/cadastro_inseminacao_monta.dart';
+import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPage.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
-import 'package:toast/toast.dart';
 
 enum OrderOptions { orderaz, orderza }
 
-class ListaPrecoCarneSuina extends StatefulWidget {
+class ListaInseminacaoSuina extends StatefulWidget {
   @override
-  _ListaPrecoCarneSuinaState createState() => _ListaPrecoCarneSuinaState();
+  _ListaInseminacaoSuinaState createState() => _ListaInseminacaoSuinaState();
 }
 
-class _ListaPrecoCarneSuinaState extends State<ListaPrecoCarneSuina> {
+class _ListaInseminacaoSuinaState extends State<ListaInseminacaoSuina> {
   TextEditingController editingController = TextEditingController();
-  ProducaoCarneSuinaDB helper = ProducaoCarneSuinaDB();
-  List<ProducaoCarneSuina> items = List();
-  List<ProducaoCarneSuina> precos = List();
-  List<ProducaoCarneSuina> tPrecos = List();
+  InseminacaoSuinaDB helper = InseminacaoSuinaDB();
+  List<InseminacaoSuino> items = List();
+  List<InseminacaoSuino> inseminacoes = List();
+  List<InseminacaoSuino> tInseminacoes = List();
+
   @override
   void initState() {
     super.initState();
-    _getAllTerminacao();
+    _getAllInventario();
     items = List();
-    tPrecos = List();
+    tInseminacoes = List();
   }
 
   @override
@@ -38,11 +38,11 @@ class _ListaPrecoCarneSuinaState extends State<ListaPrecoCarneSuina> {
           PopupMenuButton<OrderOptions>(
             itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
               const PopupMenuItem<OrderOptions>(
-                child: Text("Ordenar por Data(Crescente)"),
+                child: Text("Ordenar de A-Z"),
                 value: OrderOptions.orderaz,
               ),
               const PopupMenuItem<OrderOptions>(
-                child: Text("Ordenar por Data(Decrescente)"),
+                child: Text("Ordenar de Z-A"),
                 value: OrderOptions.orderza,
               ),
             ],
@@ -56,11 +56,11 @@ class _ListaPrecoCarneSuinaState extends State<ListaPrecoCarneSuina> {
           IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                _showTotalTerminacoesPage();
+                _showPage();
               }),
         ],
         centerTitle: true,
-        title: Text("Produção"),
+        title: Text("Lista Inseminação Suíno"),
       ),
       body: Container(
         child: Column(
@@ -73,73 +73,51 @@ class _ListaPrecoCarneSuinaState extends State<ListaPrecoCarneSuina> {
                 },
                 controller: editingController,
                 decoration: InputDecoration(
-                    labelText: "Buscar Data",
-                    hintText: "Buscar Data",
-                    prefix: Icon(Icons.search),
+                    labelText: "Buscar Inseminação Cachaço",
+                    hintText: "Buscar Inseminação Cachaço",
+                    prefixIcon: Icon(Icons.search),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(25.0)))),
               ),
             ),
             Expanded(
-                child: ListView.builder(
-                    itemCount: precos.length,
-                    itemBuilder: (context, index) {
-                      return _totalTerminacaoCard(context, index);
-                    }))
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.all(10.0),
+                  itemCount: inseminacoes.length,
+                  itemBuilder: (context, index) {
+                    return _inventarioCard(context, index);
+                  }),
+            )
           ],
         ),
       ),
     );
   }
 
-  Widget _totalTerminacaoCard(BuildContext context, int index) {
+  Widget _inventarioCard(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
         child: Padding(
           padding: EdgeInsets.all(10.0),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                Text(
-                  "Data: " + precos[index].data ?? "",
-                  style: TextStyle(fontSize: 14.0),
-                ),
-                SizedBox(
-                  width: 15,
-                ),
-                Text(" - "),
-                SizedBox(
-                  width: 15,
-                ),
-                Text(
-                  "Quantidade: " + precos[index].quantidade.toString() ?? "",
-                  style: TextStyle(fontSize: 14.0),
-                ),
-                SizedBox(
-                  width: 15,
-                ),
-                Text(" - "),
-                SizedBox(
-                  width: 15,
-                ),
-                Text(
-                  "Preço Por kg: " + precos[index].preco.toString() ?? "",
-                  style: TextStyle(fontSize: 14.0),
-                ),
-                SizedBox(
-                  width: 15,
-                ),
-                Text(" - "),
-                SizedBox(
-                  width: 15,
-                ),
-                Text(
-                  "Preço Total: " + precos[index].total.toString() ?? "",
-                  style: TextStyle(fontSize: 14.0),
-                )
-              ],
-            ),
+          child: Row(
+            children: [
+              Text(
+                "Cachaço: " + inseminacoes[index].nomeCachaco ?? "",
+                style: TextStyle(fontSize: 14.0),
+              ),
+              SizedBox(
+                width: 15,
+              ),
+              Text(" - "),
+              SizedBox(
+                width: 15,
+              ),
+              Text(
+                "Matriz: " + inseminacoes[index].nomeMatriz ?? "",
+                style: TextStyle(fontSize: 14.0),
+              )
+            ],
           ),
         ),
       ),
@@ -147,6 +125,33 @@ class _ListaPrecoCarneSuinaState extends State<ListaPrecoCarneSuina> {
         _showOptions(context, index);
       },
     );
+  }
+
+  void _getAllInventario() {
+    items = List();
+    helper.getAllItems().then((value) {
+      setState(() {
+        inseminacoes = value;
+        items.addAll(inseminacoes);
+      });
+    });
+  }
+
+  void _showPage({InseminacaoSuino inseminacao}) async {
+    final recInventario = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => CadastroInseminacaoMonta(
+                  inseminacao: inseminacao,
+                )));
+    if (recInventario != null) {
+      if (inseminacao != null) {
+        await helper.updateItem(recInventario);
+      } else {
+        await helper.insert(recInventario);
+      }
+      _getAllInventario();
+    }
   }
 
   void _showOptions(BuildContext context, int index) {
@@ -170,7 +175,7 @@ class _ListaPrecoCarneSuinaState extends State<ListaPrecoCarneSuina> {
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                          _showTotalTerminacoesPage(producao: precos[index]);
+                          _showPage(inseminacao: inseminacoes[index]);
                         },
                       ),
                     ),
@@ -182,16 +187,9 @@ class _ListaPrecoCarneSuinaState extends State<ListaPrecoCarneSuina> {
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
                         ),
                         onPressed: () {
-                          try {
-                            helper.delete(precos[index].id);
-                          } catch (e) {
-                            Toast.show("$Exception($e)", context,
-                                duration: Toast.LENGTH_SHORT,
-                                gravity: Toast.CENTER);
-                          }
-
+                          helper.delete(inseminacoes[index].id);
                           setState(() {
-                            precos.removeAt(index);
+                            inseminacoes.removeAt(index);
                             Navigator.pop(context);
                           });
                         },
@@ -205,104 +203,76 @@ class _ListaPrecoCarneSuinaState extends State<ListaPrecoCarneSuina> {
         });
   }
 
-  void _showTotalTerminacoesPage({ProducaoCarneSuina producao}) async {
-    final recCachaco = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CadastroProducaoCarneSuina(
-            producaoCarneSuina: producao,
-          ),
-        ));
-    if (recCachaco != null) {
-      if (producao != null) {
-        await helper.updateItem(recCachaco);
-      } else {
-        await helper.insert(recCachaco);
-      }
-      _getAllTerminacao();
-    }
-  }
-
-  void _getAllTerminacao() {
-    items = List();
-    helper.getAllItems().then((list) {
-      setState(() {
-        precos = list;
-        items.addAll(precos);
-      });
-    });
-  }
-
   _creatPdf(context) async {
-    tPrecos = precos;
+    tInseminacoes = inseminacoes;
     final pdfLib.Document pdf = pdfLib.Document(deflate: zlib.encode);
     pdf.addPage(pdfLib.MultiPage(
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Data', 'Preço', 'Quantidade', 'Machos', 'Fêmeas'],
-                ...precos.map((item) => [
-                      item.data,
-                      item.preco.toString(),
-                      item.quantidade.toString(),
-                    ])
+                <String>['Cachaço', 'Matriz'],
+                ...tInseminacoes
+                    .map((item) => [item.nomeCachaco, item.nomeMatriz])
               ])
             ]));
 
     final String dir = (await getApplicationDocumentsDirectory()).path;
 
-    final String path = '$dir/pdfTerminação.pdf';
+    final String path = '$dir/pdfISS.pdf';
     final File file = File(path);
     file.writeAsBytesSync(pdf.save());
     print("$file");
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (_) => PdfViwerPageLeite(path: path)));
+        .push(MaterialPageRoute(builder: (_) => PdfViwerPage(path: path)));
   }
 
   void _orderList(OrderOptions result) {
     switch (result) {
       case OrderOptions.orderaz:
-        precos.sort((a, b) {
-          return a.data.toLowerCase().compareTo(b.data.toLowerCase());
+        inseminacoes.sort((a, b) {
+          return a.nomeCachaco
+              .toLowerCase()
+              .compareTo(b.nomeCachaco.toLowerCase());
         });
         break;
       case OrderOptions.orderza:
-        precos.sort((a, b) {
-          return b.data.toLowerCase().compareTo(a.data.toLowerCase());
+        inseminacoes.sort((a, b) {
+          return b.nomeCachaco
+              .toLowerCase()
+              .compareTo(a.nomeCachaco.toLowerCase());
         });
         break;
     }
     setState(() {});
   }
 
-  //filtrar resultado com o texto passado
   void filterSearchResults(String query) {
-    List<ProducaoCarneSuina> dummySearchList = List();
+    List<InseminacaoSuino> dummySearchList = List();
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<ProducaoCarneSuina> dummyListData = List();
+      List<InseminacaoSuino> dummyListData = List();
       dummySearchList.forEach((item) {
-        if (item.data.toLowerCase().contains(query.toLowerCase())) {
+        if (item.nomeCachaco.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
         }
       });
       setState(() {
-        precos.clear();
-        precos.addAll(dummyListData);
+        inseminacoes.clear();
+        inseminacoes.addAll(dummyListData);
       });
       return;
     } else {
       setState(() {
-        precos.clear();
-        precos.addAll(items);
+        inseminacoes.clear();
+        inseminacoes.addAll(items);
       });
     }
   }
 
-  //retorna o cabeçalho do pdf
   pdfLib.Widget _buildHeade(pdfLib.Context context) {
     return pdfLib.Container(
         color: PdfColors.green,
+        height: 150,
         child: pdfLib.Padding(
             padding: pdfLib.EdgeInsets.all(5),
             child: pdfLib.Row(
@@ -321,7 +291,7 @@ class _ListaPrecoCarneSuinaState extends State<ListaPrecoCarneSuina> {
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
-                      pdfLib.Text('Produção de Carne',
+                      pdfLib.Text('Inseminação Suína',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white))
                     ],

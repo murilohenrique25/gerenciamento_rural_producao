@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:gerenciamento_rural/helpers/inventario_semen_suina_db.dart';
+import 'package:gerenciamento_rural/helpers/matriz_db.dart';
 import 'package:gerenciamento_rural/models/cachaco.dart';
 import 'package:gerenciamento_rural/models/inseminacao_suino.dart';
+import 'package:gerenciamento_rural/models/inventario_semen_suino.dart';
 import 'package:gerenciamento_rural/models/matriz.dart';
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
@@ -16,10 +19,13 @@ class CadastroInseminacaoMonta extends StatefulWidget {
 }
 
 class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
+  MatrizDB matrizDB = MatrizDB();
+  InventarioSemenSuinaDB _inventarioSemenDB = InventarioSemenSuinaDB();
   int _radioValue = 0;
   String tipo;
-  List<Matriz> matrizes = List();
-  List<Cachaco> cachacos = List();
+  List<Matriz> matrizes;
+  List<InventarioSemenSuina> listaSemens;
+  InventarioSemenSuina inventarioSemen;
   InseminacaoSuino _editedInseminacao;
   bool _inseminacaoEdited = false;
   Cachaco cachaco = Cachaco();
@@ -28,7 +34,8 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
   final _obsController = TextEditingController();
   final _palhetaController = TextEditingController();
   var _data = MaskedTextController(mask: '00-00-0000');
-
+  String nomeMatriz = "Vazio";
+  String nomeCachaco = "Vazio";
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final df = new DateFormat("dd-MM-yyyy");
@@ -45,7 +52,7 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
   @override
   void initState() {
     super.initState();
-    _getAllLotes();
+    _getAllAnimais();
     if (widget.inseminacao == null) {
       _editedInseminacao = InseminacaoSuino();
     } else {
@@ -82,6 +89,10 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
               Toast.show("Data inválida.", context,
                   duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
             } else {
+              if (_radioValue == 0) {
+                inventarioSemen.quantidade = inventarioSemen.quantidade - 1;
+                _inventarioSemenDB.updateItem(inventarioSemen);
+              }
               Navigator.pop(context, _editedInseminacao);
             }
           },
@@ -148,6 +159,7 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
                   onChanged: (value) {
                     _inseminacaoEdited = true;
                     setState(() {
+                      nomeMatriz = value.nomeAnimal;
                       _editedInseminacao.idMatriz = value.idAnimal;
                       _editedInseminacao.nomeMatriz = value.nomeAnimal;
                     });
@@ -175,13 +187,20 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
                 SizedBox(
                   height: 10.0,
                 ),
+                Text("Matriz selecionada:  $nomeMatriz",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                SizedBox(
+                  height: 10.0,
+                ),
                 SearchableDropdown.single(
-                  items: cachacos.map((cachaco) {
+                  items: listaSemens.map((cachaco) {
                     return DropdownMenuItem(
                       value: cachaco,
                       child: Row(
                         children: [
-                          Text(cachaco.nomeAnimal),
+                          Text(cachaco.nomeCachaco),
                         ],
                       ),
                     );
@@ -192,8 +211,8 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
                   onChanged: (value) {
                     _inseminacaoEdited = true;
                     setState(() {
-                      _editedInseminacao.idSemen = value.idAnimal;
-                      _editedInseminacao.nomeCachaco = value.nomeAnimal;
+                      _editedInseminacao.idSemen = value.idCachaco;
+                      _editedInseminacao.nomeCachaco = value.nomeCachaco;
                     });
                   },
                   doneButton: "Pronto",
@@ -219,6 +238,13 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
                 SizedBox(
                   height: 10.0,
                 ),
+                Text("Cachaço selecionado:  $nomeCachaco",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                SizedBox(
+                  height: 10.0,
+                ),
                 TextField(
                   controller: _data,
                   keyboardType: TextInputType.number,
@@ -231,7 +257,7 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
                   },
                 ),
                 TextField(
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   controller: _palhetaController,
                   decoration: InputDecoration(labelText: "Palheta"),
                   onChanged: (text) {
@@ -306,11 +332,16 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
     }
   }
 
-  void _getAllLotes() {
-    // helperLote.getAllItems().then((list) {
-    //   setState(() {
-    //     lotes = list;
-    //   });
-    // });
+  void _getAllAnimais() {
+    _inventarioSemenDB.getAllItems().then((list) {
+      setState(() {
+        listaSemens = list;
+      });
+    });
+    matrizDB.getAllItems().then((list) {
+      setState(() {
+        matrizes = list;
+      });
+    });
   }
 }

@@ -40,7 +40,7 @@ class _EconomiaSuinoScreenState extends State<EconomiaSuinoScreen> {
                       //   size: 21.0,
                       // ),
                       Text(
-                        "Economia",
+                        "Gastos",
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 16.5,

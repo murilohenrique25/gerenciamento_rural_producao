@@ -19,7 +19,7 @@ class Matriz extends Suinos {
     mae = map["mae"]; //
     baia = map["baia"]; //
     origem = map["origem"]; //
-    numeroPartos = map["numeroPartos"]; //
+    numeroPartos = map["numero_partos"]; //
     partoPrevisto = map["parto_previsto"]; //
     diagnosticoGestacao = map["diagnostico_gestacao"]; //
     diasPrenha = map["dias_prenha"]; //
@@ -37,7 +37,7 @@ class Matriz extends Suinos {
       "mae": mae,
       "baia": baia,
       "origem": origem,
-      "numeroPartos": numeroPartos,
+      "numero_partos": numeroPartos,
       "parto_previsto": partoPrevisto,
       "diagnostico_gestacao": diagnosticoGestacao,
       "dias_prenha": diasPrenha,

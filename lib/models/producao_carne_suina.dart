@@ -3,6 +3,7 @@ class ProducaoCarneSuina {
   String data;
   double quantidade;
   double preco;
+  double total;
 
   ProducaoCarneSuina();
   ProducaoCarneSuina.fromMap(Map map) {
@@ -10,6 +11,7 @@ class ProducaoCarneSuina {
     data = map["data"];
     quantidade = map["quantidade"];
     preco = map["preco"];
+    total = map["total"];
   }
 
   Map toMap() {
@@ -17,6 +19,7 @@ class ProducaoCarneSuina {
       "data": data,
       "quantidade": quantidade,
       "preco": preco,
+      "total": total,
     };
     if (id != null) {
       map["id"] = id;

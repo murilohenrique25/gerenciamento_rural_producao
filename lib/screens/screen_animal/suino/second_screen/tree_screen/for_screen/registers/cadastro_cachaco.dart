@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:gerenciamento_rural/models/aleitamento.dart';
+import 'package:gerenciamento_rural/models/cachaco.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:toast/toast.dart';
 
 class CadastroCachaco extends StatefulWidget {
-  final Aleitamento aleitamento;
-  CadastroCachaco({this.aleitamento});
+  final Cachaco cachaco;
+  CadastroCachaco({this.cachaco});
   @override
   _CadastroCachacoState createState() => _CadastroCachacoState();
 }
 
 class _CadastroCachacoState extends State<CadastroCachaco> {
   String idadeFinal = "";
+  String numeroData = "";
   List lotes = [];
   int _radioValue = 0;
   String estado;
@@ -33,7 +33,8 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
   final df = new DateFormat("dd-MM-yyyy");
 
   String _idadeAnimal = "1ano e 2meses";
-
+  Cachaco _editedCachaco;
+  bool _cachadoEdited = false;
   final GlobalKey<ScaffoldState> _scaffoldstate =
       new GlobalKey<ScaffoldState>();
 
@@ -46,39 +47,34 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
   @override
   void initState() {
     super.initState();
-    _getAllLotes();
-    // if (widget.aleitamento == null) {
-    //   _editedBezerra = Bezerra();
-    //   _editedBezerra.virouNovilha = 0;
-    //   _editedBezerra.estado = "Vivo";
-    // } else {
-    //   _editedBezerra = Bezerra.fromMap(widget.aleitamento.toMap());
-    //   _ninhadaController.text = _editedBezerra.nome;
-    //   _racaController.text = _editedBezerra.raca;
-    //   if (_editedBezerra?.pesoDesmama?.isNaN ?? false) {
-    //     _pesoDesmamaController.text = _editedBezerra.pesoDesmama.toString();
-    //   }
-    //   if (_editedBezerra?.pesoNascimento?.isNaN ?? false) {
-    //     _pesoController.text = _editedBezerra.pesoNascimento.toString();
-    //   }
-
-    //   _dataDesmamaController.text = _editedBezerra.dataDesmama;
-    //   _paiController.text = _editedBezerra.pai;
-    //   _maeController.text = _editedBezerra.mae;
-    //   if (_editedBezerra.estado == "Vivo") {
-    //     _radioValue = 0;
-    //   } else {
-    //     _radioValue = 1;
-    //   }
-    //   _avoMMaternoController.text = _editedBezerra.avoMMaterno;
-    //   _avoFMaternoController.text = _editedBezerra.avoFMaterno;
-    //   _avoFPaternoController.text = _editedBezerra.avoFPaterno;
-    //   _avoMPaternoController.text = _editedBezerra.avoMPaterno;
-    //   selectedLotes = _editedBezerra.idLote;
-    //   numeroData = _editedBezerra.dataNascimento;
-    //   _dataNasc.text = numeroData;
-    //   idadeFinal = differenceDate();
-    // }
+    if (widget.cachaco == null) {
+      _editedCachaco = Cachaco();
+      _editedCachaco.identificacao = "Vivo";
+      _radioValue = 0;
+    } else {
+      _editedCachaco = Cachaco.fromMap(widget.cachaco.toMap());
+      _nomeController.text = _editedCachaco.nomeAnimal;
+      if (_editedCachaco?.peso?.isNaN ?? false) {
+        _pesoController.text = _editedCachaco.peso.toString();
+      }
+      if (_editedCachaco.identificacao == "Vivo") {
+        _radioValue = 0;
+      } else if (_editedCachaco.identificacao == "Morto") {
+        _radioValue = 1;
+      } else {
+        _radioValue = 2;
+      }
+      _racaController.text = _editedCachaco.raca;
+      _paiController.text = _editedCachaco.pai;
+      _maeController.text = _editedCachaco.mae;
+      _obsController.text = _editedCachaco.observacao;
+      _procedenciaController.text = _editedCachaco.origem;
+      _estadoController.text = _editedCachaco.estado;
+      _baiaController.text = _editedCachaco.baia;
+      numeroData = _editedCachaco.dataNascimento;
+      _dataNasc.text = numeroData;
+      idadeFinal = differenceDate();
+    }
   }
 
   Future<void> _showMyDialog() async {
@@ -95,13 +91,23 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                   keyboardType: TextInputType.text,
                   controller: _paiController,
                   decoration: InputDecoration(labelText: "Pai"),
-                  onChanged: (text) {},
+                  onChanged: (text) {
+                    _cachadoEdited = true;
+                    setState(() {
+                      _editedCachaco.pai = text;
+                    });
+                  },
                 ),
                 TextField(
                   keyboardType: TextInputType.text,
                   controller: _maeController,
                   decoration: InputDecoration(labelText: "Mãe"),
-                  onChanged: (text) {},
+                  onChanged: (text) {
+                    _cachadoEdited = true;
+                    setState(() {
+                      _editedCachaco.mae = text;
+                    });
+                  },
                 ),
               ],
             ),
@@ -147,7 +153,7 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
               Toast.show("Data nascimento inválida.", context,
                   duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
             } else {
-              // Navigator.pop(context, _editedBezerra);
+              Navigator.pop(context, _editedCachaco);
             }
           },
           child: Icon(Icons.save),
@@ -171,19 +177,24 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                 TextField(
                   controller: _nomeController,
                   decoration: InputDecoration(labelText: "Nome ou Número"),
-                  onChanged: (text) {},
+                  onChanged: (text) {
+                    _cachadoEdited = true;
+                    setState(() {
+                      _editedCachaco.nomeAnimal = text;
+                    });
+                  },
                 ),
                 TextField(
                   controller: _dataNasc,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(labelText: "Data de Nascimento"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   numeroData = _dataNasc.text;
-                    //   _editedBezerra.dataNascimento = _dataNasc.text;
-                    //   idadeFinal = differenceDate();
-                    // });
+                    _cachadoEdited = true;
+                    setState(() {
+                      _editedCachaco.dataNascimento = text;
+                      numeroData = _dataNasc.text;
+                      idadeFinal = differenceDate();
+                    });
                   },
                 ),
                 SizedBox(
@@ -193,73 +204,26 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                     style: TextStyle(
                         fontSize: 16.0,
                         color: Color.fromARGB(255, 4, 125, 141))),
-                SizedBox(
-                  height: 20.0,
-                ),
-                SearchableDropdown.single(
-                  items: lotes.map((lote) {
-                    return DropdownMenuItem(
-                      value: lote.id,
-                      child: Row(
-                        children: [
-                          Text(lote.name),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: "lote",
-                  hint: "Selecione um Estado",
-                  searchHint: "Selecione um Estado",
-                  onChanged: (value) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.idLote = value;
-                    //   selectedLotes = value;
-                    // });
-                  },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
-                ),
-                SizedBox(
-                  height: 10.0,
-                ),
                 TextField(
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   controller: _procedenciaController,
                   decoration: InputDecoration(labelText: "Procêdencia"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _cachadoEdited = true;
+                    setState(() {
+                      _editedCachaco.origem = text;
+                    });
                   },
                 ),
                 TextField(
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   controller: _baiaController,
                   decoration: InputDecoration(labelText: "Baia"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _cachadoEdited = true;
+                    setState(() {
+                      _editedCachaco.baia = text;
+                    });
                   },
                 ),
                 TextField(
@@ -267,10 +231,10 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                   controller: _racaController,
                   decoration: InputDecoration(labelText: "Raça"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _cachadoEdited = true;
+                    setState(() {
+                      _editedCachaco.raca = text;
+                    });
                   },
                 ),
                 TextField(
@@ -278,10 +242,10 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                   controller: _estadoController,
                   decoration: InputDecoration(labelText: "Estado"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.raca = text;
-                    // });
+                    _cachadoEdited = true;
+                    setState(() {
+                      _editedCachaco.estado = text;
+                    });
                   },
                 ),
                 TextField(
@@ -289,10 +253,10 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                   controller: _pesoController,
                   decoration: InputDecoration(labelText: "Peso"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.pesoNascimento = double.parse(text);
-                    // });
+                    _cachadoEdited = true;
+                    setState(() {
+                      _editedCachaco.peso = double.parse(text);
+                    });
                   },
                 ),
                 TextField(
@@ -300,10 +264,10 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                   controller: _obsController,
                   decoration: InputDecoration(labelText: "Observação"),
                   onChanged: (text) {
-                    // _bezerraEdited = true;
-                    // setState(() {
-                    //   _editedBezerra.dataDesmama = text;
-                    // });
+                    _cachadoEdited = true;
+                    setState(() {
+                      _editedCachaco.observacao = text;
+                    });
                   },
                 ),
                 RaisedButton(
@@ -324,7 +288,7 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                         onChanged: (int value) {
                           setState(() {
                             _radioValue = value;
-                            estado = "Vivo";
+                            _editedCachaco.identificacao = "Vivo";
                           });
                         }),
                     Text("Vivo"),
@@ -334,7 +298,7 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                         onChanged: (int value) {
                           setState(() {
                             _radioValue = value;
-                            estado = "Morto";
+                            _editedCachaco.identificacao = "Morto";
                           });
                         }),
                     Text("Morto"),
@@ -344,7 +308,7 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                         onChanged: (int value) {
                           setState(() {
                             _radioValue = value;
-                            estado = "Vendido";
+                            _editedCachaco.identificacao = "Vendido";
                           });
                         }),
                     Text("Vendido"),
@@ -362,7 +326,7 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
   }
 
   Future<bool> _requestPop() {
-    if (false) {
+    if (_cachadoEdited) {
       showDialog(
           context: context,
           builder: (context) {
@@ -396,9 +360,9 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
   String differenceDate() {
     String num = "";
     DateTime dt = DateTime.now();
-    // if (numeroData.isNotEmpty) {
-    //   num = numeroData.split('-').reversed.join();
-    // }
+    if (numeroData.isNotEmpty) {
+      num = numeroData.split('-').reversed.join();
+    }
 
     DateTime date = DateTime.parse(num);
     int quant = dt.difference(date).inDays;
@@ -428,13 +392,5 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
       _idadeAnimal = "6 ano e $dias dias";
     }
     return _idadeAnimal;
-  }
-
-  void _getAllLotes() {
-    // helperLote.getAllItems().then((list) {
-    //   setState(() {
-    //     lotes = list;
-    //   });
-    // });
   }
 }

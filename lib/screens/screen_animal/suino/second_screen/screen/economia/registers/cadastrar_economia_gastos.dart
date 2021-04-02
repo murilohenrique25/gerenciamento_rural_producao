@@ -40,7 +40,8 @@ class _CadastroEconomiaGastoState extends State<CadastroEconomiaGasto> {
       _valorController.text = _editedGasto.valorUnitario.toString();
       _quantidadeController.text = _editedGasto.quantidade.toString();
       _obsController.text = _editedGasto.observacao;
-      valorTotal = _editedGasto.valorTotal;
+      quantidadeTotal = _editedGasto.valorUnitario;
+      quantidadeInd = _editedGasto.quantidade;
     }
   }
 
@@ -60,8 +61,8 @@ class _CadastroEconomiaGastoState extends State<CadastroEconomiaGasto> {
                 try {
                   int quant = int.parse(_quantidadeController.text);
                   double valor = double.parse(_valorController.text);
-                  _editedGasto.valorTotal = quant * valor;
-                  valorTotal = quant * valor;
+                  double t = quant * valor;
+                  _editedGasto.valorTotal = t;
                   Navigator.pop(context, _editedGasto);
                 } catch (Expetion) {
                   showDialog(
@@ -155,12 +156,17 @@ class _CadastroEconomiaGastoState extends State<CadastroEconomiaGasto> {
                     },
                     keyboardType: TextInputType.text,
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                    child: Text(
-                      "Valor Total: ${calcularTotal()}",
-                      style: TextStyle(fontSize: 18.0),
-                    ),
+                  SizedBox(
+                    height: 15.0,
+                  ),
+                  Text(
+                    "Total: ${calcularTotal()}",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141)),
+                  ),
+                  SizedBox(
+                    height: 20.0,
                   ),
                 ],
               ),

@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/tree_screen/for_screen/registers/cadastro_cachaco.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/tree_screen/for_screen/list_cachacos.dart';
 
 class CachacoSuinoScreen extends StatefulWidget {
   @override
@@ -16,7 +16,7 @@ class _CachacoSuinoScreenState extends State<CachacoSuinoScreen> {
         GestureDetector(
           onTap: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => CadastroCachaco()));
+                MaterialPageRoute(builder: (context) => ListaCachacos()));
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),

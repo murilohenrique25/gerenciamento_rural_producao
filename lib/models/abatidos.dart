@@ -1,13 +1,13 @@
 import 'package:gerenciamento_rural/models/suino.dart';
 
-class Terminacao extends Suinos {
+class Abatido extends Suinos {
   String dataAbate;
   double pesoAbate;
   double pesoMedio;
   int mudarPlantel;
   String nome;
-  Terminacao();
-  Terminacao.fromMap(Map map) {
+  Abatido();
+  Abatido.fromMap(Map map) {
     // id = map["id"];
     idAnimal = map["id_animal"];
     nome = map["nome"];
@@ -68,6 +68,6 @@ class Terminacao extends Suinos {
 
   @override
   String toString() {
-    return "Terminação(id:$idAnimal, nome: $nome, codigoExterno : $quantidade)";
+    return "Abatido(id:$idAnimal, nome: $nome, codigoExterno : $quantidade)";
   }
 }
