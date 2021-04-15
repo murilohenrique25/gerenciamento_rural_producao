@@ -74,7 +74,7 @@ class TratamentoSuinoDB extends HelperDB {
     Database db = await this.getDb();
     List listMap =
         await db.rawQuery("SELECT * FROM tratamentoSuino WHERE tipo = 0");
-    List<Tratamento> list = List();
+    List<Tratamento> list = [];
     for (Map m in listMap) {
       list.add(Tratamento.fromMap(m));
     }
@@ -84,7 +84,7 @@ class TratamentoSuinoDB extends HelperDB {
   Future<List> getAllItems() async {
     Database db = await this.getDb();
     List listMap = await db.rawQuery("SELECT * FROM tratamentoSuino");
-    List<Tratamento> list = List();
+    List<Tratamento> list = [];
     for (Map m in listMap) {
       list.add(Tratamento.fromMap(m));
     }

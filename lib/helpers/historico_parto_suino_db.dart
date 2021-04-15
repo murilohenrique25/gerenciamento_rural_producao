@@ -75,7 +75,7 @@ class HistoricoPartoSuinoDB extends HelperDB {
   Future<List> getAllItems() async {
     Database db = await this.getDb();
     List listMap = await db.rawQuery("SELECT * FROM historicoPartoSuino");
-    List<HistoricoPartoSuino> list = List();
+    List<HistoricoPartoSuino> list = [];
     for (Map m in listMap) {
       list.add(HistoricoPartoSuino.fromMap(m));
     }

@@ -17,9 +17,9 @@ class CadastroBezerra extends StatefulWidget {
 
 class _CadastroBezerraState extends State<CadastroBezerra> {
   LoteDB helperLote = LoteDB();
-  List<Lote> lotes = List();
+  List<Lote> lotes = [];
   BezerraDB helper = BezerraDB();
-  List<Bezerra> bezerras = List();
+  List<Bezerra> bezerras = [];
   final _nameFocus = FocusNode();
 
   bool _bezerraEdited = false;
@@ -359,7 +359,7 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
                     });
                   },
                 ),
-                RaisedButton(
+                ElevatedButton(
                   onPressed: () {
                     _showMyDialog();
                   },
@@ -413,13 +413,13 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
               title: Text("Descartar Alterações?"),
               content: Text("Se sair as alterações serão perdidas."),
               actions: [
-                FlatButton(
+                ElevatedButton(
                   child: Text("Cancelar"),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
-                FlatButton(
+                ElevatedButton(
                   child: Text("Sim"),
                   onPressed: () {
                     Navigator.pop(context);

@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 import 'package:toast/toast.dart';
 
 enum OrderOptions { orderaz, orderza }
@@ -19,16 +20,16 @@ class ListNutricaoSuplemento extends StatefulWidget {
 class _ListNutricaoSuplementoState extends State<ListNutricaoSuplemento> {
   TextEditingController editingController = TextEditingController();
   NutricaoSuplementarDB helper = NutricaoSuplementarDB();
-  List<NutricaoSuplementar> totalNT = List();
-  List<NutricaoSuplementar> items = List();
-  List<NutricaoSuplementar> nutricoes = List();
-  List<NutricaoSuplementar> tnutricao = List();
+  List<NutricaoSuplementar> totalNT = [];
+  List<NutricaoSuplementar> items = [];
+  List<NutricaoSuplementar> nutricoes = [];
+  List<NutricaoSuplementar> tnutricao = [];
   @override
   void initState() {
     super.initState();
     _getAllNT();
-    items = List();
-    tnutricao = List();
+    items = [];
+    tnutricao = [];
   }
 
   @override
@@ -142,7 +143,7 @@ class _ListNutricaoSuplementoState extends State<ListNutricaoSuplemento> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -155,7 +156,7 @@ class _ListNutricaoSuplementoState extends State<ListNutricaoSuplemento> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -203,8 +204,8 @@ class _ListNutricaoSuplementoState extends State<ListNutricaoSuplemento> {
   }
 
   void _getAllNT() {
-    totalNT = List();
-    items = List();
+    totalNT = [];
+    items = [];
     helper.getAllItems().then((value) {
       setState(() {
         totalNT = value;
@@ -239,7 +240,11 @@ class _ListNutricaoSuplementoState extends State<ListNutricaoSuplemento> {
 
     final String path = '$dir/pdfnc.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPageLeite(path: path)));
   }
@@ -262,10 +267,10 @@ class _ListNutricaoSuplementoState extends State<ListNutricaoSuplemento> {
 
   //filtrar resultado com o texto passado
   void filterSearchResults(String query) {
-    List<NutricaoSuplementar> dummySearchList = List();
+    List<NutricaoSuplementar> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<NutricaoSuplementar> dummyListData = List();
+      List<NutricaoSuplementar> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.nomeLote.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);

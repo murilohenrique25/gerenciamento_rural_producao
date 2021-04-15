@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -18,16 +19,16 @@ class MedicamentosSuinoList extends StatefulWidget {
 class _MedicamentosSuinoListState extends State<MedicamentosSuinoList> {
   TextEditingController editingController = TextEditingController();
   MedicamentoSuinoDB helper = MedicamentoSuinoDB();
-  List<Medicamento> items = List();
-  List<Medicamento> medicamentos = List();
-  List<Medicamento> tMedicamentos = List();
+  List<Medicamento> items = [];
+  List<Medicamento> medicamentos = [];
+  List<Medicamento> tMedicamentos = [];
 
   @override
   void initState() {
     super.initState();
     _getAllMedicamentos();
-    items = List();
-    tMedicamentos = List();
+    items = [];
+    tMedicamentos = [];
   }
 
   @override
@@ -129,7 +130,7 @@ class _MedicamentosSuinoListState extends State<MedicamentosSuinoList> {
   }
 
   void _getAllMedicamentos() {
-    items = List();
+    items = [];
     helper.getAllItems().then((value) {
       setState(() {
         medicamentos = value;
@@ -169,7 +170,7 @@ class _MedicamentosSuinoListState extends State<MedicamentosSuinoList> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -183,7 +184,7 @@ class _MedicamentosSuinoListState extends State<MedicamentosSuinoList> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -222,8 +223,11 @@ class _MedicamentosSuinoListState extends State<MedicamentosSuinoList> {
 
     final String path = '$dir/pdfLotes.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
-    print("$file");
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPage(path: path)));
   }
@@ -249,10 +253,10 @@ class _MedicamentosSuinoListState extends State<MedicamentosSuinoList> {
   }
 
   void filterSearchResults(String query) {
-    List<Medicamento> dummySearchList = List();
+    List<Medicamento> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Medicamento> dummyListData = List();
+      List<Medicamento> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.nomeMedicamento.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);

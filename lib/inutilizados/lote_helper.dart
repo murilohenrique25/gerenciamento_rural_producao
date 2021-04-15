@@ -70,7 +70,7 @@
 //   Future<List> getAllLotes() async {
 //     Database dbLote = await db;
 //     List listMap = await dbLote.rawQuery("SELECT * FROM $loteTable");
-//     List<Lote> listLote = List();
+//     List<Lote> listLote = [];
 //     for (Map m in listMap) {
 //       listLote.add(Lote.fromMap(m));
 //     }

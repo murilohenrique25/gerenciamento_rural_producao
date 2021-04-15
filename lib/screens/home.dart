@@ -1,4 +1,5 @@
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/manejo_geral.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/equinos/equinos.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/touros/touro_e_inseminacao.dart';
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/bovino_corte.dart';
@@ -96,6 +97,39 @@ class _HomeState extends State<Home> {
                         Padding(
                           padding: EdgeInsets.all(10.0),
                           child: Suinos(),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: _width,
+                          height: _height,
+                          color: Colors.grey[50],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(4.0),
+                          child: Equinos(),
+                        ),
+                      ],
+                    ),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: _width,
+                          height: _height,
+                          color: Colors.grey[50],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(4.0),
+                          child: Equinos(),
                         ),
                       ],
                     ),

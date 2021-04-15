@@ -7,6 +7,7 @@ import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/touros/second_screen/tree_screen/cadastrar_inventario_semen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/touros/second_screen/pdf/pdfViwerPageInventario.dart';
+import 'package:share_extend/share_extend.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -18,16 +19,16 @@ class ListInventarioSemen extends StatefulWidget {
 class _ListInventarioSemenState extends State<ListInventarioSemen> {
   TextEditingController editingController = TextEditingController();
   InventarioSemenDB helper = InventarioSemenDB();
-  List<InventarioSemen> items = List();
-  List<InventarioSemen> semens = List();
-  List<InventarioSemen> tSemens = List();
+  List<InventarioSemen> items = [];
+  List<InventarioSemen> semens = [];
+  List<InventarioSemen> tSemens = [];
 
   @override
   void initState() {
     super.initState();
     _getAllInventarioSemen();
-    items = List();
-    tSemens = List();
+    items = [];
+    tSemens = [];
   }
 
   @override
@@ -179,7 +180,7 @@ class _ListInventarioSemenState extends State<ListInventarioSemen> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -192,7 +193,7 @@ class _ListInventarioSemenState extends State<ListInventarioSemen> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -232,7 +233,7 @@ class _ListInventarioSemenState extends State<ListInventarioSemen> {
   }
 
   void _getAllInventarioSemen() {
-    items = List();
+    items = [];
     helper.getAllItems().then((list) {
       setState(() {
         semens = list;
@@ -271,8 +272,11 @@ class _ListInventarioSemenState extends State<ListInventarioSemen> {
 
     final String path = '$dir/pdfInventarioSemens.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
-    print("$file");
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => PdfViwerPageInventario(path: path)));
   }
@@ -294,10 +298,10 @@ class _ListInventarioSemenState extends State<ListInventarioSemen> {
   }
 
   void filterSearchResults(String query) {
-    List<InventarioSemen> dummySearchList = List();
+    List<InventarioSemen> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<InventarioSemen> dummyListData = List();
+      List<InventarioSemen> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.nomeTouro.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);

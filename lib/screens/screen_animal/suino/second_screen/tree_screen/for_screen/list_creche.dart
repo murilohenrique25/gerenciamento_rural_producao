@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 import 'package:toast/toast.dart';
 
 enum OrderOptions { orderaz, orderza }
@@ -19,15 +20,15 @@ class ListaCreche extends StatefulWidget {
 class _ListaCrecheState extends State<ListaCreche> {
   TextEditingController editingController = TextEditingController();
   CrecheDB helper = CrecheDB();
-  List<Creche> items = List();
-  List<Creche> creches = List();
-  List<Creche> tCreches = List();
+  List<Creche> items = [];
+  List<Creche> creches = [];
+  List<Creche> tCreches = [];
   @override
   void initState() {
     super.initState();
     _getAllCreche();
-    items = List();
-    tCreches = List();
+    items = [];
+    tCreches = [];
   }
 
   @override
@@ -130,7 +131,7 @@ class _ListaCrecheState extends State<ListaCreche> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -143,7 +144,7 @@ class _ListaCrecheState extends State<ListaCreche> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -191,7 +192,7 @@ class _ListaCrecheState extends State<ListaCreche> {
   }
 
   void _getAllCreche() {
-    items = List();
+    items = [];
     helper.getAllItems().then((list) {
       setState(() {
         creches = list;
@@ -228,8 +229,11 @@ class _ListaCrecheState extends State<ListaCreche> {
 
     final String path = '$dir/pdfCachacos.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
-    print("$file");
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPageLeite(path: path)));
   }
@@ -256,10 +260,10 @@ class _ListaCrecheState extends State<ListaCreche> {
 
   //filtrar resultado com o texto passado
   void filterSearchResults(String query) {
-    List<Creche> dummySearchList = List();
+    List<Creche> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Creche> dummyListData = List();
+      List<Creche> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.nomeAnimal.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);

@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 import 'package:toast/toast.dart';
 
 enum OrderOptions { orderaz, orderza }
@@ -19,16 +20,16 @@ class ListaVacas extends StatefulWidget {
 class _ListaVacasState extends State<ListaVacas> {
   TextEditingController editingController = TextEditingController();
   VacaDB helper = VacaDB();
-  List<Vaca> totalVacas = List();
-  List<Vaca> items = List();
-  List<Vaca> vacas = List();
-  List<Vaca> tvacas = List();
+  List<Vaca> totalVacas = [];
+  List<Vaca> items = [];
+  List<Vaca> vacas = [];
+  List<Vaca> tvacas = [];
   @override
   void initState() {
     super.initState();
     _getAllVacas();
-    items = List();
-    tvacas = List();
+    items = [];
+    tvacas = [];
   }
 
   @override
@@ -134,7 +135,7 @@ class _ListaVacasState extends State<ListaVacas> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -147,7 +148,7 @@ class _ListaVacasState extends State<ListaVacas> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -195,7 +196,7 @@ class _ListaVacasState extends State<ListaVacas> {
   }
 
   void _getAllVacas() {
-    items = List();
+    items = [];
     helper.getAllItems().then((list) {
       setState(() {
         totalVacas = list;
@@ -232,8 +233,11 @@ class _ListaVacasState extends State<ListaVacas> {
 
     final String path = '$dir/pdfVacas.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
-    print("$file");
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPageLeite(path: path)));
   }
@@ -256,10 +260,10 @@ class _ListaVacasState extends State<ListaVacas> {
 
   //filtrar resultado com o texto passado
   void filterSearchResults(String query) {
-    List<Vaca> dummySearchList = List();
+    List<Vaca> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Vaca> dummyListData = List();
+      List<Vaca> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.nome.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);

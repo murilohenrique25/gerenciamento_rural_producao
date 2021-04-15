@@ -78,7 +78,7 @@ class BezerraDB extends HelperDB {
     Database db = await this.getDb();
     List listMap =
         await db.rawQuery("SELECT * FROM bezerra WHERE virouNovilha == 0");
-    List<Bezerra> list = List();
+    List<Bezerra> list = [];
     for (Map m in listMap) {
       list.add(Bezerra.fromMap(m));
     }

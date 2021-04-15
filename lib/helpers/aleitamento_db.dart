@@ -73,7 +73,7 @@ class AleitamentoDB extends HelperDB {
     Database db = await this.getDb();
     List listMap =
         await db.rawQuery("SELECT * FROM aleitamento WHERE mudar_plantel == 0");
-    List<Aleitamento> list = List();
+    List<Aleitamento> list = [];
     for (Map m in listMap) {
       list.add(Aleitamento.fromMap(m));
     }

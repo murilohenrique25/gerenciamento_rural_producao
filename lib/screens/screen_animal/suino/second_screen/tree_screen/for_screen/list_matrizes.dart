@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 import 'package:toast/toast.dart';
 
 enum OrderOptions { orderaz, orderza }
@@ -19,15 +20,15 @@ class ListaMatrizes extends StatefulWidget {
 class _ListaMatrizesState extends State<ListaMatrizes> {
   TextEditingController editingController = TextEditingController();
   MatrizDB helper = MatrizDB();
-  List<Matriz> items = List();
-  List<Matriz> matrizes = List();
-  List<Matriz> tMatrizes = List();
+  List<Matriz> items = [];
+  List<Matriz> matrizes = [];
+  List<Matriz> tMatrizes = [];
   @override
   void initState() {
     super.initState();
     _getAllMatrizes();
-    items = List();
-    tMatrizes = List();
+    items = [];
+    tMatrizes = [];
   }
 
   @override
@@ -130,7 +131,7 @@ class _ListaMatrizesState extends State<ListaMatrizes> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -143,7 +144,7 @@ class _ListaMatrizesState extends State<ListaMatrizes> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -191,7 +192,7 @@ class _ListaMatrizesState extends State<ListaMatrizes> {
   }
 
   void _getAllMatrizes() {
-    items = List();
+    items = [];
     helper.getAllItems().then((list) {
       setState(() {
         matrizes = list;
@@ -217,7 +218,11 @@ class _ListaMatrizesState extends State<ListaMatrizes> {
 
     final String path = '$dir/pdfMatrizes.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     print("$file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPageLeite(path: path)));
@@ -245,10 +250,10 @@ class _ListaMatrizesState extends State<ListaMatrizes> {
 
   //filtrar resultado com o texto passado
   void filterSearchResults(String query) {
-    List<Matriz> dummySearchList = List();
+    List<Matriz> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Matriz> dummyListData = List();
+      List<Matriz> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.nomeAnimal.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);

@@ -74,7 +74,7 @@ class PrecoCarneSuinaDB extends HelperDB {
   Future<List> getAllItems() async {
     Database db = await this.getDb();
     List listMap = await db.rawQuery("SELECT * FROM precoCarneSuina");
-    List<PrecoCarneSuina> list = List();
+    List<PrecoCarneSuina> list = [];
     for (Map m in listMap) {
       list.add(PrecoCarneSuina.fromMap(m));
     }

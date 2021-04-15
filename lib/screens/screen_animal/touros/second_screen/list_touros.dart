@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -18,16 +19,16 @@ class ListTouros extends StatefulWidget {
 class _ListTourosState extends State<ListTouros> {
   TextEditingController editingController = TextEditingController();
   TouroDB helper = TouroDB();
-  List<Touro> items = List();
-  List<Touro> touros = List();
-  List<Touro> tTouros = List();
+  List<Touro> items = [];
+  List<Touro> touros = [];
+  List<Touro> tTouros = [];
 
   @override
   void initState() {
     super.initState();
     _getAllTouros();
-    items = List();
-    tTouros = List();
+    items = [];
+    tTouros = [];
   }
 
   @override
@@ -133,7 +134,7 @@ class _ListTourosState extends State<ListTouros> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -146,7 +147,7 @@ class _ListTourosState extends State<ListTouros> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -186,7 +187,7 @@ class _ListTourosState extends State<ListTouros> {
   }
 
   void _getAllTouros() {
-    items = List();
+    items = [];
     helper.getAllItems().then((list) {
       setState(() {
         touros = list;
@@ -212,10 +213,10 @@ class _ListTourosState extends State<ListTouros> {
   }
 
   void filterSearchResults(String query) {
-    List<Touro> dummySearchList = List();
+    List<Touro> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Touro> dummyListData = List();
+      List<Touro> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.nome.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
@@ -251,8 +252,11 @@ class _ListTourosState extends State<ListTouros> {
 
     final String path = '$dir/pdfTouros.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
-    print("$file");
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPageTouro(path: path)));
   }

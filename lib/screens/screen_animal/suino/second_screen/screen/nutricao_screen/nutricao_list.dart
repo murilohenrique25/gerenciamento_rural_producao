@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -18,16 +19,16 @@ class ListaNutricaoSuina extends StatefulWidget {
 class _ListaNutricaoSuinaState extends State<ListaNutricaoSuina> {
   TextEditingController editingController = TextEditingController();
   NutricaoSuinaDB helper = NutricaoSuinaDB();
-  List<NutricaoSuina> items = List();
-  List<NutricaoSuina> nutricoes = List();
-  List<NutricaoSuina> tNutricoes = List();
+  List<NutricaoSuina> items = [];
+  List<NutricaoSuina> nutricoes = [];
+  List<NutricaoSuina> tNutricoes = [];
 
   @override
   void initState() {
     super.initState();
     _getAllNutricao();
-    items = List();
-    tNutricoes = List();
+    items = [];
+    tNutricoes = [];
   }
 
   @override
@@ -128,7 +129,7 @@ class _ListaNutricaoSuinaState extends State<ListaNutricaoSuina> {
   }
 
   void _getAllNutricao() {
-    items = List();
+    items = [];
     helper.getAllItems().then((value) {
       setState(() {
         nutricoes = value;
@@ -168,7 +169,7 @@ class _ListaNutricaoSuinaState extends State<ListaNutricaoSuina> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -181,7 +182,7 @@ class _ListaNutricaoSuinaState extends State<ListaNutricaoSuina> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -219,8 +220,11 @@ class _ListaNutricaoSuinaState extends State<ListaNutricaoSuina> {
 
     final String path = '$dir/pdfLotes.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
-    print("$file");
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPage(path: path)));
   }
@@ -242,10 +246,10 @@ class _ListaNutricaoSuinaState extends State<ListaNutricaoSuina> {
   }
 
   void filterSearchResults(String query) {
-    List<NutricaoSuina> dummySearchList = List();
+    List<NutricaoSuina> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<NutricaoSuina> dummyListData = List();
+      List<NutricaoSuina> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.fase.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);

@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -18,15 +19,15 @@ class Lotes extends StatefulWidget {
 class _LotesState extends State<Lotes> {
   TextEditingController editingController = TextEditingController();
   LoteDB helper = LoteDB();
-  List<Lote> items = List();
-  List<Lote> lotes = List();
-  List<Lote> tLotes = List();
+  List<Lote> items = [];
+  List<Lote> lotes = [];
+  List<Lote> tLotes = [];
   @override
   void initState() {
     super.initState();
     _getAllLotes();
-    items = List();
-    tLotes = List();
+    items = [];
+    tLotes = [];
   }
 
   @override
@@ -141,7 +142,7 @@ class _LotesState extends State<Lotes> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -154,7 +155,7 @@ class _LotesState extends State<Lotes> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -194,7 +195,7 @@ class _LotesState extends State<Lotes> {
   }
 
   void _getAllLotes() {
-    items = List();
+    items = [];
     helper.getAllItems().then((list) {
       setState(() {
         lotes = list;
@@ -219,8 +220,11 @@ class _LotesState extends State<Lotes> {
 
     final String path = '$dir/pdfLotes.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
-    print("$file");
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPageLote(path: path)));
   }
@@ -242,10 +246,10 @@ class _LotesState extends State<Lotes> {
   }
 
   void filterSearchResults(String query) {
-    List<Lote> dummySearchList = List();
+    List<Lote> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Lote> dummyListData = List();
+      List<Lote> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.name.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);

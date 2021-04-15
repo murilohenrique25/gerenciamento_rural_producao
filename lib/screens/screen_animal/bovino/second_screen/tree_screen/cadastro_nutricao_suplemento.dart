@@ -16,7 +16,7 @@ class CadastroNutricaoSuplemento extends StatefulWidget {
 class _CadastroNutricaoSuplementoState
     extends State<CadastroNutricaoSuplemento> {
   LoteDB helperLote = LoteDB();
-  List<Lote> lotes = List();
+  List<Lote> lotes = [];
   NutricaoSuplementar _editedNutricao;
   bool _nutricaoEdited = false;
   final _nameFocus = FocusNode();
@@ -213,13 +213,13 @@ class _CadastroNutricaoSuplementoState
               title: Text("Descartar Alterações?"),
               content: Text("Se sair as alterações serão perdidas."),
               actions: [
-                FlatButton(
+                ElevatedButton(
                   child: Text("Cancelar"),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
-                FlatButton(
+                ElevatedButton(
                   child: Text("Sim"),
                   onPressed: () {
                     Navigator.pop(context);

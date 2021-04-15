@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 import 'package:toast/toast.dart';
 
 enum OrderOptions { orderaz, orderza }
@@ -19,15 +20,15 @@ class ListaTermincao extends StatefulWidget {
 class _ListaTermincaoState extends State<ListaTermincao> {
   TextEditingController editingController = TextEditingController();
   TerminacaoDB helper = TerminacaoDB();
-  List<Terminacao> items = List();
-  List<Terminacao> terminacoes = List();
-  List<Terminacao> tTerminacoes = List();
+  List<Terminacao> items = [];
+  List<Terminacao> terminacoes = [];
+  List<Terminacao> tTerminacoes = [];
   @override
   void initState() {
     super.initState();
     _getAllTerminacao();
-    items = List();
-    tTerminacoes = List();
+    items = [];
+    tTerminacoes = [];
   }
 
   @override
@@ -130,7 +131,7 @@ class _ListaTermincaoState extends State<ListaTermincao> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -144,7 +145,7 @@ class _ListaTermincaoState extends State<ListaTermincao> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -192,7 +193,7 @@ class _ListaTermincaoState extends State<ListaTermincao> {
   }
 
   void _getAllTerminacao() {
-    items = List();
+    items = [];
     helper.getAllItems().then((list) {
       setState(() {
         terminacoes = list;
@@ -229,7 +230,11 @@ class _ListaTermincaoState extends State<ListaTermincao> {
 
     final String path = '$dir/pdfTerminação.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     print("$file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPageLeite(path: path)));
@@ -257,10 +262,10 @@ class _ListaTermincaoState extends State<ListaTermincao> {
 
   //filtrar resultado com o texto passado
   void filterSearchResults(String query) {
-    List<Terminacao> dummySearchList = List();
+    List<Terminacao> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Terminacao> dummyListData = List();
+      List<Terminacao> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.nomeAnimal.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);

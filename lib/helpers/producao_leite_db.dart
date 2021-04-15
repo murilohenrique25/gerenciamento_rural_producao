@@ -74,7 +74,7 @@ class LeiteDB extends HelperDB {
   Future<List> getAllItems() async {
     Database db = await this.getDb();
     List listMap = await db.rawQuery("SELECT * FROM leiteTable");
-    List<Leite> list = List();
+    List<Leite> list = [];
     for (Map m in listMap) {
       list.add(Leite.fromMap(m));
     }

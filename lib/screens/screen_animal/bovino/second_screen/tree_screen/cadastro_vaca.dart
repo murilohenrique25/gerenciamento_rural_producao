@@ -17,8 +17,8 @@ class CadastroVaca extends StatefulWidget {
 
 class _CadastroVacaState extends State<CadastroVaca> {
   LoteDB helperLote = LoteDB();
-  List<Lote> lotes = List();
-  List<Vaca> vacas = List();
+  List<Lote> lotes = [];
+  List<Vaca> vacas = [];
   final _nameFocus = FocusNode();
   Lote lote = Lote();
   bool _vacasEdited = false;
@@ -389,7 +389,7 @@ class _CadastroVacaState extends State<CadastroVaca> {
                     Text("Aborto"),
                   ],
                 ),
-                RaisedButton(
+                ElevatedButton(
                   onPressed: () {
                     _showMyDialog();
                   },
@@ -443,13 +443,13 @@ class _CadastroVacaState extends State<CadastroVaca> {
               title: Text("Descartar Alterações?"),
               content: Text("Se sair as alterações serão perdidas."),
               actions: [
-                FlatButton(
+                ElevatedButton(
                   child: Text("Cancelar"),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
-                FlatButton(
+                ElevatedButton(
                   child: Text("Sim"),
                   onPressed: () {
                     Navigator.pop(context);

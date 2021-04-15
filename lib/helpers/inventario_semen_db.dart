@@ -82,7 +82,7 @@ class InventarioSemenDB extends HelperDB {
   Future<List> getAllItems() async {
     Database db = await this.getDb();
     List listMap = await db.rawQuery("SELECT * FROM inventarioSemen");
-    List<InventarioSemen> list = List();
+    List<InventarioSemen> list = [];
     for (Map m in listMap) {
       list.add(InventarioSemen.fromMap(m));
     }
@@ -93,7 +93,7 @@ class InventarioSemenDB extends HelperDB {
     Database db = await this.getDb();
     List listMap =
         await db.rawQuery("SELECT * FROM inventarioSemen WHERE quantidade > 0");
-    List<InventarioSemen> list = List();
+    List<InventarioSemen> list = [];
     for (Map m in listMap) {
       list.add(InventarioSemen.fromMap(m));
     }

@@ -331,7 +331,7 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                 SizedBox(
                   height: 20.0,
                 ),
-                RaisedButton(
+                ElevatedButton(
                   onPressed: () {
                     _showMyDialog();
                   },
@@ -395,13 +395,13 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
               title: Text("Descartar Alterações?"),
               content: Text("Se sair as alterações serão perdidas."),
               actions: [
-                FlatButton(
+                ElevatedButton(
                   child: Text("Cancelar"),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
-                FlatButton(
+                ElevatedButton(
                   child: Text("Sim"),
                   onPressed: () {
                     Navigator.pop(context);

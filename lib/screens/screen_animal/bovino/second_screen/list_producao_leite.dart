@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 import 'package:toast/toast.dart';
 
 enum OrderOptions { orderaz, orderza }
@@ -19,17 +20,17 @@ class ProducoesLeite extends StatefulWidget {
 class _ProducoesLeiteState extends State<ProducoesLeite> {
   TextEditingController editingController = TextEditingController();
   LeiteDB helper = LeiteDB();
-  List<Leite> prodLeite = List();
-  List<Leite> items = List();
-  List<Leite> leites = List();
-  List<Leite> tLeites = List();
+  List<Leite> prodLeite = [];
+  List<Leite> items = [];
+  List<Leite> leites = [];
+  List<Leite> tLeites = [];
   String _nomeMes = "Geral";
   @override
   void initState() {
     super.initState();
     _getAllProducaoLeites();
-    items = List();
-    tLeites = List();
+    items = [];
+    tLeites = [];
   }
 
   @override
@@ -187,7 +188,7 @@ class _ProducoesLeiteState extends State<ProducoesLeite> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -201,7 +202,7 @@ class _ProducoesLeiteState extends State<ProducoesLeite> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -256,7 +257,7 @@ class _ProducoesLeiteState extends State<ProducoesLeite> {
   }
 
   void _getAllProducaoLeites() {
-    items = List();
+    items = [];
     helper.getAllItems().then((list) {
       setState(() {
         prodLeite = list;
@@ -300,8 +301,11 @@ class _ProducoesLeiteState extends State<ProducoesLeite> {
 
     final String path = '$dir/pdfListaLeite.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
-    print("$file");
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPageLeite(path: path)));
   }
@@ -378,10 +382,10 @@ class _ProducoesLeiteState extends State<ProducoesLeite> {
       default:
         _nomeMes = "Geral";
     }
-    List<Leite> dummySearchList = List();
+    List<Leite> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Leite> dummyListData = List();
+      List<Leite> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.idMes == numero) {
           dummyListData.add(item);

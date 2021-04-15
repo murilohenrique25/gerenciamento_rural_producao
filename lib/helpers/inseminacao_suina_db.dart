@@ -73,7 +73,7 @@ class InseminacaoSuinaDB extends HelperDB {
   Future<List> getAllItems() async {
     Database db = await this.getDb();
     List listMap = await db.rawQuery("SELECT * FROM inseminacaoSuina");
-    List<InseminacaoSuino> list = List();
+    List<InseminacaoSuino> list = [];
     for (Map m in listMap) {
       list.add(InseminacaoSuino.fromMap(m));
     }

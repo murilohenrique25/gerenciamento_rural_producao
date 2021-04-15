@@ -6,6 +6,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -17,16 +18,16 @@ class ListInseminacoes extends StatefulWidget {
 class _ListInseminacoesState extends State<ListInseminacoes> {
   TextEditingController editingController = TextEditingController();
   InseminacaoDB helper = InseminacaoDB();
-  List<Inseminacao> items = List();
-  List<Inseminacao> inseminacoes = List();
-  List<Inseminacao> tinseminacoes = List();
+  List<Inseminacao> items = [];
+  List<Inseminacao> inseminacoes = [];
+  List<Inseminacao> tinseminacoes = [];
 
   @override
   void initState() {
     super.initState();
     _getAllInseminacoes();
-    items = List();
-    tinseminacoes = List();
+    items = [];
+    tinseminacoes = [];
   }
 
   @override
@@ -140,7 +141,7 @@ class _ListInseminacoesState extends State<ListInseminacoes> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -154,7 +155,7 @@ class _ListInseminacoesState extends State<ListInseminacoes> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -194,7 +195,7 @@ class _ListInseminacoesState extends State<ListInseminacoes> {
   }
 
   void _getAllInseminacoes() {
-    items = List();
+    items = [];
     helper.getAllItems().then((list) {
       setState(() {
         inseminacoes = list;
@@ -220,10 +221,10 @@ class _ListInseminacoesState extends State<ListInseminacoes> {
   }
 
   void filterSearchResults(String query) {
-    List<Inseminacao> dummySearchList = List();
+    List<Inseminacao> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Inseminacao> dummyListData = List();
+      List<Inseminacao> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.nomeVaca.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
@@ -263,7 +264,11 @@ class _ListInseminacoesState extends State<ListInseminacoes> {
 
     final String path = '$dir/pdfInseminacoes.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     print("$file");
     // Navigator.of(context)
     //     .push(MaterialPageRoute(builder: (_) => PdfViwerPageTouro(path: path)));

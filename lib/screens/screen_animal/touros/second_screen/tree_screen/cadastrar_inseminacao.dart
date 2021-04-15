@@ -31,11 +31,11 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
 
   VacaDB helperVaca = VacaDB();
   NovilhaDB helperNovilha = NovilhaDB();
-  List<Vaca> totalVacas = List();
-  List<Novilha> totalNovilhas = List();
+  List<Vaca> totalVacas = [];
+  List<Novilha> totalNovilhas = [];
 
   InventarioSemenDB helperInventario = InventarioSemenDB();
-  List<InventarioSemen> semens = List();
+  List<InventarioSemen> semens = [];
   bool _inseminacaoEdited = false;
   Inseminacao _editedInseminacao;
   InventarioSemen selectedInseminacao;
@@ -291,13 +291,13 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
               title: Text("Descartar Alterações?"),
               content: Text("Se sair as alterações serão perdidas."),
               actions: [
-                FlatButton(
+                ElevatedButton(
                   child: Text("Cancelar"),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
-                FlatButton(
+                ElevatedButton(
                   child: Text("Sim"),
                   onPressed: () {
                     Navigator.pop(context);

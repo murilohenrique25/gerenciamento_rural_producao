@@ -17,9 +17,9 @@ class CadastroNovilha extends StatefulWidget {
 
 class _CadastroNovilhaState extends State<CadastroNovilha> {
   LoteDB helperLote = LoteDB();
-  List<Lote> lotes = List();
+  List<Lote> lotes = [];
   NovilhaDB helper = NovilhaDB();
-  List<Novilha> novilhas = List();
+  List<Novilha> novilhas = [];
   final _nameFocus = FocusNode();
 
   bool _novilhaEdited = false;
@@ -438,7 +438,7 @@ class _CadastroNovilhaState extends State<CadastroNovilha> {
                 SizedBox(
                   height: 20.0,
                 ),
-                RaisedButton(
+                ElevatedButton(
                   onPressed: () {
                     _showMyDialog();
                   },
@@ -492,13 +492,13 @@ class _CadastroNovilhaState extends State<CadastroNovilha> {
               title: Text("Descartar Alterações?"),
               content: Text("Se sair as alterações serão perdidas."),
               actions: [
-                FlatButton(
+                ElevatedButton(
                   child: Text("Cancelar"),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
-                FlatButton(
+                ElevatedButton(
                   child: Text("Sim"),
                   onPressed: () {
                     Navigator.pop(context);

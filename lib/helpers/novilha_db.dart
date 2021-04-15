@@ -73,7 +73,7 @@ class NovilhaDB extends HelperDB {
   Future<List> getAllItems() async {
     Database db = await this.getDb();
     List listMap = await db.rawQuery("SELECT * FROM novilha");
-    List<Novilha> list = List();
+    List<Novilha> list = [];
     for (Map m in listMap) {
       list.add(Novilha.fromMap(m));
     }

@@ -172,9 +172,10 @@ class _CadastroState extends State<Cadastro> {
                 padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
                 child: Container(
                   height: 50.0,
-                  child: RaisedButton(
+                  child: ElevatedButton(
                     onPressed: () {
                       if (selectedECC == _ecc[0] || selectedECC == null) {
+                        // ignore: deprecated_member_use
                         _scaffoldstate.currentState.showSnackBar(
                           new SnackBar(
                             duration: new Duration(seconds: 2),
@@ -183,6 +184,7 @@ class _CadastroState extends State<Cadastro> {
                         );
                       }
                       if (selectedStatus == _status[0]) {
+                        // ignore: deprecated_member_use
                         _scaffoldstate.currentState.showSnackBar(
                           new SnackBar(
                             duration: new Duration(seconds: 2),
@@ -196,7 +198,6 @@ class _CadastroState extends State<Cadastro> {
                       "Salvar Animal",
                       style: TextStyle(color: Colors.white, fontSize: 20.0),
                     ),
-                    color: Colors.green,
                   ),
                 ),
               ),

@@ -25,10 +25,10 @@ class _CadastroTratamentoState extends State<CadastroTratamento> {
   NovilhaDB novilhaDB = NovilhaDB();
   BezerraDB bezerraDB = BezerraDB();
 
-  List<Vaca> _vacas = List();
-  List<Novilha> _novilhas = List();
-  List<Bezerra> _bezerras = List();
-  List<Medicamento> _medicamento = List();
+  List<Vaca> _vacas = [];
+  List<Novilha> _novilhas = [];
+  List<Bezerra> _bezerras = [];
+  List<Medicamento> _medicamento = [];
 
   String selectedECC;
   final _nomeVacaController = TextEditingController();
@@ -55,10 +55,10 @@ class _CadastroTratamentoState extends State<CadastroTratamento> {
   @override
   void initState() {
     super.initState();
-    _vacas = List();
-    _novilhas = List();
-    _bezerras = List();
-    _medicamento = List();
+    _vacas = [];
+    _novilhas = [];
+    _bezerras = [];
+    _medicamento = [];
     if (widget.tratamento == null) {
       _editedTratamento = Tratamento();
     } else {
@@ -392,13 +392,13 @@ class _CadastroTratamentoState extends State<CadastroTratamento> {
               title: Text("Descartar Alterações?"),
               content: Text("Se sair as alterações serão perdidas."),
               actions: [
-                FlatButton(
+                ElevatedButton(
                   child: Text("Cancelar"),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
-                FlatButton(
+                ElevatedButton(
                   child: Text("Sim"),
                   onPressed: () {
                     Navigator.pop(context);

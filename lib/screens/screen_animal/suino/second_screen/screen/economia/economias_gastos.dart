@@ -6,6 +6,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -17,15 +18,15 @@ class EconomiaSuina extends StatefulWidget {
 class _EconomiaSuinaState extends State<EconomiaSuina> {
   TextEditingController editingController = TextEditingController();
   GastoSuinoDB helper = GastoSuinoDB();
-  List<Gasto> items = List();
-  List<Gasto> gastos = List();
-  List<Gasto> tGastos = List();
+  List<Gasto> items = [];
+  List<Gasto> gastos = [];
+  List<Gasto> tGastos = [];
   @override
   void initState() {
     super.initState();
     _getAllGastos();
-    items = List();
-    tGastos = List();
+    items = [];
+    tGastos = [];
   }
 
   @override
@@ -173,7 +174,7 @@ class _EconomiaSuinaState extends State<EconomiaSuina> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -186,7 +187,7 @@ class _EconomiaSuinaState extends State<EconomiaSuina> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -226,7 +227,7 @@ class _EconomiaSuinaState extends State<EconomiaSuina> {
   }
 
   void _getAllGastos() {
-    items = List();
+    items = [];
     helper.getAllItems().then((value) {
       setState(() {
         gastos = value;
@@ -260,10 +261,10 @@ class _EconomiaSuinaState extends State<EconomiaSuina> {
   }
 
   void filterSearchResults(String query) {
-    List<Gasto> dummySearchList = List();
+    List<Gasto> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Gasto> dummyListData = List();
+      List<Gasto> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.nome.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
@@ -310,8 +311,11 @@ class _EconomiaSuinaState extends State<EconomiaSuina> {
 
     final String path = '$dir/pdfTouros.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
-    print("$file");
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     // Navigator.of(context)
     //     .push(MaterialPageRoute(builder: (_) => PdfViwerPageTouro(path: path)));
   }

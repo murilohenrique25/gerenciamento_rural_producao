@@ -23,9 +23,9 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
   CachacoDB _cachacoDB = CachacoDB();
   MatrizDB _matrizDB = MatrizDB();
 
-  List<Cachaco> _cachacos = List();
-  List<Matriz> _matrizes = List();
-  List<Medicamento> _medicamentos = List();
+  List<Cachaco> _cachacos = [];
+  List<Matriz> _matrizes = [];
+  List<Medicamento> _medicamentos = [];
 
   String nomeAnimal = "Vazio";
   String nomeMedicamento = "Vazio";
@@ -50,9 +50,9 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
   @override
   void initState() {
     super.initState();
-    _cachacos = List();
-    _matrizes = List();
-    _medicamentos = List();
+    _cachacos = [];
+    _matrizes = [];
+    _medicamentos = [];
     if (widget.tratamento == null) {
       _editedTratamento = Tratamento();
     } else {
@@ -367,13 +367,13 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
               title: Text("Descartar Alterações?"),
               content: Text("Se sair as alterações serão perdidas."),
               actions: [
-                FlatButton(
+                ElevatedButton(
                   child: Text("Cancelar"),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
-                FlatButton(
+                ElevatedButton(
                   child: Text("Sim"),
                   onPressed: () {
                     Navigator.pop(context);

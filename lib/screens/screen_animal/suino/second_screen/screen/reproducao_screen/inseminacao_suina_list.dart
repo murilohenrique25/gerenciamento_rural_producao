@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -18,16 +19,16 @@ class ListaInseminacaoSuina extends StatefulWidget {
 class _ListaInseminacaoSuinaState extends State<ListaInseminacaoSuina> {
   TextEditingController editingController = TextEditingController();
   InseminacaoSuinaDB helper = InseminacaoSuinaDB();
-  List<InseminacaoSuino> items = List();
-  List<InseminacaoSuino> inseminacoes = List();
-  List<InseminacaoSuino> tInseminacoes = List();
+  List<InseminacaoSuino> items = [];
+  List<InseminacaoSuino> inseminacoes = [];
+  List<InseminacaoSuino> tInseminacoes = [];
 
   @override
   void initState() {
     super.initState();
     _getAllInventario();
-    items = List();
-    tInseminacoes = List();
+    items = [];
+    tInseminacoes = [];
   }
 
   @override
@@ -128,7 +129,7 @@ class _ListaInseminacaoSuinaState extends State<ListaInseminacaoSuina> {
   }
 
   void _getAllInventario() {
-    items = List();
+    items = [];
     helper.getAllItems().then((value) {
       setState(() {
         inseminacoes = value;
@@ -168,7 +169,7 @@ class _ListaInseminacaoSuinaState extends State<ListaInseminacaoSuina> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -181,7 +182,7 @@ class _ListaInseminacaoSuinaState extends State<ListaInseminacaoSuina> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -220,8 +221,11 @@ class _ListaInseminacaoSuinaState extends State<ListaInseminacaoSuina> {
 
     final String path = '$dir/pdfISS.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
-    print("$file");
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPage(path: path)));
   }
@@ -247,10 +251,10 @@ class _ListaInseminacaoSuinaState extends State<ListaInseminacaoSuina> {
   }
 
   void filterSearchResults(String query) {
-    List<InseminacaoSuino> dummySearchList = List();
+    List<InseminacaoSuino> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<InseminacaoSuino> dummyListData = List();
+      List<InseminacaoSuino> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.nomeCachaco.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);

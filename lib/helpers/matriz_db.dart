@@ -73,7 +73,7 @@ class MatrizDB extends HelperDB {
   Future<List> getAllItems() async {
     Database db = await this.getDb();
     List listMap = await db.rawQuery("SELECT * FROM matriz");
-    List<Matriz> list = List();
+    List<Matriz> list = [];
     for (Map m in listMap) {
       list.add(Matriz.fromMap(m));
     }

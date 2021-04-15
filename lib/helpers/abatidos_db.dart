@@ -72,7 +72,7 @@ class AbatidosDB extends HelperDB {
   Future<List> getAllItems() async {
     Database db = await this.getDb();
     List listMap = await db.rawQuery("SELECT * FROM abatido");
-    List<Abatido> list = List();
+    List<Abatido> list = [];
     for (Map m in listMap) {
       list.add(Abatido.fromMap(m));
     }

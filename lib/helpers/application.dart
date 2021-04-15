@@ -1,4 +1,4 @@
-String dbName = 'final0204.db';
+String dbName = 'final0704.db';
 int dbVersion = 1;
 
 List<String> dbCreate = [
@@ -477,4 +477,166 @@ List<String> dbCreate = [
       valorUnitario REAL,
       valorTotal REAL
      )""",
+  //tabela cavalo
+  """CREATE TABLE cavalo(
+      id INTEGER PRIMARY KEY,
+      nome TEXT,
+      data_nascimento TEXT,
+      estado TEXT,
+      lote TEXT,
+      raca TEXT,
+      pai TEXT,
+      mae TEXT,
+      origem TEXT,
+      resenha TEXT,
+      observacao TEXT,
+      vm TEXT
+     )""",
+  //tabela egua
+  """CREATE TABLE egua(
+      id INTEGER PRIMARY KEY,
+      nome TEXT,
+      data_nascimento TEXT,
+      estado TEXT,
+      lote TEXT,
+      raca TEXT,
+      pai TEXT,
+      mae TEXT,
+      origem TEXT,
+      resenha TEXT,
+      observacao TEXT,
+      situacao TEXT,
+      diagnosticoGestacao TEXT,
+      cios TEXT,
+      totalPartos TEXT,
+      vm TEXT
+     )""",
+  //tabela potro
+  """CREATE TABLE potro(
+      id INTEGER PRIMARY KEY,
+      nome TEXT,
+      data_nascimento TEXT,
+      estado TEXT,
+      lote TEXT,
+      raca TEXT,
+      pai TEXT,
+      mae TEXT,
+      origem TEXT,
+      resenha TEXT,
+      observacao TEXT,
+      situacao TEXT,
+      sexo TEXT,
+      virou_adulto INTEGER,
+      vm TEXT
+     )""",
+  //tb volumoso
+  """CREATE TABLE nutricaoVolumosoEquino(
+    id INTEGER PRIMARY KEY,
+    id_lote INTEGER,
+    nome_lote TEXT,
+    tipo TEXT,
+    pb REAL,
+    ndt REAL,
+    ms REAL,
+    umidade REAL,
+    quantidade_individual REAL,
+    quantidade_total REAL,
+    observacao TEXT,
+    data TEXT 
+  )""",
+  //tb volumoso
+  """CREATE TABLE nutricaoConcentradoEquino(
+    id INTEGER PRIMARY KEY,
+    id_lote INTEGER,
+    nome_lote TEXT,
+    ingredientes TEXT,
+    pb REAL,
+    ndt REAL,
+    quantidade_individual REAL,
+    quantidade_total REAL,
+    observacao TEXT,
+    data TEXT 
+  )""",
+  //tb volumoso
+  """CREATE TABLE nutricaoSuplementarEquino(
+    id INTEGER PRIMARY KEY,
+    id_lote INTEGER,
+    nome_lote TEXT,
+    ingredientes TEXT,
+    quantidade_individual REAL,
+    quantidade_total REAL,
+    observacao TEXT,
+    data TEXT 
+  )""",
+  //tabela medicamentoSuino
+  """CREATE TABLE medicamentoEquino(
+  id INTEGER PRIMARY KEY,
+  nomeMedicamento TEXT,
+  quantidade REAL,
+  precoUnitario REAL,
+  precoTotal REAL,
+  tempoDescarteLeite TEXT,
+  tipoDosagem TEXT,
+  carenciaMedicamento TEXT,
+  dataVencimento TEXT,
+  fornecedor TEXT,
+  dataAbertura TEXT,
+  dataCompra TEXT,
+  principioAtivo TEXT,
+  observacao TEXT
+  )""",
+  //tb tratamentoSuino
+  """CREATE TABLE tratamentoEquino(
+    id INTEGER PRIMARY KEY,
+    lote TEXT,
+    idAnimal INTEGER, 
+    nomeAnimal TEXT,
+    enfermidade TEXT,
+    idMedicamento INTEGER,
+    quantidade REAL,
+    nomeMedicamento TEXT,
+    unidade TEXT,
+    viaAplicacao TEXT,
+    duracao TEXT,
+    inicioTratamento TEXT,
+    fimTratamento TEXT,
+    carencia TEXT,
+    observacao TEXT,
+    tipo INTEGER,
+    FOREIGN KEY (idMedicamento) REFERENCES medicamentoEquino(id) 
+    )""",
+  //tb inseminacaoEquino
+  """CREATE TABLE inseminacaoEquino(
+      id INTEGER PRIMARY KEY,
+      id_matriz INTEGER,
+      nome_matriz TEXT,
+      id_semen INTEGER,
+      nome_cachaco TEXT,
+      data TEXT,
+      observacao TEXT,
+      inseminador TEXT,
+      tipo_reproducao TEXT,
+      palheta TEXT
+    )""",
+  //tb inventarioSemenEquino
+  """CREATE TABLE inventarioSemenEquino(
+      id INTEGER PRIMARY KEY,
+      id_cachaco INTEGER,
+      nome_cachaco TEXT,
+      identificao TEXT,
+      quantidade INTEGER,
+      cor TEXT,
+      data_cadastro TEXT,
+      data_validade TEXT,
+      observacao TEXT,
+      vigor TEXT,
+      mortalidade TEXT,
+      turbilhamento TEXT,
+      concentracao TEXT,
+      volume REAL,
+      aspecto TEXT,
+      celulas_normais REAL,
+      defeito_maiores TEXT,
+      defeito_menores TEXT
+    )""",
 ];

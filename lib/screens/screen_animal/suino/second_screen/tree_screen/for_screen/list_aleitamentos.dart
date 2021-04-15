@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 import 'package:toast/toast.dart';
 
 enum OrderOptions { orderaz, orderza }
@@ -19,15 +20,15 @@ class ListaAleitamentos extends StatefulWidget {
 class _ListaAleitamentosState extends State<ListaAleitamentos> {
   TextEditingController editingController = TextEditingController();
   AleitamentoDB helper = AleitamentoDB();
-  List<Aleitamento> items = List();
-  List<Aleitamento> aleitamentos = List();
-  List<Aleitamento> tAleitamentos = List();
+  List<Aleitamento> items = [];
+  List<Aleitamento> aleitamentos = [];
+  List<Aleitamento> tAleitamentos = [];
   @override
   void initState() {
     super.initState();
     _getAllAleitamento();
-    items = List();
-    tAleitamentos = List();
+    items = [];
+    tAleitamentos = [];
   }
 
   @override
@@ -130,7 +131,7 @@ class _ListaAleitamentosState extends State<ListaAleitamentos> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -144,7 +145,7 @@ class _ListaAleitamentosState extends State<ListaAleitamentos> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -192,7 +193,7 @@ class _ListaAleitamentosState extends State<ListaAleitamentos> {
   }
 
   void _getAllAleitamento() {
-    items = List();
+    items = [];
     helper.getAllItems().then((list) {
       setState(() {
         aleitamentos = list;
@@ -229,8 +230,11 @@ class _ListaAleitamentosState extends State<ListaAleitamentos> {
 
     final String path = '$dir/pdfCachacos.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
-    print("$file");
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPageLeite(path: path)));
   }
@@ -257,10 +261,10 @@ class _ListaAleitamentosState extends State<ListaAleitamentos> {
 
   //filtrar resultado com o texto passado
   void filterSearchResults(String query) {
-    List<Aleitamento> dummySearchList = List();
+    List<Aleitamento> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Aleitamento> dummyListData = List();
+      List<Aleitamento> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.nomeAnimal.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);

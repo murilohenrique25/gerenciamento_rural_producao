@@ -18,11 +18,11 @@ class _RelatorioGastoDataState extends State<RelatorioGastoData> {
   GastoDB helper = GastoDB();
   MedicamentoDB helperMedicamento = MedicamentoDB();
 
-  List<Gasto> totalGasto = List();
-  List<Gasto> totalGastoData = List();
+  List<Gasto> totalGasto = [];
+  List<Gasto> totalGastoData = [];
 
-  List<Medicamento> totalGastoMedicamento = List();
-  List<Medicamento> totalGastoMedicamentoData = List();
+  List<Medicamento> totalGastoMedicamento = [];
+  List<Medicamento> totalGastoMedicamentoData = [];
   var datainicial;
   var datafinal;
 
@@ -80,13 +80,12 @@ class _RelatorioGastoDataState extends State<RelatorioGastoData> {
                   ),
                   Container(
                     width: double.infinity,
-                    child: RaisedButton(
+                    child: ElevatedButton(
                       onPressed: verificaDatas,
                       child: Text(
                         "Gerar Relatório",
                         style: TextStyle(color: Colors.white),
                       ),
-                      color: Colors.green[900],
                     ),
                   )
                 ],
@@ -99,8 +98,8 @@ class _RelatorioGastoDataState extends State<RelatorioGastoData> {
   }
 
   void verificaDatas() {
-    totalGastoData = List();
-    totalGastoMedicamentoData = List();
+    totalGastoData = [];
+    totalGastoMedicamentoData = [];
 
     var dataini = datainicial;
     var datafim = datafinal;

@@ -73,7 +73,7 @@ class CrecheDB extends HelperDB {
     Database db = await this.getDb();
     List listMap =
         await db.rawQuery("SELECT * FROM creche WHERE mudar_plantel == 0");
-    List<Creche> list = List();
+    List<Creche> list = [];
     for (Map m in listMap) {
       list.add(Creche.fromMap(m));
     }

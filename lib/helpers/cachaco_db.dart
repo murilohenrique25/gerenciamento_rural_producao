@@ -73,7 +73,7 @@ class CachacoDB extends HelperDB {
   Future<List> getAllItems() async {
     Database db = await this.getDb();
     List listMap = await db.rawQuery("SELECT * FROM cachaco");
-    List<Cachaco> list = List();
+    List<Cachaco> list = [];
     for (Map m in listMap) {
       list.add(Cachaco.fromMap(m));
     }

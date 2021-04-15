@@ -19,10 +19,10 @@ class _RelatorioPrecoLeiteQuantLitroState
   PrecoLeiteDB helperleite = PrecoLeiteDB();
   LeiteDB helper = LeiteDB();
 
-  List<Leite> totalLeite = List();
-  List<Leite> totalLeiteData = List();
+  List<Leite> totalLeite = [];
+  List<Leite> totalLeiteData = [];
 
-  List<PrecoLeite> totalPrecoLeite = List();
+  List<PrecoLeite> totalPrecoLeite = [];
   double _precoCadastradoSistema = 0.0;
   String mes;
   var datainicial;
@@ -68,13 +68,12 @@ class _RelatorioPrecoLeiteQuantLitroState
                   ),
                   Container(
                     width: double.infinity,
-                    child: RaisedButton(
+                    child: ElevatedButton(
                       onPressed: verificaDatas,
                       child: Text(
                         "Gerar Relatório",
                         style: TextStyle(color: Colors.white),
                       ),
-                      color: Colors.green[900],
                     ),
                   )
                 ],
@@ -87,7 +86,7 @@ class _RelatorioPrecoLeiteQuantLitroState
   }
 
   void verificaDatas() {
-    totalLeiteData = List();
+    totalLeiteData = [];
     var dataini = datainicial;
     if ((dataini != null)) {
       var datainicial = dataini.split('-');

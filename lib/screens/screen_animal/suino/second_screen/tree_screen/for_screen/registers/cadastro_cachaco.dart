@@ -270,7 +270,7 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                     });
                   },
                 ),
-                RaisedButton(
+                ElevatedButton(
                   onPressed: () {
                     _showMyDialog();
                   },
@@ -334,13 +334,13 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
               title: Text("Descartar Alterações?"),
               content: Text("Se sair as alterações serão perdidas."),
               actions: [
-                FlatButton(
+                ElevatedButton(
                   child: Text("Cancelar"),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
-                FlatButton(
+                ElevatedButton(
                   child: Text("Sim"),
                   onPressed: () {
                     Navigator.pop(context);

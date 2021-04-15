@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 import 'package:toast/toast.dart';
 
 enum OrderOptions { orderaz, orderza }
@@ -19,16 +20,16 @@ class ListNutricaoVolumoso extends StatefulWidget {
 class _ListNutricaoVolumosoState extends State<ListNutricaoVolumoso> {
   TextEditingController editingController = TextEditingController();
   NutricaoVolumosoDB helper = NutricaoVolumosoDB();
-  List<NutricaoVolumoso> totalNT = List();
-  List<NutricaoVolumoso> items = List();
-  List<NutricaoVolumoso> nutricoes = List();
-  List<NutricaoVolumoso> tnutricao = List();
+  List<NutricaoVolumoso> totalNT = [];
+  List<NutricaoVolumoso> items = [];
+  List<NutricaoVolumoso> nutricoes = [];
+  List<NutricaoVolumoso> tnutricao = [];
   @override
   void initState() {
     super.initState();
     _getAllNT();
-    items = List();
-    tnutricao = List();
+    items = [];
+    tnutricao = [];
   }
 
   @override
@@ -142,7 +143,7 @@ class _ListNutricaoVolumosoState extends State<ListNutricaoVolumoso> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -155,7 +156,7 @@ class _ListNutricaoVolumosoState extends State<ListNutricaoVolumoso> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -203,8 +204,8 @@ class _ListNutricaoVolumosoState extends State<ListNutricaoVolumoso> {
   }
 
   void _getAllNT() {
-    totalNT = List();
-    items = List();
+    totalNT = [];
+    items = [];
     helper.getAllItems().then((value) {
       setState(() {
         totalNT = value;
@@ -238,7 +239,11 @@ class _ListNutricaoVolumosoState extends State<ListNutricaoVolumoso> {
 
     final String path = '$dir/pdfnc.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     print("$file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPageLeite(path: path)));
@@ -262,10 +267,10 @@ class _ListNutricaoVolumosoState extends State<ListNutricaoVolumoso> {
 
   //filtrar resultado com o texto passado
   void filterSearchResults(String query) {
-    List<NutricaoVolumoso> dummySearchList = List();
+    List<NutricaoVolumoso> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<NutricaoVolumoso> dummyListData = List();
+      List<NutricaoVolumoso> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.nomeLote.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);

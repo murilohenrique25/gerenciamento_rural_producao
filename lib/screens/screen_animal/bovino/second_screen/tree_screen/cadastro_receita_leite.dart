@@ -93,13 +93,13 @@ class _CadastroReceitaLeiteState extends State<CadastroReceitaLeite> {
               title: Text("Descartar Alterações?"),
               content: Text("Se sair as alterações serão perdidas."),
               actions: [
-                FlatButton(
+                ElevatedButton(
                   child: Text("Cancelar"),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
-                FlatButton(
+                ElevatedButton(
                   child: Text("Sim"),
                   onPressed: () {
                     Navigator.pop(context);
@@ -110,7 +110,7 @@ class _CadastroReceitaLeiteState extends State<CadastroReceitaLeite> {
             );
           });
       return Future.value(false);
-    // ignore: dead_code
+      // ignore: dead_code
     } else {
       return Future.value(true);
     }

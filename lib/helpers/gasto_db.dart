@@ -72,7 +72,7 @@ class GastoDB extends HelperDB {
   Future<List> getAllItems() async {
     Database db = await this.getDb();
     List listMap = await db.rawQuery("SELECT * FROM gasto");
-    List<Gasto> list = List();
+    List<Gasto> list = [];
     for (Map m in listMap) {
       list.add(Gasto.fromMap(m));
     }

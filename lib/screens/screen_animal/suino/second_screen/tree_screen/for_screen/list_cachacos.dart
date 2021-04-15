@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 import 'package:toast/toast.dart';
 
 enum OrderOptions { orderaz, orderza }
@@ -19,15 +20,15 @@ class ListaCachacos extends StatefulWidget {
 class _ListaCachacosState extends State<ListaCachacos> {
   TextEditingController editingController = TextEditingController();
   CachacoDB helper = CachacoDB();
-  List<Cachaco> items = List();
-  List<Cachaco> cachacos = List();
-  List<Cachaco> tCachacos = List();
+  List<Cachaco> items = [];
+  List<Cachaco> cachacos = [];
+  List<Cachaco> tCachacos = [];
   @override
   void initState() {
     super.initState();
     _getAllCachacos();
-    items = List();
-    tCachacos = List();
+    items = [];
+    tCachacos = [];
   }
 
   @override
@@ -130,7 +131,7 @@ class _ListaCachacosState extends State<ListaCachacos> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -143,7 +144,7 @@ class _ListaCachacosState extends State<ListaCachacos> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -191,7 +192,7 @@ class _ListaCachacosState extends State<ListaCachacos> {
   }
 
   void _getAllCachacos() {
-    items = List();
+    items = [];
     helper.getAllItems().then((list) {
       setState(() {
         cachacos = list;
@@ -217,8 +218,11 @@ class _ListaCachacosState extends State<ListaCachacos> {
 
     final String path = '$dir/pdfCachacos.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
-    print("$file");
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPageLeite(path: path)));
   }
@@ -245,10 +249,10 @@ class _ListaCachacosState extends State<ListaCachacos> {
 
   //filtrar resultado com o texto passado
   void filterSearchResults(String query) {
-    List<Cachaco> dummySearchList = List();
+    List<Cachaco> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Cachaco> dummyListData = List();
+      List<Cachaco> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.nomeAnimal.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);

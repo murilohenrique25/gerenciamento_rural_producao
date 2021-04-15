@@ -25,8 +25,8 @@ class _CadastroCrecheState extends State<CadastroCreche> {
   String nomeMatriz = "Vazio";
   String nomeCachaco = "Vazio";
   String nomeEstado = "Vazio";
-  List<Matriz> matrizes = List();
-  List<Cachaco> cachacos = List();
+  List<Matriz> matrizes = [];
+  List<Cachaco> cachacos = [];
   MatrizDB matrizDB = MatrizDB();
   CachacoDB cachacoDB = CachacoDB();
   List<String> estado = ["Creche", "Terminação"];
@@ -515,13 +515,13 @@ class _CadastroCrecheState extends State<CadastroCreche> {
               title: Text("Descartar Alterações?"),
               content: Text("Se sair as alterações serão perdidas."),
               actions: [
-                FlatButton(
+                ElevatedButton(
                   child: Text("Cancelar"),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
-                FlatButton(
+                ElevatedButton(
                   child: Text("Sim"),
                   onPressed: () {
                     Navigator.pop(context);

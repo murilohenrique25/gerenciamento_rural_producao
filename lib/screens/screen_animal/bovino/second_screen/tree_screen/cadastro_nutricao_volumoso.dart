@@ -15,7 +15,7 @@ class CadastroNutricaoVolumoso extends StatefulWidget {
 
 class _CadastroNutricaoVolumosoState extends State<CadastroNutricaoVolumoso> {
   LoteDB helperLote = LoteDB();
-  List<Lote> lotes = List();
+  List<Lote> lotes = [];
   final _nameFocus = FocusNode();
   bool _nutricaoEdited = false;
   NutricaoVolumoso _editedNutricao;
@@ -262,13 +262,13 @@ class _CadastroNutricaoVolumosoState extends State<CadastroNutricaoVolumoso> {
               title: Text("Descartar Alterações?"),
               content: Text("Se sair as alterações serão perdidas."),
               actions: [
-                FlatButton(
+                ElevatedButton(
                   child: Text("Cancelar"),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
-                FlatButton(
+                ElevatedButton(
                   child: Text("Sim"),
                   onPressed: () {
                     Navigator.pop(context);

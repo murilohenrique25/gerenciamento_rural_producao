@@ -75,7 +75,7 @@ class NutricaoConcentradoDB extends HelperDB {
   Future<List> getAllItems() async {
     Database db = await this.getDb();
     List listMap = await db.rawQuery("SELECT * FROM nutricaoConcentrado");
-    List<NutricaoConcentrado> list = List();
+    List<NutricaoConcentrado> list = [];
     for (Map m in listMap) {
       list.add(NutricaoConcentrado.fromMap(m));
     }

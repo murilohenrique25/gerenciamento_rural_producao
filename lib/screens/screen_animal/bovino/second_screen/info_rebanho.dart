@@ -19,11 +19,11 @@ class _InfoRebanhoState extends State<InfoRebanho> {
   NovilhaDB novilhaDB = NovilhaDB();
   BezerraDB bezerraDB = BezerraDB();
 
-  List<Touro> listTouro = List();
-  List<Vaca> listVaca = List();
-  List<Novilha> listNovilha = List();
-  List<Novilha> listNovilhaInseminada = List();
-  List<Bezerra> listBezerra = List();
+  List<Touro> listTouro = [];
+  List<Vaca> listVaca = [];
+  List<Novilha> listNovilha = [];
+  List<Novilha> listNovilhaInseminada = [];
+  List<Bezerra> listBezerra = [];
   int totalVacas = 0;
   int totalNovilhas = 0;
   int totalBezerras = 0;
@@ -38,11 +38,11 @@ class _InfoRebanhoState extends State<InfoRebanho> {
   @override
   void initState() {
     super.initState();
-    listTouro = List();
-    listVaca = List();
-    listNovilha = List();
-    listBezerra = List();
-    listNovilhaInseminada = List();
+    listTouro = [];
+    listVaca = [];
+    listNovilha = [];
+    listBezerra = [];
+    listNovilhaInseminada = [];
     _carregarDados();
   }
 

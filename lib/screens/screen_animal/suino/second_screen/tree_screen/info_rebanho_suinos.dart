@@ -25,12 +25,12 @@ class _InfoRebanhoSuinosState extends State<InfoRebanhoSuinos> {
   TerminacaoDB terminacaoDB = TerminacaoDB();
   AbatidosDB abatidosDB = AbatidosDB();
 
-  List<Cachaco> listCachaco = List();
-  List<Matriz> listMatriz = List();
-  List<Aleitamento> listAleitamento = List();
-  List<Creche> listCreche = List();
-  List<Terminacao> listTerminacao = List();
-  List<Abatido> listAbatido = List();
+  List<Cachaco> listCachaco = [];
+  List<Matriz> listMatriz = [];
+  List<Aleitamento> listAleitamento = [];
+  List<Creche> listCreche = [];
+  List<Terminacao> listTerminacao = [];
+  List<Abatido> listAbatido = [];
 
   int totalCachaco = 0;
   int totalMatriz = 0;
@@ -42,12 +42,12 @@ class _InfoRebanhoSuinosState extends State<InfoRebanhoSuinos> {
   @override
   void initState() {
     super.initState();
-    listCachaco = List();
-    listMatriz = List();
-    listAleitamento = List();
-    listCreche = List();
-    listTerminacao = List();
-    listAbatido = List();
+    listCachaco = [];
+    listMatriz = [];
+    listAleitamento = [];
+    listCreche = [];
+    listTerminacao = [];
+    listAbatido = [];
     _carregarDados();
   }
 

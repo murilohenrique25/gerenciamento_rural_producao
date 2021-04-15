@@ -16,7 +16,7 @@ class CadastroProducaoCarneSuina extends StatefulWidget {
 class _CadastroProducaoCarneSuinaState
     extends State<CadastroProducaoCarneSuina> {
   PrecoCarneSuinaDB _precoCarneSuinaDB = PrecoCarneSuinaDB();
-  List<PrecoCarneSuina> precoCarne = List();
+  List<PrecoCarneSuina> precoCarne = [];
   PrecoCarneSuina precoCarneSuina;
   final precoController = TextEditingController();
   String nomeMes = "Vazio";
@@ -172,13 +172,13 @@ class _CadastroProducaoCarneSuinaState
               title: Text("Descartar Alterações?"),
               content: Text("Se sair as alterações serão perdidas."),
               actions: [
-                FlatButton(
+                ElevatedButton(
                   child: Text("Cancelar"),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
-                FlatButton(
+                ElevatedButton(
                   child: Text("Sim"),
                   onPressed: () {
                     Navigator.pop(context);

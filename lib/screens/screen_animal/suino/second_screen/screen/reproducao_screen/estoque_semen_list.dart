@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -18,16 +19,16 @@ class ListaEstoqueSemenSuina extends StatefulWidget {
 class _ListaEstoqueSemenSuinaState extends State<ListaEstoqueSemenSuina> {
   TextEditingController editingController = TextEditingController();
   InventarioSemenSuinaDB helper = InventarioSemenSuinaDB();
-  List<InventarioSemenSuina> items = List();
-  List<InventarioSemenSuina> inventarioSemens = List();
-  List<InventarioSemenSuina> tInventarioSemens = List();
+  List<InventarioSemenSuina> items = [];
+  List<InventarioSemenSuina> inventarioSemens = [];
+  List<InventarioSemenSuina> tInventarioSemens = [];
 
   @override
   void initState() {
     super.initState();
     _getAllInventario();
-    items = List();
-    tInventarioSemens = List();
+    items = [];
+    tInventarioSemens = [];
   }
 
   @override
@@ -130,7 +131,7 @@ class _ListaEstoqueSemenSuinaState extends State<ListaEstoqueSemenSuina> {
   }
 
   void _getAllInventario() {
-    items = List();
+    items = [];
     helper.getAllItems().then((value) {
       setState(() {
         inventarioSemens = value;
@@ -170,7 +171,7 @@ class _ListaEstoqueSemenSuinaState extends State<ListaEstoqueSemenSuina> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -183,7 +184,7 @@ class _ListaEstoqueSemenSuinaState extends State<ListaEstoqueSemenSuina> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -222,8 +223,11 @@ class _ListaEstoqueSemenSuinaState extends State<ListaEstoqueSemenSuina> {
 
     final String path = '$dir/pdfISS.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
-    print("$file");
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPage(path: path)));
   }
@@ -249,10 +253,10 @@ class _ListaEstoqueSemenSuinaState extends State<ListaEstoqueSemenSuina> {
   }
 
   void filterSearchResults(String query) {
-    List<InventarioSemenSuina> dummySearchList = List();
+    List<InventarioSemenSuina> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<InventarioSemenSuina> dummyListData = List();
+      List<InventarioSemenSuina> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.nomeCachaco.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);

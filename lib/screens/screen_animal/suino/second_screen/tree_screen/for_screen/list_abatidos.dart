@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -18,15 +19,15 @@ class ListaAbatidos extends StatefulWidget {
 class _ListaAbatidosState extends State<ListaAbatidos> {
   TextEditingController editingController = TextEditingController();
   AbatidosDB helper = AbatidosDB();
-  List<Abatido> items = List();
-  List<Abatido> abatidos = List();
-  List<Abatido> tAbatidos = List();
+  List<Abatido> items = [];
+  List<Abatido> abatidos = [];
+  List<Abatido> tAbatidos = [];
   @override
   void initState() {
     super.initState();
     _getAllTerminacao();
-    items = List();
-    tAbatidos = List();
+    items = [];
+    tAbatidos = [];
   }
 
   @override
@@ -108,7 +109,7 @@ class _ListaAbatidosState extends State<ListaAbatidos> {
   }
 
   void _getAllTerminacao() {
-    items = List();
+    items = [];
     helper.getAllItems().then((list) {
       setState(() {
         abatidos = list;
@@ -145,8 +146,11 @@ class _ListaAbatidosState extends State<ListaAbatidos> {
 
     final String path = '$dir/pdfAbt.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
-    print("$file");
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPageLeite(path: path)));
   }
@@ -173,10 +177,10 @@ class _ListaAbatidosState extends State<ListaAbatidos> {
 
   //filtrar resultado com o texto passado
   void filterSearchResults(String query) {
-    List<Abatido> dummySearchList = List();
+    List<Abatido> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Abatido> dummyListData = List();
+      List<Abatido> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.nomeAnimal.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);

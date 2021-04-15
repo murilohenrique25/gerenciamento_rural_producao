@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -18,16 +19,16 @@ class PrecoLeiteList extends StatefulWidget {
 class _PrecoLeiteListState extends State<PrecoLeiteList> {
   TextEditingController editingController = TextEditingController();
   PrecoLeiteDB helper = PrecoLeiteDB();
-  List<PrecoLeite> items = List();
-  List<PrecoLeite> precoleitelist = List();
-  List<PrecoLeite> tPrecoleitelist = List();
+  List<PrecoLeite> items = [];
+  List<PrecoLeite> precoleitelist = [];
+  List<PrecoLeite> tPrecoleitelist = [];
 
   @override
   void initState() {
     super.initState();
     _getAllPRecoLeite();
-    items = List();
-    tPrecoleitelist = List();
+    items = [];
+    tPrecoleitelist = [];
   }
 
   @override
@@ -128,7 +129,7 @@ class _PrecoLeiteListState extends State<PrecoLeiteList> {
   }
 
   void _getAllPRecoLeite() {
-    items = List();
+    items = [];
     helper.getAllItems().then((value) {
       setState(() {
         precoleitelist = value;
@@ -168,7 +169,7 @@ class _PrecoLeiteListState extends State<PrecoLeiteList> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -182,7 +183,7 @@ class _PrecoLeiteListState extends State<PrecoLeiteList> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -221,8 +222,11 @@ class _PrecoLeiteListState extends State<PrecoLeiteList> {
 
     final String path = '$dir/pdfLotes.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
-    print("$file");
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => PdfViwerPagePrecoLeite(path: path)));
   }
@@ -244,10 +248,10 @@ class _PrecoLeiteListState extends State<PrecoLeiteList> {
   }
 
   void filterSearchResults(String query) {
-    List<PrecoLeite> dummySearchList = List();
+    List<PrecoLeite> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<PrecoLeite> dummyListData = List();
+      List<PrecoLeite> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.data.contains(query)) {
           dummyListData.add(item);

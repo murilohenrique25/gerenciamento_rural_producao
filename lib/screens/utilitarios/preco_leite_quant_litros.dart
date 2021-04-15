@@ -6,6 +6,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -20,7 +21,7 @@ class PrecoLeiteQuantLitros extends StatefulWidget {
 }
 
 class _PrecoLeiteQuantLitrosState extends State<PrecoLeiteQuantLitros> {
-  List<Leite> totalLeite = List();
+  List<Leite> totalLeite = [];
   double quantLeite = 0.0;
   double precoTotal = 0.0;
   double resultado = 0.00;
@@ -127,7 +128,12 @@ class _PrecoLeiteQuantLitrosState extends State<PrecoLeiteQuantLitros> {
 
     final String path = '$dir/pdfrelatoriaPreco.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
+    //file.writeAsBytesSync(pdf.save());
     print("$file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPageLote(path: path)));

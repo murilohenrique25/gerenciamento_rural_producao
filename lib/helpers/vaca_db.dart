@@ -72,7 +72,7 @@ class VacaDB extends HelperDB {
   Future<List> getAllItems() async {
     Database db = await this.getDb();
     List listMap = await db.rawQuery("SELECT * FROM vaca");
-    List<Vaca> list = List();
+    List<Vaca> list = [];
     for (Map m in listMap) {
       list.add(Vaca.fromMap(m));
     }

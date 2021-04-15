@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -18,16 +19,16 @@ class TratamentoList extends StatefulWidget {
 class _TratamentoListState extends State<TratamentoList> {
   TextEditingController editingController = TextEditingController();
   TratamentoDB helper = TratamentoDB();
-  List<Tratamento> items = List();
-  List<Tratamento> tratamentos = List();
-  List<Tratamento> tTratamentos = List();
+  List<Tratamento> items = [];
+  List<Tratamento> tratamentos = [];
+  List<Tratamento> tTratamentos = [];
 
   @override
   void initState() {
     super.initState();
     _getAllTratamentos();
-    items = List();
-    tTratamentos = List();
+    items = [];
+    tTratamentos = [];
   }
 
   @override
@@ -128,7 +129,7 @@ class _TratamentoListState extends State<TratamentoList> {
   }
 
   void _getAllTratamentos() {
-    items = List();
+    items = [];
     helper.getAllItems().then((value) {
       setState(() {
         tratamentos = value;
@@ -168,7 +169,7 @@ class _TratamentoListState extends State<TratamentoList> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -181,7 +182,7 @@ class _TratamentoListState extends State<TratamentoList> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -220,8 +221,11 @@ class _TratamentoListState extends State<TratamentoList> {
 
     final String path = '$dir/pdfTratamento.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
-    print("$file");
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPage(path: path)));
   }
@@ -247,10 +251,10 @@ class _TratamentoListState extends State<TratamentoList> {
   }
 
   void filterSearchResults(String query) {
-    List<Tratamento> dummySearchList = List();
+    List<Tratamento> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Tratamento> dummyListData = List();
+      List<Tratamento> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.nomeMedicamento.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);

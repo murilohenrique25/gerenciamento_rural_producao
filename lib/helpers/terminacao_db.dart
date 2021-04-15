@@ -73,7 +73,7 @@ class TerminacaoDB extends HelperDB {
     Database db = await this.getDb();
     List listMap =
         await db.rawQuery("SELECT * FROM terminacao WHERE mudar_plantel == 0");
-    List<Terminacao> list = List();
+    List<Terminacao> list = [];
     for (Map m in listMap) {
       list.add(Terminacao.fromMap(m));
     }

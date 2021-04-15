@@ -6,6 +6,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -21,8 +22,8 @@ class GastosData extends StatefulWidget {
 
 class _GastosDataState extends State<GastosData> {
   TextEditingController editingController = TextEditingController();
-  List<Gasto> gastos = List();
-  List<Medicamento> medicamentos = List();
+  List<Gasto> gastos = [];
+  List<Medicamento> medicamentos = [];
   String dinicial = "";
   String dfinal = "";
   double _precoTotal = 0.00;
@@ -270,8 +271,11 @@ class _GastosDataState extends State<GastosData> {
 
     final String path = '$dir/pdfTeste.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
-    print("$file");
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPageLote(path: path)));
   }

@@ -72,7 +72,7 @@ class PrecoLeiteDB extends HelperDB {
   Future<List> getAllItems() async {
     Database db = await this.getDb();
     List listMap = await db.rawQuery("SELECT * FROM precoLeite");
-    List<PrecoLeite> list = List();
+    List<PrecoLeite> list = [];
     for (Map m in listMap) {
       list.add(PrecoLeite.fromMap(m));
     }

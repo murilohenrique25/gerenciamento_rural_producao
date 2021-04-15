@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 import 'package:toast/toast.dart';
 
 enum OrderOptions { orderaz, orderza }
@@ -19,15 +20,15 @@ class ListaPrecoCarneSuina extends StatefulWidget {
 class _ListaPrecoCarneSuinaState extends State<ListaPrecoCarneSuina> {
   TextEditingController editingController = TextEditingController();
   ProducaoCarneSuinaDB helper = ProducaoCarneSuinaDB();
-  List<ProducaoCarneSuina> items = List();
-  List<ProducaoCarneSuina> precos = List();
-  List<ProducaoCarneSuina> tPrecos = List();
+  List<ProducaoCarneSuina> items = [];
+  List<ProducaoCarneSuina> precos = [];
+  List<ProducaoCarneSuina> tPrecos = [];
   @override
   void initState() {
     super.initState();
     _getAllTerminacao();
-    items = List();
-    tPrecos = List();
+    items = [];
+    tPrecos = [];
   }
 
   @override
@@ -163,7 +164,7 @@ class _ListaPrecoCarneSuinaState extends State<ListaPrecoCarneSuina> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -176,7 +177,7 @@ class _ListaPrecoCarneSuinaState extends State<ListaPrecoCarneSuina> {
                     ),
                     Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: FlatButton(
+                      child: ElevatedButton(
                         child: Text(
                           "Excluir",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
@@ -224,7 +225,7 @@ class _ListaPrecoCarneSuinaState extends State<ListaPrecoCarneSuina> {
   }
 
   void _getAllTerminacao() {
-    items = List();
+    items = [];
     helper.getAllItems().then((list) {
       setState(() {
         precos = list;
@@ -253,8 +254,11 @@ class _ListaPrecoCarneSuinaState extends State<ListaPrecoCarneSuina> {
 
     final String path = '$dir/pdfTerminação.pdf';
     final File file = File(path);
-    file.writeAsBytesSync(pdf.save());
-    print("$file");
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      file.writeAsStringSync("pdf");
+    }
+    ShareExtend.share(file.path, "file");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPageLeite(path: path)));
   }
@@ -277,10 +281,10 @@ class _ListaPrecoCarneSuinaState extends State<ListaPrecoCarneSuina> {
 
   //filtrar resultado com o texto passado
   void filterSearchResults(String query) {
-    List<ProducaoCarneSuina> dummySearchList = List();
+    List<ProducaoCarneSuina> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<ProducaoCarneSuina> dummyListData = List();
+      List<ProducaoCarneSuina> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.data.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);

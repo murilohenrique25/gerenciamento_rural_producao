@@ -72,7 +72,7 @@ class TouroDB extends HelperDB {
   Future<List> getAllItems() async {
     Database db = await this.getDb();
     List listMap = await db.rawQuery("SELECT * FROM touro");
-    List<Touro> list = List();
+    List<Touro> list = [];
     for (Map m in listMap) {
       list.add(Touro.fromMap(m));
     }
@@ -83,7 +83,7 @@ class TouroDB extends HelperDB {
     Database db = await this.getDb();
     List listMap =
         await db.rawQuery("SELECT * FROM touro WHERE estado = 'Vivo'");
-    List<Touro> list = List();
+    List<Touro> list = [];
     for (Map m in listMap) {
       list.add(Touro.fromMap(m));
     }

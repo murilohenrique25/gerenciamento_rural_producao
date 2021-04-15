@@ -23,8 +23,7 @@ class _RelatoriosState extends State<Relatorios> {
                 children: [
                   Expanded(
                     child: Container(
-                      child: RaisedButton(
-                        color: Colors.green[900],
+                      child: ElevatedButton(
                         onPressed: () {
                           Navigator.push(
                               context,
@@ -45,8 +44,7 @@ class _RelatoriosState extends State<Relatorios> {
                 children: [
                   Expanded(
                     child: Container(
-                      child: RaisedButton(
-                        color: Colors.green[900],
+                      child: ElevatedButton(
                         onPressed: () {
                           Navigator.push(
                               context,
