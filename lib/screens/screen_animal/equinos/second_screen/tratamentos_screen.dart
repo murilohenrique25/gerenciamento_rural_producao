@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/tratamentos/tratamento_suino_list.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/equinos/second_screen/tratamentos/tratamento_equino_list.dart';
 
 class TratamentoEquinoScreen extends StatefulWidget {
   @override
@@ -15,8 +15,10 @@ class _TratamentoEquinoScreenState extends State<TratamentoEquinoScreen> {
       children: [
         GestureDetector(
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => TratamentoSuinoList()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TratamentoEquinoList()));
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),

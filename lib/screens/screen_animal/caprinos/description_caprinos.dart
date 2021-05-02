@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/equinos/second_screen/medicamentos_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/equinos/second_screen/nutricao_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/equinos/second_screen/plantel_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/equinos/second_screen/reproducao_equino_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/equinos/second_screen/tratamentos_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/economia_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/medicamentos_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/nutricao_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/plantel_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/producao_carne_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/reproducao_caprino_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/tratamentos_screen.dart';
 
 class DescriptionCaprinos extends StatefulWidget {
   @override
@@ -58,7 +60,7 @@ class _DescriptionCaprinosState extends State<DescriptionCaprinos> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: ReproducaoEquinoScreen(),
+                          child: ReproducaoCaprinoScreen(),
                         ),
                       ],
                     ),
@@ -91,7 +93,7 @@ class _DescriptionCaprinosState extends State<DescriptionCaprinos> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: MedicamentoEquinoScreen(),
+                          child: MedicamentoCaprinosScreen(),
                         ),
                       ],
                     ),
@@ -108,7 +110,37 @@ class _DescriptionCaprinosState extends State<DescriptionCaprinos> {
                       ),
                       Padding(
                         padding: EdgeInsets.all(10.0),
-                        child: NutricaoEquinoScreen(),
+                        child: NutricaoCaprinoScreen(),
+                      ),
+                    ],
+                  ),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        width: _width,
+                        height: _height,
+                        color: Colors.grey[50],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: ProducaoCarneCaprinoScreen(),
+                      ),
+                    ],
+                  ),
+                ]),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        width: _width,
+                        height: _height,
+                        color: Colors.grey[50],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: EconomiaCaprinosScreen(),
                       ),
                     ],
                   ),

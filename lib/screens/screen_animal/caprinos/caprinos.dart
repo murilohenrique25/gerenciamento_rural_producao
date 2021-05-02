@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/equinos/description_equinos.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/caprinos/description_caprinos.dart';
 
 class Caprinos extends StatefulWidget {
   @override
@@ -17,7 +17,8 @@ class _CaprinosState extends State<Caprinos> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => DescriptionEquinos()));
+                      builder: (BuildContext context) =>
+                          DescriptionCaprinos()));
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15.0),
@@ -32,7 +33,7 @@ class _CaprinosState extends State<Caprinos> {
                     colorBlendMode: BlendMode.modulate,
                   ),
                   Text(
-                    "Equinos",
+                    "Caprinos",
                     style: TextStyle(
                         color: Colors.black,
                         letterSpacing: 1.0,

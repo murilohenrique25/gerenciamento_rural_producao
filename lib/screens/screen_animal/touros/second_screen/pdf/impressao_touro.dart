@@ -2,8 +2,9 @@ import 'dart:io';
 
 import 'package:ext_storage/ext_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:share_extend/share_extend.dart';
+
 import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
+import 'package:share_extend/share_extend.dart';
 
 class ImpressaoTouro extends StatefulWidget {
   final String path;

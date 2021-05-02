@@ -7,7 +7,6 @@ import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/touros/second_screen/tree_screen/cadastrar_inventario_semen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/touros/second_screen/pdf/pdfViwerPageInventario.dart';
-import 'package:share_extend/share_extend.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -272,11 +271,7 @@ class _ListInventarioSemenState extends State<ListInventarioSemen> {
 
     final String path = '$dir/pdfInventarioSemens.pdf';
     final File file = File(path);
-    if (!await file.exists()) {
-      await file.create(recursive: true);
-      file.writeAsStringSync("pdf");
-    }
-    ShareExtend.share(file.path, "file");
+    file.writeAsBytesSync(await pdf.save());
     Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => PdfViwerPageInventario(path: path)));
   }

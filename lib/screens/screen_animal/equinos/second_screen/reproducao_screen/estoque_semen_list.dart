@@ -7,7 +7,6 @@ import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
-import 'package:share_extend/share_extend.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -224,11 +223,7 @@ class _ListaEstoqueSemenEquinosState extends State<ListaEstoqueSemenEquinos> {
 
     final String path = '$dir/pdfISS.pdf';
     final File file = File(path);
-    if (!await file.exists()) {
-      await file.create(recursive: true);
-      file.writeAsStringSync("pdf");
-    }
-    ShareExtend.share(file.path, "file");
+    file.writeAsBytesSync(await pdf.save());
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPage(path: path)));
   }

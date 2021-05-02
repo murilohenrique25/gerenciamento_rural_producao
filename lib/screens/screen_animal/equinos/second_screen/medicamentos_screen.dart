@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/medicamento/medicamentos_list.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/equinos/second_screen/medicamento/medicamentos_list.dart';
 
 class MedicamentoEquinoScreen extends StatefulWidget {
   @override
@@ -19,7 +19,7 @@ class _MedicamentoEquinoScreenState extends State<MedicamentoEquinoScreen> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => MedicamentosSuinoList()));
+                    builder: (context) => MedicamentosEquinoList()));
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/medicamento_equino_db.dart';
 import 'package:gerenciamento_rural/models/medicamento.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/equinos/second_screen/medicamento/registers/cadastrar_medicamentos.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/medicamento/registers/cadastrar_medicamentos.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPage.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
-import 'package:share_extend/share_extend.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -144,7 +143,7 @@ class _MedicamentosCaprinoListState extends State<MedicamentosCaprinoList> {
     final recMedicamento = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => CadastroMedicamentoEquino(
+            builder: (context) => CadastroMedicamentoCaprino(
                   medicamento: medicamento,
                 )));
     if (recMedicamento != null) {
@@ -224,11 +223,7 @@ class _MedicamentosCaprinoListState extends State<MedicamentosCaprinoList> {
 
     final String path = '$dir/pdfLotes.pdf';
     final File file = File(path);
-    if (!await file.exists()) {
-      await file.create(recursive: true);
-      file.writeAsStringSync("pdf");
-    }
-    ShareExtend.share(file.path, "file");
+    file.writeAsBytesSync(await pdf.save());
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => PdfViwerPage(path: path)));
   }
