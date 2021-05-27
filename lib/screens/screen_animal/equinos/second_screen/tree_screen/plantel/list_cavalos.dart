@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/cavalo_db.dart';
 import 'package:gerenciamento_rural/models/cavalo.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/equinos/second_screen/tree_screen/plantel/registers/cadastro_cavalo.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -210,10 +210,28 @@ class _ListaCavalosState extends State<ListaCavalos> {
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
                 <String>[
                   'Nome',
+                  'Data Nascimento',
                   'Raça',
                   'Origem',
+                  'Pai',
+                  'Mãe',
+                  'Lote',
+                  'Estado',
+                  'Resenha',
+                  'Observação'
                 ],
-                ...cavalos.map((item) => [item.nome, item.raca, item.origem])
+                ...cavalos.map((item) => [
+                      item.nome,
+                      item.dataNascimento,
+                      item.raca,
+                      item.origem,
+                      item.pai,
+                      item.mae,
+                      item.lote,
+                      item.estado,
+                      item.resenha,
+                      item.observacao
+                    ])
               ])
             ]));
 

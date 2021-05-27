@@ -4,7 +4,7 @@ import 'package:gerenciamento_rural/helpers/vaca_db.dart';
 import 'package:gerenciamento_rural/models/novilha.dart';
 import 'package:gerenciamento_rural/models/vaca.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/cadastro_novilha.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -255,13 +255,45 @@ class _ListaNovilhasState extends State<ListaNovilhas> {
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
                 <String>[
                   'Nome / Nº Brinco',
-                  'Última Inseminação',
+                  'Data Nascimento',
+                  'Peso Nascimento',
+                  'Peso Desmama',
+                  'Data Desmama',
+                  'Data Cobertura',
+                  'Peso 1º Cobertura',
+                  'Idade 1º Cobertura',
+                  'Idade 1º Parto',
+                  'Diagnostico Gestação'
+                      'Pai',
+                  'Mãe',
+                  'Avó Materno',
+                  'Avô Materno',
+                  'Avó Paterno',
+                  'Avô Paterno',
                   'Raça',
                   'Estado',
                   "Lote"
                 ],
-                ...tnovilhas.map((item) =>
-                    [item.nome, item.raca, item.estado, item.idLote.toString()])
+                ...tnovilhas.map((item) => [
+                      item.nome,
+                      item.dataNascimento,
+                      item.pesoDesmama.toString(),
+                      item.dataDesmama,
+                      item.dataCobertura,
+                      item.pesoPrimeiraCobertura.toString(),
+                      item.idadePrimeiraCobertura.toString(),
+                      item.idadePrimeiraCobertura.toString(),
+                      item.diagnosticoGestacao,
+                      item.pai,
+                      item.mae,
+                      item.avoFMaterno,
+                      item.avoMMaterno,
+                      item.avoFPaterno,
+                      item.avoMPaterno,
+                      item.raca,
+                      item.estado,
+                      item.idLote.toString()
+                    ])
               ])
             ]));
 

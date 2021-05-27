@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:gerenciamento_rural/helpers/preco_carne_suina_db.dart';
-import 'package:gerenciamento_rural/models/preco_carne_suina.dart';
-import 'package:gerenciamento_rural/models/producao_carne_suina.dart';
+import 'package:gerenciamento_rural/helpers/pesagem_lote_caprino_db.dart';
+import 'package:gerenciamento_rural/helpers/todos_caprinos_db.dart';
+import 'package:gerenciamento_rural/models/pesagem_lote_caprina.dart';
+import 'package:gerenciamento_rural/models/todoscaprino.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
-import 'package:toast/toast.dart';
 
 class CadastroPesagemLoteCaprino extends StatefulWidget {
-  final ProducaoCarneSuina producaoCarneSuina;
-  CadastroPesagemLoteCaprino({this.producaoCarneSuina});
+  final PesagemLoteCaprina pesagemLoteCaprina;
+  CadastroPesagemLoteCaprino({this.pesagemLoteCaprina});
   @override
   _CadastroPesagemLoteCaprinoState createState() =>
       _CadastroPesagemLoteCaprinoState();
@@ -16,31 +16,35 @@ class CadastroPesagemLoteCaprino extends StatefulWidget {
 
 class _CadastroPesagemLoteCaprinoState
     extends State<CadastroPesagemLoteCaprino> {
-  PrecoCarneSuinaDB _precoCarneSuinaDB = PrecoCarneSuinaDB();
-  List<PrecoCarneSuina> precoCarne = [];
-  PrecoCarneSuina precoCarneSuina;
+  PesagemLoteCaprinaDB _pesagemLoteCaprinaDB = PesagemLoteCaprinaDB();
+  TodosCaprinosDB _todosAnimaisDB = TodosCaprinosDB();
+  List<TodosCaprino> animais = [];
+  TodosCaprino animal;
+  List<PesagemLoteCaprina> pesagens = [];
+  PesagemLoteCaprina pesagemLoteCaprina;
   final loteController = TextEditingController();
   final baiaController = TextEditingController();
-  final numeroAnimalController = TextEditingController();
   final pesoController = TextEditingController();
   final obsController = TextEditingController();
-  String nomeLote = "Vazio";
-  String numAnial = "Vazio";
-  double nomePreco = 0.0;
+  String nomeAnimal = "";
   bool _producaoCarneEdited = false;
-  ProducaoCarneSuina _editedProducaoCarne;
-  var dataFinal = MaskedTextController(mask: '00-00-0000');
+  PesagemLoteCaprina _editedPesagem;
+  var data = MaskedTextController(mask: '00-00-0000');
 
   @override
   void initState() {
     super.initState();
-    _getAllPreco();
-    if (widget.producaoCarneSuina == null) {
-      _editedProducaoCarne = ProducaoCarneSuina();
+    _getAll();
+    if (widget.pesagemLoteCaprina == null) {
+      _editedPesagem = PesagemLoteCaprina();
     } else {
-      loteController.text = _editedProducaoCarne.preco.toString();
-      nomeLote = _editedProducaoCarne.data;
-      nomePreco = _editedProducaoCarne.preco;
+      _editedPesagem =
+          PesagemLoteCaprina.fromMap(widget.pesagemLoteCaprina.toMap());
+      loteController.text = _editedPesagem.lote;
+      baiaController.text = _editedPesagem.baia;
+      pesoController.text = _editedPesagem.peso.toString();
+      data.text = _editedPesagem.data;
+      obsController.text = _editedPesagem.observacao;
     }
   }
 
@@ -56,21 +60,7 @@ class _CadastroPesagemLoteCaprinoState
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             setState(() {
-              if (_editedProducaoCarne.preco.isNaN) {
-                Toast.show("Informe o preço", context,
-                    duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
-              } else if (_editedProducaoCarne.data == "" ||
-                  _editedProducaoCarne.data.length < 7) {
-                Toast.show("Informe a data", context,
-                    duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
-              } else if (_editedProducaoCarne.quantidade == null) {
-                Toast.show("Informe a quantidade", context,
-                    duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
-              } else {
-                double t = _editedProducaoCarne.quantidade * nomePreco;
-                _editedProducaoCarne.total = t;
-                Navigator.pop(context, _editedProducaoCarne);
-              }
+              Navigator.pop(context, _editedPesagem);
             });
           },
           child: Icon(Icons.save),
@@ -90,27 +80,57 @@ class _CadastroPesagemLoteCaprinoState
                 SizedBox(
                   height: 20,
                 ),
+                TextField(
+                  controller: loteController,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(labelText: "Lote"),
+                  onChanged: (text) {
+                    _producaoCarneEdited = true;
+                    setState(() {
+                      _editedPesagem.lote = text;
+                    });
+                  },
+                ),
+                TextField(
+                  controller: data,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _producaoCarneEdited = true;
+                    setState(() {
+                      _editedPesagem.data = text;
+                    });
+                  },
+                ),
+                TextField(
+                  controller: baiaController,
+                  decoration: InputDecoration(labelText: "Baia"),
+                  onChanged: (text) {
+                    _producaoCarneEdited = true;
+                    setState(() {
+                      _editedPesagem.baia = text;
+                    });
+                  },
+                ),
                 SearchableDropdown.single(
-                  items: precoCarne.map((preco) {
+                  items: animais.map((animal) {
                     return DropdownMenuItem(
-                      value: preco,
+                      value: animal,
                       child: Row(
                         children: [
-                          Text(preco.data),
+                          Text(animal.nome),
                         ],
                       ),
                     );
                   }).toList(),
-                  value: precoCarneSuina,
-                  hint: "Selecione um lote",
-                  searchHint: "Selecione um lote",
+                  value: animal,
+                  hint: "Selecione um animal",
+                  searchHint: "Selecione um animal",
                   onChanged: (value) {
                     _producaoCarneEdited = true;
                     setState(() {
-                      _editedProducaoCarne.data = value.data;
-                      nomeLote = value.data;
-                      _editedProducaoCarne.preco = value.preco;
-                      nomePreco = value.preco;
+                      _editedPesagem.animal = value.nome;
+                      nomeAnimal = value.nome;
                     });
                   },
                   doneButton: "Pronto",
@@ -136,65 +156,28 @@ class _CadastroPesagemLoteCaprinoState
                 SizedBox(
                   height: 5.0,
                 ),
-                Text("Lote:  $nomeLote",
+                Text("Animal:  $nomeAnimal",
                     style: TextStyle(
                         fontSize: 16.0,
                         color: Color.fromARGB(255, 4, 125, 141))),
-                SizedBox(
-                  height: 10.0,
-                ),
                 TextField(
-                  controller: dataFinal,
+                  controller: pesoController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: "Data"),
+                  decoration: InputDecoration(labelText: "Peso Kg"),
                   onChanged: (text) {
                     _producaoCarneEdited = true;
                     setState(() {
-                      _editedProducaoCarne.quantidade = double.parse(text);
-                    });
-                  },
-                ),
-                TextField(
-                  controller: baiaController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: "Baia"),
-                  onChanged: (text) {
-                    _producaoCarneEdited = true;
-                    setState(() {
-                      _editedProducaoCarne.quantidade = double.parse(text);
-                    });
-                  },
-                ),
-                TextField(
-                  controller: numeroAnimalController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: "Nº do animal"),
-                  onChanged: (text) {
-                    _producaoCarneEdited = true;
-                    setState(() {
-                      _editedProducaoCarne.quantidade = double.parse(text);
-                    });
-                  },
-                ),
-                TextField(
-                  controller: baiaController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: "Peso"),
-                  onChanged: (text) {
-                    _producaoCarneEdited = true;
-                    setState(() {
-                      _editedProducaoCarne.quantidade = double.parse(text);
+                      _editedPesagem.peso = double.parse(text);
                     });
                   },
                 ),
                 TextField(
                   controller: obsController,
-                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(labelText: "Observação"),
                   onChanged: (text) {
                     _producaoCarneEdited = true;
                     setState(() {
-                      _editedProducaoCarne.quantidade = double.parse(text);
+                      _editedPesagem.observacao = text;
                     });
                   },
                 ),
@@ -206,11 +189,14 @@ class _CadastroPesagemLoteCaprinoState
     );
   }
 
-  void _getAllPreco() {
-    _precoCarneSuinaDB.getAllItems().then((value) {
+  void _getAll() {
+    _pesagemLoteCaprinaDB.getAllItems().then((value) {
       setState(() {
-        precoCarne = value;
+        pesagens = value;
       });
+    });
+    _todosAnimaisDB.getAllItems().then((value) {
+      animais = value;
     });
   }
 

@@ -11,6 +11,7 @@ class NutricaoVolumoso {
   double umidade;
   String observacao;
   String data;
+  String baia;
 
   NutricaoVolumoso();
   NutricaoVolumoso.fromMap(Map map) {
@@ -26,6 +27,7 @@ class NutricaoVolumoso {
     quantidadeTotal = map["quantidade_total"];
     observacao = map["observacao"];
     data = map["data"];
+    baia = map["baia"];
   }
 
   Map toMap() {
@@ -41,6 +43,7 @@ class NutricaoVolumoso {
       "quantidade_total": quantidadeTotal,
       "observacao": observacao,
       "data": data,
+      "baia": baia,
     };
     if (id != null) {
       map["id"] = id;

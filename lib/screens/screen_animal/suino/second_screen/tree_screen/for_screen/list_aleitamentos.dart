@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/aleitamento_db.dart';
 import 'package:gerenciamento_rural/models/aleitamento.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/tree_screen/for_screen/registers/cadastro_aleitamento.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -211,17 +211,43 @@ class _ListaAleitamentosState extends State<ListaAleitamentos> {
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
                 <String>[
                   'Ninhada',
-                  'Quantidade Vivos',
-                  'Quantidade Mortos',
+                  'Data Nascimento',
+                  'Quantiade',
+                  'Estado',
+                  'Lote',
+                  'Identificação',
+                  'Vivos',
+                  'Mortos',
+                  'Raça',
+                  'Pai',
+                  'Mãe',
                   'Machos',
-                  'Fêmeas'
+                  'Fêmeas',
+                  'Baia',
+                  'Peso Nascimento',
+                  'Peso Desmama',
+                  'Data Desmama',
+                  'Observação'
                 ],
                 ...aleitamentos.map((item) => [
                       item.nome,
+                      item.dataNascimento,
+                      item.quantidade.toString(),
+                      item.estado,
+                      item.lote,
+                      item.identificacao,
                       item.vivos,
                       item.mortos,
+                      item.raca,
+                      item.pai,
+                      item.mae,
                       item.sexoM,
-                      item.sexoF
+                      item.sexoF,
+                      item.baia,
+                      item.pesoNascimento,
+                      item.pesoDesmama,
+                      item.dataDesmama,
+                      item.observacao
                     ])
               ])
             ]));

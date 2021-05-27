@@ -12,7 +12,6 @@ class CadastroLote extends StatefulWidget {
 
 class _CadastroLoteState extends State<CadastroLote> {
   final _nomeLoteController = TextEditingController();
-  final _quantidadeController = TextEditingController();
 
   final _nameFocus = FocusNode();
 
@@ -28,8 +27,7 @@ class _CadastroLoteState extends State<CadastroLote> {
       _editedLote = Lote();
     } else {
       _editedLote = Lote.fromMap(widget.lote.toMap());
-      _nomeLoteController.text = _editedLote.name;
-      _quantidadeController.text = _editedLote.quantidade.toString();
+      _nomeLoteController.text = _editedLote.nome;
     }
   }
 
@@ -41,13 +39,13 @@ class _CadastroLoteState extends State<CadastroLote> {
         onWillPop: _requestPop,
         child: Scaffold(
           appBar: AppBar(
-            title: Text(_editedLote.name ?? "Cadastrar Lote"),
+            title: Text(_editedLote.nome ?? "Cadastrar Lote"),
             centerTitle: true,
             actions: [],
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              if (_editedLote.name != null && _editedLote.name.isNotEmpty) {
+              if (_editedLote.nome != null && _editedLote.nome.isNotEmpty) {
                 Navigator.pop(context, _editedLote);
               } else {
                 FocusScope.of(context).requestFocus(_nameFocus);
@@ -75,21 +73,9 @@ class _CadastroLoteState extends State<CadastroLote> {
                     onChanged: (text) {
                       _loteEdited = true;
                       setState(() {
-                        _editedLote.name = text;
+                        _editedLote.nome = text;
                       });
                     },
-                  ),
-                  TextField(
-                    controller: _quantidadeController,
-                    decoration:
-                        InputDecoration(labelText: "Quantidade de animais"),
-                    onChanged: (text) {
-                      _loteEdited = true;
-                      setState(() {
-                        _editedLote.quantidade = int.parse(text);
-                      });
-                    },
-                    keyboardType: TextInputType.number,
                   ),
                 ],
               ),

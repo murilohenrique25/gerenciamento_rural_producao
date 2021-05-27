@@ -17,6 +17,7 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
   String idadeFinal = "";
   String numeroData = "";
   int numPartos = 0;
+  String partoPrevisto = "";
   String nomeD = "";
   List<String> diagnosticos = ["Vazia", "Prenha", "Aborto"];
   String diagnostico = "";
@@ -74,7 +75,6 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
       numPartos = _editedMatriz.numeroPartos;
       _baiaController.text = _editedMatriz.baia;
       _loteController.text = _editedMatriz.lote;
-      _diasprenhaController.text = _editedMatriz.diasPrenha.toString();
       numeroData = _editedMatriz.dataNascimento;
       _dataNasc.text = numeroData;
     }
@@ -236,7 +236,7 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                   },
                 ),
                 TextField(
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   controller: _origemController,
                   decoration: InputDecoration(labelText: "Origem"),
                   onChanged: (text) {
@@ -331,6 +331,10 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                 SizedBox(
                   height: 20.0,
                 ),
+                Text("Parto Previsto:  $partoPrevisto",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
                 ElevatedButton(
                   onPressed: () {
                     _showMyDialog();

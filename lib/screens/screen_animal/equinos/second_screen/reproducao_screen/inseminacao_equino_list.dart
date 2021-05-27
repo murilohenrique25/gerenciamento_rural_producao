@@ -210,8 +210,24 @@ class _ListaInseminacaoEquinoState extends State<ListaInseminacaoEquino> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Cavalo', 'Égua'],
-                ...tInseminacoes.map((item) => [item.nomeCavalo, item.nomeEgua])
+                <String>[
+                  'Cavalo',
+                  'Égua',
+                  'Data',
+                  'Inseminador',
+                  'Tipo Reprodução',
+                  'Palheta',
+                  'Observação'
+                ],
+                ...tInseminacoes.map((item) => [
+                      item.nomeCavalo,
+                      item.nomeEgua,
+                      item.data,
+                      item.inseminador,
+                      item.tipoReproducao,
+                      item.palheta,
+                      item.observacao
+                    ])
               ])
             ]));
 
@@ -289,7 +305,7 @@ class _ListaInseminacaoEquinoState extends State<ListaInseminacaoEquino> {
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
-                      pdfLib.Text('Inseminação Suína',
+                      pdfLib.Text('Inseminação Equinos',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white))
                     ],

@@ -25,6 +25,7 @@ class _CadastroNutricaoVolumosoEquinoState
   final _msController = TextEditingController();
   final _umidController = TextEditingController();
   final _obsController = TextEditingController();
+  final _baiaController = TextEditingController();
 
   final df = new DateFormat("dd-MM-yyyy");
 
@@ -55,6 +56,7 @@ class _CadastroNutricaoVolumosoEquinoState
       _pbController.text = _editedNutricao.pb.toString();
       _ndtController.text = _editedNutricao.ndt.toString();
       _obsController.text = _editedNutricao.observacao;
+      _baiaController.text = _editedNutricao.baia;
     }
   }
 
@@ -115,6 +117,17 @@ class _CadastroNutricaoVolumosoEquinoState
                   },
                 ),
                 TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _baiaController,
+                  decoration: InputDecoration(labelText: "Baia"),
+                  onChanged: (text) {
+                    _nutricaoEdited = true;
+                    setState(() {
+                      _editedNutricao.baia = text;
+                    });
+                  },
+                ),
+                TextField(
                   controller: _tipoController,
                   decoration: InputDecoration(labelText: "Tipo de volumoso"),
                   onChanged: (text) {
@@ -128,7 +141,7 @@ class _CadastroNutricaoVolumosoEquinoState
                   keyboardType: TextInputType.text,
                   controller: _quantIndController,
                   decoration: InputDecoration(
-                      labelText: "Quantidade individual por dia"),
+                      labelText: "Quantidade individual por dia Kg"),
                   onChanged: (text) {
                     _nutricaoEdited = true;
                     setState(() {
@@ -140,7 +153,7 @@ class _CadastroNutricaoVolumosoEquinoState
                   keyboardType: TextInputType.text,
                   controller: _quantTotalController,
                   decoration:
-                      InputDecoration(labelText: "Quantidade total por dia"),
+                      InputDecoration(labelText: "Quantidade total por dia Kg"),
                   onChanged: (text) {
                     _nutricaoEdited = true;
                     setState(() {

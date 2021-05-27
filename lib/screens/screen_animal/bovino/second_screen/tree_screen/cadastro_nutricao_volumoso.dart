@@ -114,7 +114,7 @@ class _CadastroNutricaoVolumosoState extends State<CadastroNutricaoVolumoso> {
                       value: lote,
                       child: Row(
                         children: [
-                          Text(lote.name),
+                          Text(lote.nome),
                         ],
                       ),
                     );

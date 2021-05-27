@@ -112,7 +112,7 @@ class _CadastroNutricaoConcentradoState
                       value: lote,
                       child: Row(
                         children: [
-                          Text(lote.name),
+                          Text(lote.nome),
                         ],
                       ),
                     );

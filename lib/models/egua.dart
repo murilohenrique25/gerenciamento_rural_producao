@@ -14,7 +14,11 @@ class Egua {
   String diagnosticoGestacao;
   String vm;
   String cios;
+  String baia;
+  double peso;
   String totalPartos;
+  int diasPrenha;
+  String pelagem;
   Egua();
   Egua.fromMap(Map map) {
     id = map["id"]; //
@@ -26,13 +30,17 @@ class Egua {
     pai = map["pai"]; //
     mae = map["mae"]; //
     resenha = map["resenha"]; //
+    baia = map["baia"]; //
+    peso = map["peso"]; //
     origem = map["origem"]; //
     observacao = map["observacao"]; //
     situacao = map["situacao"]; //
     diagnosticoGestacao = map["diagnostico_gestacao"];
     vm = map["vm"];
+    diasPrenha = map["diasPrenha"];
     cios = map["cios"];
     totalPartos = map["total_partos"];
+    pelagem = map["pelagem"];
   }
 
   Map toMap() {
@@ -46,12 +54,16 @@ class Egua {
       "mae": mae,
       "origem": origem,
       "resenha": resenha,
+      "baia": baia,
+      "peso": peso,
       "observacao": observacao,
       "situacao": situacao,
+      "diasPrenha": diasPrenha,
       "diagnostico_gestacao": diagnosticoGestacao,
       "vm": vm,
       "cios": cios,
       "total_partos": totalPartos,
+      "pelagem": pelagem,
     };
     if (id != null) {
       map["id"] = id;

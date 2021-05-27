@@ -281,7 +281,7 @@ class _CadastroVacaState extends State<CadastroVaca> {
                       value: lote.id,
                       child: Row(
                         children: [
-                          Text(lote.name),
+                          Text(lote.nome),
                         ],
                       ),
                     );

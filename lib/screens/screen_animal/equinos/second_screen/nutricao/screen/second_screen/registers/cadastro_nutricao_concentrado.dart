@@ -14,13 +14,14 @@ class _CadastroNutricaoConcentradoEquinoState
     extends State<CadastroNutricaoConcentradoEquino> {
   bool _nutricaoEdited = false;
   NutricaoConcentrado _editedNutricao;
-  String nomeLote = "Vazio";
+  String nomeLote = "";
   final _quantIndController = TextEditingController();
   final _loteController = TextEditingController();
   final _quantTotalController = TextEditingController();
   final _pbController = TextEditingController();
   final _ndtController = TextEditingController();
   final _ingredientesController = TextEditingController();
+  final _baiaController = TextEditingController();
 
   final _obsController = TextEditingController();
 
@@ -52,6 +53,7 @@ class _CadastroNutricaoConcentradoEquinoState
       _pbController.text = _editedNutricao.pb.toString();
       _ndtController.text = _editedNutricao.ndt.toString();
       _obsController.text = _editedNutricao.observacao;
+      _baiaController.text = _editedNutricao.baia;
     }
   }
 
@@ -113,6 +115,17 @@ class _CadastroNutricaoConcentradoEquinoState
                 ),
                 TextField(
                   keyboardType: TextInputType.text,
+                  controller: _baiaController,
+                  decoration: InputDecoration(labelText: "Baia"),
+                  onChanged: (text) {
+                    _nutricaoEdited = true;
+                    setState(() {
+                      _editedNutricao.baia = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
                   controller: _ingredientesController,
                   decoration: InputDecoration(labelText: "Ingredientes"),
                   onChanged: (text) {
@@ -126,7 +139,7 @@ class _CadastroNutricaoConcentradoEquinoState
                   keyboardType: TextInputType.text,
                   controller: _quantIndController,
                   decoration: InputDecoration(
-                      labelText: "Quantidade individual por dia"),
+                      labelText: "Quantidade individual por dia Kg"),
                   onChanged: (text) {
                     _nutricaoEdited = true;
                     setState(() {
@@ -138,7 +151,7 @@ class _CadastroNutricaoConcentradoEquinoState
                   keyboardType: TextInputType.text,
                   controller: _quantTotalController,
                   decoration:
-                      InputDecoration(labelText: "Quantidade total por dia"),
+                      InputDecoration(labelText: "Quantidade total por dia Kg"),
                   onChanged: (text) {
                     _nutricaoEdited = true;
                     setState(() {

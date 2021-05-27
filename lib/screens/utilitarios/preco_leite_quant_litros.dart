@@ -117,9 +117,26 @@ class _PrecoLeiteQuantLitrosState extends State<PrecoLeiteQuantLitros> {
         footer: _buildFooter,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Data', 'Quantidade'],
-                ...totalLeite.map(
-                    (item) => [item.dataColeta, item.quantidade.toString()])
+                <String>[
+                  'Data',
+                  'Quantidade',
+                  'Gordura',
+                  'Proteína',
+                  'Lactose',
+                  'Ureia',
+                  'CCS',
+                  'CBT'
+                ],
+                ...totalLeite.map((item) => [
+                      item.dataColeta,
+                      item.quantidade.toString(),
+                      item.gordura.toString(),
+                      item.proteina.toString(),
+                      item.lactose.toString(),
+                      item.ureia.toString(),
+                      item.ccs.toString(),
+                      item.cbt.toString()
+                    ])
               ])
             ]));
 

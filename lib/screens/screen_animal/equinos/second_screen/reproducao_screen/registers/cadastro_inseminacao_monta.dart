@@ -35,8 +35,8 @@ class _CadastroInseminacaoMontaEquinoState
   final _obsController = TextEditingController();
   final _palhetaController = TextEditingController();
   var _data = MaskedTextController(mask: '00-00-0000');
-  String nomeEgua = "Vazio";
-  String nomeCavalo = "Vazio";
+  String nomeEgua = "";
+  String nomeCavalo = "";
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final df = new DateFormat("dd-MM-yyyy");
@@ -145,12 +145,12 @@ class _CadastroInseminacaoMontaEquinoState
                   height: 20.0,
                 ),
                 SearchableDropdown.single(
-                  items: eguas.map((matriz) {
+                  items: eguas.map((egua) {
                     return DropdownMenuItem(
-                      value: matriz,
+                      value: egua,
                       child: Row(
                         children: [
-                          Text(matriz.nome),
+                          Text(egua.nome),
                         ],
                       ),
                     );

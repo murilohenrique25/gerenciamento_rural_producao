@@ -213,9 +213,42 @@ class _ListaEstoqueSemenEquinosState extends State<ListaEstoqueSemenEquinos> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Cavalo', 'Quantidade'],
-                ...tInventarioSemens.map(
-                    (item) => [item.nomeCavalo, item.quantidade.toString()])
+                <String>[
+                  'Cavalo',
+                  'Identificação',
+                  'Quantidade',
+                  'Cor',
+                  'Data Cadastro',
+                  'Data Validade',
+                  'Vigor',
+                  'Motilidade',
+                  'Turbilhamento',
+                  'Concentração',
+                  'Volume',
+                  'Aspecto',
+                  'Células Normais',
+                  'Defeitos Maiores',
+                  'Defeitos Menores',
+                  'Observação'
+                ],
+                ...tInventarioSemens.map((item) => [
+                      item.nomeCavalo,
+                      item.identificacao,
+                      item.quantidade.toString(),
+                      item.cor,
+                      item.dataCadastro,
+                      item.dataValidade,
+                      item.vigor,
+                      item.mortalidade,
+                      item.turbilhamento,
+                      item.concentracao,
+                      item.volume.toString(),
+                      item.aspecto,
+                      item.celulasNormais.toString(),
+                      item.defeitoMaiores,
+                      item.defeitoMenores,
+                      item.observacao
+                    ])
               ])
             ]));
 
@@ -293,7 +326,7 @@ class _ListaEstoqueSemenEquinosState extends State<ListaEstoqueSemenEquinos> {
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
-                      pdfLib.Text('Inventário Sêmen Suína',
+                      pdfLib.Text('Inventário Sêmen Equinos',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white))
                     ],

@@ -22,9 +22,9 @@ class CadastroCreche extends StatefulWidget {
 class _CadastroCrecheState extends State<CadastroCreche> {
   String idadeFinal = "";
   String numeroData = "";
-  String nomeMatriz = "Vazio";
-  String nomeCachaco = "Vazio";
-  String nomeEstado = "Vazio";
+  String nomeMatriz = "";
+  String nomeCachaco = "";
+  String nomeEstado = "";
   List<Matriz> matrizes = [];
   List<Cachaco> cachacos = [];
   MatrizDB matrizDB = MatrizDB();
@@ -222,7 +222,7 @@ class _CadastroCrecheState extends State<CadastroCreche> {
                 SizedBox(
                   height: 10.0,
                 ),
-                Text("Matriz selecionada:  $nomeMatriz",
+                Text("Matriz Mãe:  $nomeMatriz",
                     style: TextStyle(
                         fontSize: 16.0,
                         color: Color.fromARGB(255, 4, 125, 141))),
@@ -272,7 +272,7 @@ class _CadastroCrecheState extends State<CadastroCreche> {
                 SizedBox(
                   height: 10.0,
                 ),
-                Text("Cachaço selecionado:  $nomeCachaco",
+                Text("Cachaço Pai:  $nomeCachaco",
                     style: TextStyle(
                         fontSize: 16.0,
                         color: Color.fromARGB(255, 4, 125, 141))),

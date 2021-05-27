@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/terminacao_db.dart';
 import 'package:gerenciamento_rural/models/terminacao.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/tree_screen/for_screen/registers/cadastro_terminacao.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -211,17 +211,49 @@ class _ListaTermincaoState extends State<ListaTermincao> {
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
                 <String>[
                   'Ninhada',
-                  'Quantidade Vivos',
-                  'Quantidade Mortos',
+                  'Data Nascimento',
+                  'Data Abate',
+                  'Peso Abate',
+                  'Peso Médio'
+                      'Quantiade',
+                  'Estado',
+                  'Lote',
+                  'Identificação',
+                  'Vivos',
+                  'Mortos',
+                  'Raça',
+                  'Pai',
+                  'Mãe',
                   'Machos',
-                  'Fêmeas'
+                  'Fêmeas',
+                  'Baia',
+                  'Peso Nascimento',
+                  'Peso Desmama',
+                  'Data Desmama',
+                  'Observação'
                 ],
                 ...terminacoes.map((item) => [
                       item.nome,
+                      item.dataNascimento,
+                      item.dataAbate,
+                      item.pesoAbate.toString(),
+                      item.pesoMedio.toString(),
+                      item.quantidade.toString(),
+                      item.estado,
+                      item.lote,
+                      item.identificacao,
                       item.vivos,
                       item.mortos,
+                      item.raca,
+                      item.pai,
+                      item.mae,
                       item.sexoM,
-                      item.sexoF
+                      item.sexoF,
+                      item.baia,
+                      item.pesoNascimento,
+                      item.pesoDesmama,
+                      item.dataDesmama,
+                      item.observacao
                     ])
               ])
             ]));

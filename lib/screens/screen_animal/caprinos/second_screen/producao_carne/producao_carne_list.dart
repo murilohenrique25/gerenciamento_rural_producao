@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/producao_carne_suina_db.dart';
-import 'package:gerenciamento_rural/models/producao_carne_suina.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/helpers/producao_carne_caprina_db.dart';
+import 'package:gerenciamento_rural/models/producao_carne_caprina.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/producao_carne/registers/cadastro_producao_carne_caprina.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -19,10 +19,10 @@ class ListaPrecoCarneCaprino extends StatefulWidget {
 
 class _ListaPrecoCarneCaprinoState extends State<ListaPrecoCarneCaprino> {
   TextEditingController editingController = TextEditingController();
-  ProducaoCarneSuinaDB helper = ProducaoCarneSuinaDB();
-  List<ProducaoCarneSuina> items = [];
-  List<ProducaoCarneSuina> precos = [];
-  List<ProducaoCarneSuina> tPrecos = [];
+  ProducaoCarneCaprinaDB helper = ProducaoCarneCaprinaDB();
+  List<ProducaoCarneCaprina> items = [];
+  List<ProducaoCarneCaprina> precos = [];
+  List<ProducaoCarneCaprina> tPrecos = [];
   @override
   void initState() {
     super.initState();
@@ -85,7 +85,7 @@ class _ListaPrecoCarneCaprinoState extends State<ListaPrecoCarneCaprino> {
                 child: ListView.builder(
                     itemCount: precos.length,
                     itemBuilder: (context, index) {
-                      return _totalTerminacaoCard(context, index);
+                      return _totalCard(context, index);
                     }))
           ],
         ),
@@ -93,7 +93,7 @@ class _ListaPrecoCarneCaprinoState extends State<ListaPrecoCarneCaprino> {
     );
   }
 
-  Widget _totalTerminacaoCard(BuildContext context, int index) {
+  Widget _totalCard(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
         child: Padding(
@@ -206,12 +206,12 @@ class _ListaPrecoCarneCaprinoState extends State<ListaPrecoCarneCaprino> {
         });
   }
 
-  void _showTotalTerminacoesPage({ProducaoCarneSuina producao}) async {
+  void _showTotalTerminacoesPage({ProducaoCarneCaprina producao}) async {
     final recCachaco = await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => CadastroProducaoCarneCaprina(
-            producaoCarneSuina: producao,
+            producaoCarneCaprina: producao,
           ),
         ));
     if (recCachaco != null) {
@@ -241,18 +241,19 @@ class _ListaPrecoCarneCaprinoState extends State<ListaPrecoCarneCaprino> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Data', 'Preço', 'Quantidade', 'Machos', 'Fêmeas'],
+                <String>['Data', 'Preço', 'Quantidade', 'Total'],
                 ...precos.map((item) => [
                       item.data,
                       item.preco.toString(),
                       item.quantidade.toString(),
+                      item.total.toString()
                     ])
               ])
             ]));
 
     final String dir = (await getApplicationDocumentsDirectory()).path;
 
-    final String path = '$dir/pdfTerminação.pdf';
+    final String path = '$dir/pdf.pdf';
     final File file = File(path);
     file.writeAsBytesSync(await pdf.save());
     Navigator.of(context)
@@ -277,10 +278,10 @@ class _ListaPrecoCarneCaprinoState extends State<ListaPrecoCarneCaprino> {
 
   //filtrar resultado com o texto passado
   void filterSearchResults(String query) {
-    List<ProducaoCarneSuina> dummySearchList = [];
+    List<ProducaoCarneCaprina> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<ProducaoCarneSuina> dummyListData = [];
+      List<ProducaoCarneCaprina> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.data.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);

@@ -13,12 +13,9 @@ class _CadastroMedicamentoState extends State<CadastroMedicamento> {
   List<TipoMedicamento> _tipos = <TipoMedicamento>[
     const TipoMedicamento("Nenhum"),
     const TipoMedicamento("ml"),
-    const TipoMedicamento("l"),
-    const TipoMedicamento("ds"),
-    const TipoMedicamento("h"),
+    const TipoMedicamento("L"),
+    const TipoMedicamento("g"),
     const TipoMedicamento("kg"),
-    const TipoMedicamento("gr"),
-    const TipoMedicamento("am"),
   ];
   var controleDateVencimento = MaskedTextController(mask: '00-00-0000');
   var controleDateCompra = MaskedTextController(mask: '00-00-0000');
@@ -122,8 +119,7 @@ class _CadastroMedicamentoState extends State<CadastroMedicamento> {
                         Expanded(
                           child: TextField(
                             controller: _quantidadeController,
-                            decoration:
-                                InputDecoration(labelText: "Quantidade"),
+                            decoration: InputDecoration(labelText: "Dose"),
                             onChanged: (text) {
                               _medicamentoEdited = true;
                               setState(() {
@@ -190,7 +186,7 @@ class _CadastroMedicamentoState extends State<CadastroMedicamento> {
                           });
                         });
                       },
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                     ),
                     TextField(
                       controller: controleDateCompra,
@@ -230,7 +226,7 @@ class _CadastroMedicamentoState extends State<CadastroMedicamento> {
                           });
                         });
                       },
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                     ),
                     TextField(
                       controller: controleDataAbertura,
@@ -254,20 +250,6 @@ class _CadastroMedicamentoState extends State<CadastroMedicamento> {
                         setState(() {
                           setState(() {
                             _editedMedicamento.principioAtivo = text;
-                          });
-                        });
-                      },
-                      keyboardType: TextInputType.text,
-                    ),
-                    TextField(
-                      controller: _tempoDescarteLeite,
-                      decoration: InputDecoration(
-                          labelText: "Tempo de Descarte do Leite"),
-                      onChanged: (text) {
-                        _medicamentoEdited = true;
-                        setState(() {
-                          setState(() {
-                            _editedMedicamento.tempoDescarteLeite = text;
                           });
                         });
                       },

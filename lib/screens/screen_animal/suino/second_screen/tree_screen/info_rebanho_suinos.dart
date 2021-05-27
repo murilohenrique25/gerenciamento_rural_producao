@@ -67,7 +67,7 @@ class _InfoRebanhoSuinosState extends State<InfoRebanhoSuinos> {
             children: [
               Expanded(
                 child: Container(
-                  color: Colors.blue,
+                  color: Colors.indigo,
                   height: 80.0,
                   child: Center(
                     child: Text(
@@ -83,7 +83,7 @@ class _InfoRebanhoSuinosState extends State<InfoRebanhoSuinos> {
               Expanded(
                 child: Container(
                   height: 80.0,
-                  color: Colors.green,
+                  color: Colors.blue,
                   child: Center(
                     child: Text(
                       "Cachaços\n$totalCachaco",
@@ -98,7 +98,7 @@ class _InfoRebanhoSuinosState extends State<InfoRebanhoSuinos> {
               Expanded(
                 child: Container(
                   height: 80.0,
-                  color: Colors.yellow,
+                  color: Colors.green,
                   child: Center(
                     child: Text(
                       "Aleitamento\n$totalAleitamento",
@@ -116,7 +116,7 @@ class _InfoRebanhoSuinosState extends State<InfoRebanhoSuinos> {
             children: [
               Expanded(
                 child: Container(
-                  color: Colors.brown,
+                  color: Colors.teal,
                   height: 80.0,
                   child: Center(
                     child: Text(
@@ -132,7 +132,7 @@ class _InfoRebanhoSuinosState extends State<InfoRebanhoSuinos> {
               Expanded(
                 child: Container(
                   height: 80.0,
-                  color: Colors.indigo,
+                  color: Colors.yellow,
                   child: Center(
                     child: Text(
                       "Terminação\n$totalTerminacao",
@@ -147,7 +147,7 @@ class _InfoRebanhoSuinosState extends State<InfoRebanhoSuinos> {
               Expanded(
                 child: Container(
                   height: 80.0,
-                  color: Colors.teal,
+                  color: Colors.brown,
                   child: Center(
                     child: Text(
                       "Abatidos\n$totalAbatidos",

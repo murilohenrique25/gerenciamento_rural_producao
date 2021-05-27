@@ -23,7 +23,7 @@ class _CadastroEstoqueSemenSuinoState extends State<CadastroEstoqueSemenSuino> {
   InventarioSemenSuina _editedInventario;
   Cachaco cachaco = Cachaco();
   String idadeFinal = "";
-  String nomeCachaco = "Vazio";
+  String nomeCachaco = "";
   final _vigorController = TextEditingController();
   final _obsController = TextEditingController();
   final _palhetaController = TextEditingController();
@@ -195,7 +195,8 @@ class _CadastroEstoqueSemenSuinoState extends State<CadastroEstoqueSemenSuino> {
                 TextField(
                   keyboardType: TextInputType.number,
                   controller: _quantidadeController,
-                  decoration: InputDecoration(labelText: "Quantidade"),
+                  decoration:
+                      InputDecoration(labelText: "Quantidade de Palheta"),
                   onChanged: (text) {
                     _inventarioEdited = true;
                     setState(() {

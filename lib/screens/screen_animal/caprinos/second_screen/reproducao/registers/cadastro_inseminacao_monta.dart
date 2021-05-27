@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:gerenciamento_rural/helpers/inventario_semen_suina_db.dart';
-import 'package:gerenciamento_rural/helpers/matriz_db.dart';
-import 'package:gerenciamento_rural/models/cachaco.dart';
-import 'package:gerenciamento_rural/models/inseminacao_suino.dart';
-import 'package:gerenciamento_rural/models/inventario_semen_suino.dart';
-import 'package:gerenciamento_rural/models/matriz.dart';
+import 'package:gerenciamento_rural/helpers/inventario_semen_caprino_db.dart';
+import 'package:gerenciamento_rural/helpers/matriz_caprino_db.dart';
+import 'package:gerenciamento_rural/helpers/reprodutor_db.dart';
+import 'package:gerenciamento_rural/models/inseminacao_caprino.dart';
+import 'package:gerenciamento_rural/models/inventario_semen_caprino.dart';
+import 'package:gerenciamento_rural/models/matriz_caprino.dart';
+import 'package:gerenciamento_rural/models/reprodutor.dart';
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:toast/toast.dart';
 
 class CadastroInseminacaoMonta extends StatefulWidget {
-  final InseminacaoSuino inseminacao;
+  final InseminacaoCaprino inseminacao;
   CadastroInseminacaoMonta({this.inseminacao});
   @override
   _CadastroInseminacaoMontaState createState() =>
@@ -19,23 +20,25 @@ class CadastroInseminacaoMonta extends StatefulWidget {
 }
 
 class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
-  MatrizDB matrizDB = MatrizDB();
-  InventarioSemenSuinaDB _inventarioSemenDB = InventarioSemenSuinaDB();
+  MatrizCaprinoDB matrizDB = MatrizCaprinoDB();
+  ReprodutorDB reprodutorDB = ReprodutorDB();
+  InventarioSemenCaprinoDB _inventarioSemenDB = InventarioSemenCaprinoDB();
   int _radioValue = 0;
   String tipo;
-  List<Matriz> matrizes;
-  List<InventarioSemenSuina> listaSemens;
-  InventarioSemenSuina inventarioSemen;
-  InseminacaoSuino _editedInseminacao;
+  List<MatrizCaprino> matrizes = [];
+  List<Reprodutor> reprodutores = [];
+  List<InventarioSemenCaprino> listaSemens = [];
+  InventarioSemenCaprino inventarioSemen;
+  InseminacaoCaprino _editedInseminacao;
   bool _inseminacaoEdited = false;
-  Cachaco cachaco = Cachaco();
-  Matriz matriz = Matriz();
+  Reprodutor reprodutor = Reprodutor();
+  MatrizCaprino matriz = MatrizCaprino();
   final _inseminadorController = TextEditingController();
   final _obsController = TextEditingController();
   final _palhetaController = TextEditingController();
   var _data = MaskedTextController(mask: '00-00-0000');
-  String nomeMatriz = "Vazio";
-  String nomeMacho = "Vazio";
+  String nomeMatriz = "";
+  String nomeMacho = "";
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final df = new DateFormat("dd-MM-yyyy");
@@ -54,9 +57,10 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
     super.initState();
     _getAllAnimais();
     if (widget.inseminacao == null) {
-      _editedInseminacao = InseminacaoSuino();
+      _editedInseminacao = InseminacaoCaprino();
     } else {
-      _editedInseminacao = InseminacaoSuino.fromMap(widget.inseminacao.toMap());
+      _editedInseminacao =
+          InseminacaoCaprino.fromMap(widget.inseminacao.toMap());
       _inseminadorController.text = _editedInseminacao.inseminador;
       _obsController.text = _editedInseminacao.observacao;
       _palhetaController.text = _editedInseminacao.observacao;
@@ -90,8 +94,12 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
                   duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
             } else {
               if (_radioValue == 0) {
-                inventarioSemen.quantidade = inventarioSemen.quantidade - 1;
-                _inventarioSemenDB.updateItem(inventarioSemen);
+                if (inventarioSemen.quantidade > 0) {
+                  int valor = inventarioSemen.quantidade - 1;
+                  if (valor <= inventarioSemen.quantidade)
+                    inventarioSemen.quantidade = valor;
+                  _inventarioSemenDB.updateItem(inventarioSemen);
+                } else {}
               }
               Navigator.pop(context, _editedInseminacao);
             }
@@ -159,8 +167,7 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
                   onChanged: (value) {
                     _inseminacaoEdited = true;
                     setState(() {
-                      nomeMatriz = value.nomeAnimal;
-                      _editedInseminacao.idMatriz = value.idAnimal;
+                      _editedInseminacao.idMatriz = value.id;
                       _editedInseminacao.nomeMatriz = value.nomeAnimal;
                       nomeMatriz = value.nomeAnimal;
                     });
@@ -195,55 +202,107 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
                 SizedBox(
                   height: 10.0,
                 ),
-                SearchableDropdown.single(
-                  items: listaSemens.map((cachaco) {
-                    return DropdownMenuItem(
-                      value: cachaco,
-                      child: Row(
-                        children: [
-                          Text(cachaco.nomeCachaco),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: cachaco,
-                  hint: "Selecione um macho",
-                  searchHint: "Selecione um macho",
-                  onChanged: (value) {
-                    _inseminacaoEdited = true;
-                    setState(() {
-                      _editedInseminacao.idSemen = value.idCachaco;
-                      _editedInseminacao.nomeCachaco = value.nomeCachaco;
-                      nomeMacho = value.nomeCachaco;
-                    });
-                  },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
-                ),
+                if (_radioValue == 1)
+                  SearchableDropdown.single(
+                    items: reprodutores.map((reprodutor) {
+                      return DropdownMenuItem(
+                        value: reprodutor,
+                        child: Row(
+                          children: [
+                            Text(reprodutor.nomeAnimal),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    value: reprodutor,
+                    hint: "Selecione um reprodutor",
+                    searchHint: "Selecione um reprodutor",
+                    onChanged: (value) {
+                      _inseminacaoEdited = true;
+                      setState(() {
+                        _editedInseminacao.idSemen = value.id;
+                        _editedInseminacao.nomeReprodutor = value.nomeAnimal;
+                        nomeMacho = value.nomeAnimal;
+                      });
+                    },
+                    doneButton: "Pronto",
+                    displayItem: (item, selected) {
+                      return (Row(children: [
+                        selected
+                            ? Icon(
+                                Icons.radio_button_checked,
+                                color: Colors.grey,
+                              )
+                            : Icon(
+                                Icons.radio_button_unchecked,
+                                color: Colors.grey,
+                              ),
+                        SizedBox(width: 7),
+                        Expanded(
+                          child: item,
+                        ),
+                      ]));
+                    },
+                    isExpanded: true,
+                  ),
+                if (_radioValue == 0)
+                  SearchableDropdown.single(
+                    items: listaSemens.map((reprodutor) {
+                      return DropdownMenuItem(
+                        value: reprodutor,
+                        child: Row(
+                          children: [
+                            Text(reprodutor.nomeReprodutor),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    value: reprodutor,
+                    hint: "Selecione um sêmen",
+                    searchHint: "Selecione um sêmen",
+                    onChanged: (value) {
+                      _inseminacaoEdited = true;
+                      setState(() {
+                        inventarioSemen = value;
+                        _editedInseminacao.idSemen = value.idReprodutor;
+                        _editedInseminacao.nomeReprodutor =
+                            value.nomeReprodutor;
+                        nomeMacho = value.nomeReprodutor;
+                      });
+                    },
+                    doneButton: "Pronto",
+                    displayItem: (item, selected) {
+                      return (Row(children: [
+                        selected
+                            ? Icon(
+                                Icons.radio_button_checked,
+                                color: Colors.grey,
+                              )
+                            : Icon(
+                                Icons.radio_button_unchecked,
+                                color: Colors.grey,
+                              ),
+                        SizedBox(width: 7),
+                        Expanded(
+                          child: item,
+                        ),
+                      ]));
+                    },
+                    isExpanded: true,
+                  ),
                 SizedBox(
                   height: 10.0,
                 ),
-                Text("Macho selecionado:  $nomeMacho",
-                    style: TextStyle(
-                        fontSize: 16.0,
-                        color: Color.fromARGB(255, 4, 125, 141))),
+                if (_radioValue == 0)
+                  Text("Sêmen selecionado:  $nomeMacho",
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          color: Color.fromARGB(255, 4, 125, 141))),
+                if (_radioValue == 1)
+                  Text("Macho selecionado:  $nomeMacho",
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          color: Color.fromARGB(255, 4, 125, 141))),
                 SizedBox(
                   height: 10.0,
                 ),
@@ -259,6 +318,7 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
                   },
                 ),
                 TextField(
+                  enabled: _radioValue == 0 ? true : false,
                   keyboardType: TextInputType.text,
                   controller: _palhetaController,
                   decoration: InputDecoration(labelText: "Palheta"),
@@ -343,6 +403,11 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
     matrizDB.getAllItems().then((list) {
       setState(() {
         matrizes = list;
+      });
+    });
+    reprodutorDB.getAllItemsVivos().then((list) {
+      setState(() {
+        reprodutores = list;
       });
     });
   }

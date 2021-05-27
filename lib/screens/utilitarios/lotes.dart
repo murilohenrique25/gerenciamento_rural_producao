@@ -102,7 +102,7 @@ class _LotesState extends State<Lotes> {
           child: Row(
             children: [
               Text(
-                "Nome: " + lotes[index].name ?? "",
+                "Nome: " + lotes[index].nome ?? "",
                 style: TextStyle(fontSize: 14.0),
               ),
               SizedBox(
@@ -112,11 +112,7 @@ class _LotesState extends State<Lotes> {
               SizedBox(
                 width: 15,
               ),
-              Text(
-                "Quantidade animais: " + lotes[index].quantidade.toString() ??
-                    "",
-                style: TextStyle(fontSize: 14.0),
-              )
+          
             ],
           ),
         ),
@@ -210,8 +206,8 @@ class _LotesState extends State<Lotes> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome', 'Quantidade de animais'],
-                ...tLotes.map((item) => [item.name, item.quantidade.toString()])
+                <String>['Nome'],
+                ...tLotes.map((item) => [item.nome])
               ])
             ]));
 
@@ -228,12 +224,12 @@ class _LotesState extends State<Lotes> {
     switch (result) {
       case OrderOptions.orderaz:
         lotes.sort((a, b) {
-          return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+          return a.nome.toLowerCase().compareTo(b.nome.toLowerCase());
         });
         break;
       case OrderOptions.orderza:
         lotes.sort((a, b) {
-          return b.name.toLowerCase().compareTo(a.name.toLowerCase());
+          return b.nome.toLowerCase().compareTo(a.nome.toLowerCase());
         });
         break;
     }
@@ -246,7 +242,7 @@ class _LotesState extends State<Lotes> {
     if (query.isNotEmpty) {
       List<Lote> dummyListData = [];
       dummySearchList.forEach((item) {
-        if (item.name.toLowerCase().contains(query.toLowerCase())) {
+        if (item.nome.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
         }
       });

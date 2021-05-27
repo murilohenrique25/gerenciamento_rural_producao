@@ -28,8 +28,8 @@ class LoteDB extends HelperDB {
   @override
   Future<Map> getItem(dynamic where) async {
     Database db = await this.getDb();
-    List<Map> items = await db.query("loteTable",
-        where: "id_lote = ?", whereArgs: [where], limit: 1);
+    List<Map> items =
+        await db.query("lote", where: "id = ?", whereArgs: [where], limit: 1);
     Map result = Map();
     if (items.isNotEmpty) {
       result = items.first;
@@ -39,21 +39,20 @@ class LoteDB extends HelperDB {
 
   Future<Lote> insert(Lote lote) async {
     Database db = await this.getDb();
-    lote.id = await db.insert("loteTable", lote.toMap());
+    lote.id = await db.insert("lote", lote.toMap());
     return lote;
   }
 
   @override
   Future<List<Map>> list() async {
     Database db = await this.getDb();
-    return db.rawQuery("SELECT * FROM loteTable orderBy id_lote CRESC");
+    return db.rawQuery("SELECT * FROM lote orderBy id CRESC");
   }
 
   @override
   Future<bool> delete(dynamic id) async {
     Database db = await this.getDb();
-    int rows =
-        await db.delete("loteTable", where: "id_lote = ?", whereArgs: [id]);
+    int rows = await db.delete("lote", where: "id = ?", whereArgs: [id]);
 
     return (rows != 0);
   }
@@ -61,18 +60,18 @@ class LoteDB extends HelperDB {
   Future<int> getNumber() async {
     Database db = await this.getDb();
     return Sqflite.firstIntValue(
-        await db.rawQuery("SELECT COUNT(*) FROM loteTable"));
+        await db.rawQuery("SELECT COUNT(*) FROM lote"));
   }
 
   Future<void> updateItem(Lote lote) async {
     Database db = await this.getDb();
-    await db.update("loteTable", lote.toMap(),
-        where: "id_lote = ?", whereArgs: [lote.id]);
+    await db
+        .update("lote", lote.toMap(), where: "id = ?", whereArgs: [lote.id]);
   }
 
   Future<List> getAllItems() async {
     Database db = await this.getDb();
-    List listMap = await db.rawQuery("SELECT * FROM loteTable");
+    List listMap = await db.rawQuery("SELECT * FROM lote");
     List<Lote> list = [];
     for (Map m in listMap) {
       list.add(Lote.fromMap(m));

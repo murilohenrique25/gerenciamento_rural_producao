@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/egua_db.dart';
 import 'package:gerenciamento_rural/models/egua.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/equinos/second_screen/tree_screen/plantel/registers/cadastro_egua.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -208,8 +208,38 @@ class _ListaEguasState extends State<ListaEguas> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome', 'Procedência', 'Raça'],
-                ...eguas.map((item) => [item.nome, item.origem, item.raca])
+                <String>[
+                  'Nome',
+                  'Data Nascimento',
+                  'Raça',
+                  'Pai',
+                  'Mãe',
+                  'Lote',
+                  'Estado',
+                  'Origem',
+                  'Resenha',
+                  'Situação',
+                  'Diagnóstico Gestação',
+                  'Cios',
+                  'Total Partos',
+                  'Observação'
+                ],
+                ...eguas.map((item) => [
+                      item.nome,
+                      item.dataNascimento,
+                      item.raca,
+                      item.pai,
+                      item.mae,
+                      item.lote,
+                      item.estado,
+                      item.origem,
+                      item.resenha,
+                      item.situacao,
+                      item.diagnosticoGestacao,
+                      item.cios,
+                      item.totalPartos,
+                      item.observacao
+                    ])
               ])
             ]));
 

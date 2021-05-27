@@ -1,12 +1,11 @@
-String dbName = 'final0704.db';
+String dbName = 'final2605a5.db';
 int dbVersion = 1;
 
 List<String> dbCreate = [
   //tb lote
-  """CREATE TABLE loteTable(
-    id_lote INTEGER PRIMARY KEY, 
-    name TEXT, 
-    quantidade INTEGER
+  """CREATE TABLE lote(
+    id INTEGER PRIMARY KEY, 
+    nome TEXT 
     )""",
   //tb producaoleite
   """CREATE TABLE leiteTable(
@@ -187,6 +186,7 @@ List<String> dbCreate = [
     quantidade_total REAL,
     observacao TEXT,
     data TEXT,
+    baia TEXT,
     FOREIGN KEY (id_lote) REFERENCES loteTable(id_lote) 
   )""",
   //tb volumoso
@@ -201,6 +201,7 @@ List<String> dbCreate = [
     quantidade_total REAL,
     observacao TEXT,
     data TEXT,
+    baia TEXT,
     FOREIGN KEY (id_lote) REFERENCES loteTable(id_lote) 
   )""",
   //tb volumoso
@@ -213,6 +214,7 @@ List<String> dbCreate = [
     quantidade_total REAL,
     observacao TEXT,
     data TEXT,
+    baia TEXT,
     FOREIGN KEY (id_lote) REFERENCES loteTable(id_lote) 
   )""",
   //TB historicoPartoSuino
@@ -465,7 +467,7 @@ List<String> dbCreate = [
     quantidade_total REAL,
     quantidade_animais REAL,
     ingredientes TEXT,
-    data TEXT 
+    data TEXT
   )""",
   //tabela gasto
   """CREATE TABLE gastoSuino(
@@ -474,6 +476,7 @@ List<String> dbCreate = [
       data TEXT,
       quantidade INTEGER,
       observacao TEXT,
+      unidade TEXT,
       valorUnitario REAL,
       valorTotal REAL
      )""",
@@ -484,13 +487,16 @@ List<String> dbCreate = [
       data_nascimento TEXT,
       estado TEXT,
       lote TEXT,
+      baia TEXT,
+      peso REAL,
       raca TEXT,
       pai TEXT,
       mae TEXT,
       origem TEXT,
       resenha TEXT,
       observacao TEXT,
-      vm TEXT
+      vm TEXT,
+      pelagem TEXT
      )""",
   //tabela egua
   """CREATE TABLE egua(
@@ -509,7 +515,11 @@ List<String> dbCreate = [
       diagnosticoGestacao TEXT,
       cios TEXT,
       totalPartos TEXT,
-      vm TEXT
+      diasPrenha INTEGER,
+      baia TEXT,
+      peso REAL,
+      vm TEXT,
+      pelagem TEXT
      )""",
   //tabela potro
   """CREATE TABLE potro(
@@ -518,6 +528,8 @@ List<String> dbCreate = [
       data_nascimento TEXT,
       estado TEXT,
       lote TEXT,
+      baia TEXT,
+      peso REAL,
       raca TEXT,
       pai TEXT,
       mae TEXT,
@@ -527,7 +539,8 @@ List<String> dbCreate = [
       situacao TEXT,
       sexo TEXT,
       virou_adulto INTEGER,
-      vm TEXT
+      vm TEXT,
+      pelagem TEXT
      )""",
   //tb volumoso
   """CREATE TABLE nutricaoVolumosoEquino(
@@ -542,7 +555,8 @@ List<String> dbCreate = [
     quantidade_individual REAL,
     quantidade_total REAL,
     observacao TEXT,
-    data TEXT 
+    data TEXT,
+    baia TEXT
   )""",
   //tb volumoso
   """CREATE TABLE nutricaoConcentradoEquino(
@@ -555,7 +569,8 @@ List<String> dbCreate = [
     quantidade_individual REAL,
     quantidade_total REAL,
     observacao TEXT,
-    data TEXT 
+    data TEXT,
+    baia TEXT
   )""",
   //tb volumoso
   """CREATE TABLE nutricaoSuplementarEquino(
@@ -583,7 +598,8 @@ List<String> dbCreate = [
   dataAbertura TEXT,
   dataCompra TEXT,
   principioAtivo TEXT,
-  observacao TEXT
+  observacao TEXT,
+  baia TEXT
   )""",
   //tb tratamentoSuino
   """CREATE TABLE tratamentoEquino(
@@ -639,4 +655,292 @@ List<String> dbCreate = [
       defeito_maiores TEXT,
       defeito_menores TEXT
     )""",
+
+  //tb inseminacaoCaprino
+  """CREATE TABLE inseminacaoCaprino(
+      id INTEGER PRIMARY KEY,
+      id_matriz INTEGER,
+      nome_matriz TEXT,
+      id_semen INTEGER,
+      nome_reprodutor TEXT,
+      data TEXT,
+      observacao TEXT,
+      inseminador TEXT,
+      tipo_reproducao TEXT,
+      palheta TEXT
+  )""",
+  //tb inventarioSemenCaprino
+  """CREATE TABLE inventarioSemenCaprino(
+      id INTEGER PRIMARY KEY,
+      id_reprodutor INTEGER,
+      nome_reprodutor TEXT,
+      identificacao TEXT,
+      quantidade INTEGER,
+      cor TEXT,
+      data_cadastro TEXT,
+      data_validade TEXT,
+      observacao TEXT,
+      vigor TEXT,
+      mortalidade TEXT,
+      turbilhamento TEXT,
+      concentracao TEXT,
+      volume REAL,
+      aspecto TEXT,
+      celulas_normais REAL,
+      defeito_maiores TEXT,
+      defeito_menores TEXT
+    )""",
+  //tb precoCarneCaprino
+  """CREATE TABLE precoCarneCaprina(
+    id INTEGER PRIMARY KEY, 
+    data TEXT, 
+    preco REAL
+    )""",
+  //tb producaoCarneCaprino
+  """CREATE TABLE producaoCarneCaprina(
+    id INTEGER PRIMARY KEY, 
+    data TEXT, 
+    preco REAL,
+    quantidade REAL,
+    total REAL
+    )""",
+  //tb jovemFemea
+  """CREATE TABLE jovemFemea(
+    id INTEGER PRIMARY KEY,
+    id_lote INTEGER,
+    setor TEXT,
+     nome_animal TEXT,
+     data_nascimento TEXT,
+     lote TEXT,
+     raca TEXT,
+     pai TEXT,
+     mae TEXT,
+     situacao TEXT,
+     baia TEXT,
+     origem TEXT,
+     peso_nascimento REAL,
+     peso_desmama REAL,
+     data_desmama TEXT,
+     observacao TEXT,
+     virouAdulto INTEGER,
+     descricao TEXT,
+     data_acontecido TEXT,
+     valor_vendido REAL,
+      peso_final REAL,
+      FOREIGN KEY (id_lote) REFERENCES loteCaprino(id)
+    )""",
+  //tb jovemMacho
+  """CREATE TABLE jovemMacho(
+    id INTEGER PRIMARY KEY,
+    id_lote INTEGER,
+    setor TEXT,
+     nome_animal TEXT,
+     data_nascimento TEXT,
+     lote TEXT,
+     raca TEXT,
+     pai TEXT,
+     mae TEXT,
+     situacao TEXT,
+     baia TEXT,
+     origem TEXT,
+     peso_nascimento REAL,
+     peso_desmama REAL,
+     data_desmama TEXT,
+     observacao TEXT, 
+     virouAdulto INTEGER,
+     descricao TEXT,
+     data_acontecido TEXT,
+     valor_vendido REAL,
+      peso_final REAL,
+      FOREIGN KEY (id_lote) REFERENCES loteCaprino(id)
+    )""",
+  //tb reprodutor
+  """CREATE TABLE reprodutor(
+    id INTEGER PRIMARY KEY,
+    id_lote INTEGER,
+    setor TEXT,
+     nome_animal TEXT,
+     data_nascimento TEXT,
+     lote TEXT,
+     raca TEXT,
+     pai TEXT,
+     mae TEXT,
+     situacao TEXT,
+     procedencia TEXT,
+     baia TEXT,
+     origem TEXT,
+     observacao TEXT,
+     peso_abatido REAL,
+     data_abatido TEXT,
+     descricao TEXT,
+     data_acontecido TEXT,
+     valor_vendido REAL,
+      peso_final REAL,
+      peso REAL,
+      FOREIGN KEY (id_lote) REFERENCES loteCaprino(id)
+     )""",
+  //tb matrizCaprino
+  """CREATE TABLE matrizCaprino(
+    id INTEGER PRIMARY KEY,
+    id_lote INTEGER,
+    setor TEXT,
+     nome_animal TEXT,
+     data_nascimento TEXT,
+     lote TEXT,
+     raca TEXT,
+     pai TEXT,
+     mae TEXT,
+     situacao TEXT,
+     procedencia TEXT,
+     baia TEXT,
+     origem TEXT,
+     observacao TEXT,
+     diagnostico_gestacao TEXT,
+     idade_primeiro_parto TEXT,
+     peso_primeiro_parto REAL,
+     ultima_inseminacao TEXT,
+     descricao TEXT,
+     data_acontecido TEXT,
+     valor_vendido REAL,
+      peso_final REAL,
+      dias_prenha INTEGER,
+      FOREIGN KEY (id_lote) REFERENCES loteCaprino(id)
+     )""",
+  //tb volumoso
+  """CREATE TABLE nutricaoVolumosoCaprino(
+    id INTEGER PRIMARY KEY,
+    id_lote INTEGER,
+    nome_lote TEXT,
+    tipo TEXT,
+    pb REAL,
+    ndt REAL,
+    ms REAL,
+    umidade REAL,
+    quantidade_individual REAL,
+    quantidade_total REAL,
+    observacao TEXT,
+    data TEXT,
+    baia TEXT
+  )""",
+  //tb volumoso
+  """CREATE TABLE nutricaoConcentradoCaprino(
+    id INTEGER PRIMARY KEY,
+    id_lote INTEGER,
+    nome_lote TEXT,
+    ingredientes TEXT,
+    pb REAL,
+    ndt REAL,
+    quantidade_individual REAL,
+    quantidade_total REAL,
+    observacao TEXT,
+    data TEXT,
+    baia TEXT
+  )""",
+  //tb volumoso
+  """CREATE TABLE nutricaoSuplementarCaprino(
+    id INTEGER PRIMARY KEY,
+    id_lote INTEGER,
+    nome_lote TEXT,
+    ingredientes TEXT,
+    quantidade_individual REAL,
+    quantidade_total REAL,
+    observacao TEXT,
+    data TEXT,
+    baia TEXT
+  )""",
+  //tb tratamentoCaprina
+  """CREATE TABLE tratamentoCaprino(
+    id INTEGER PRIMARY KEY,
+    lote TEXT,
+    idAnimal INTEGER, 
+    nomeAnimal TEXT,
+    enfermidade TEXT,
+    idMedicamento INTEGER,
+    quantidade REAL,
+    nomeMedicamento TEXT,
+    unidade TEXT,
+    viaAplicacao TEXT,
+    duracao TEXT,
+    inicioTratamento TEXT,
+    fimTratamento TEXT,
+    carencia TEXT,
+    observacao TEXT,
+    tipo INTEGER
+    )""",
+  //tb tratamentoCaprina
+  """CREATE TABLE registroPartoCaprino(
+    id INTEGER PRIMARY KEY,
+    nome_matriz TEXT,
+      nome_reprodutor TEXT,
+      quantidade INTEGER,
+      quant_machos INTEGER,
+      quant_femeas INTEGER,
+      problema TEXT,
+      data TEXT,
+      tipo_inseminacao TEXT,
+      total_partos REAL
+      )""",
+  //tb pesagemLoteCaprina
+  """CREATE TABLE pesagemLoteCaprina(
+    id INTEGER PRIMARY KEY,
+    lote TEXT,
+    id_lote INTEGER,
+    baia TEXT,
+    data TEXT,
+    peso REAL,
+    animal TEXT,
+    media REAL,
+    observacao TEXT,
+    FOREIGN KEY (id_lote) REFERENCES loteCaprino(id)
+    )""",
+  //tb todosCaprino
+  """CREATE TABLE todosCaprinos(
+    id INTEGER PRIMARY KEY,
+    nome TEXT,
+    id_lote INTEGER,
+    FOREIGN KEY (id_lote) REFERENCES loteCaprino(id)
+    )""",
+  //tb loteCaprino
+  """CREATE TABLE loteCaprino(
+    id INTEGER PRIMARY KEY, 
+    nome TEXT,
+    data TEXT,
+    tipo TEXT
+    )""",
+  //tb caprinoAbatido
+  """CREATE TABLE caprinoAbatido(
+    id INTEGER PRIMARY KEY, 
+    id_lote INTEGER,
+    nome TEXT,
+    peso REAL,
+     FOREIGN KEY (id_lote) REFERENCES loteCaprino(id)
+    )""",
+  //tabela gasto
+  """CREATE TABLE gastoCaprino(
+      id INTEGER PRIMARY KEY,
+      nome TEXT,
+      data TEXT,
+      quantidade INTEGER,
+      observacao TEXT,
+      valorUnitario REAL,
+      valorTotal REAL
+     )""",
+  //tabela medicamentoSuino
+  """CREATE TABLE medicamentoCaprino(
+  id INTEGER PRIMARY KEY,
+  nomeMedicamento TEXT,
+  quantidade REAL,
+  precoUnitario REAL,
+  precoTotal REAL,
+  tempoDescarteLeite TEXT,
+  tipoDosagem TEXT,
+  carenciaMedicamento TEXT,
+  dataVencimento TEXT,
+  fornecedor TEXT,
+  dataAbertura TEXT,
+  dataCompra TEXT,
+  principioAtivo TEXT,
+  observacao TEXT,
+  baia TEXT
+  )""",
 ];

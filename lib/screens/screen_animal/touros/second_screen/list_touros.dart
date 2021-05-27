@@ -241,9 +241,30 @@ class _ListTourosState extends State<ListTouros> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome', 'Raça', 'Pai', 'Mãe'],
-                ...tTouros
-                    .map((item) => [item.nome, item.raca, item.pai, item.mae])
+                <String>[
+                  'Nome / Nº Brinco',
+                  'Data Nascimento',
+                  'Pai',
+                  'Mãe',
+                  'Avó Materno',
+                  'Avô Materno',
+                  'Avó Paterno',
+                  'Avô Paterno',
+                  'Raça',
+                  'Estado'
+                ],
+                ...tTouros.map((item) => [
+                      item.nome,
+                      item.dataNascimento,
+                      item.pai,
+                      item.mae,
+                      item.avoFMaterno,
+                      item.avoMMaterno,
+                      item.avoFPaterno,
+                      item.avoMPaterno,
+                      item.raca,
+                      item.estado
+                    ])
               ])
             ]));
 

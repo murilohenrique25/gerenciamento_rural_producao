@@ -277,7 +277,7 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
                       value: lote.id,
                       child: Row(
                         children: [
-                          Text(lote.name),
+                          Text(lote.nome),
                         ],
                       ),
                     );

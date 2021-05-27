@@ -9,7 +9,7 @@ class NutricaoConcentrado {
   double ndt;
   String observacao;
   String data;
-
+  String baia;
   NutricaoConcentrado();
   NutricaoConcentrado.fromMap(Map map) {
     id = map["id"];
@@ -22,6 +22,7 @@ class NutricaoConcentrado {
     quantidadeTotal = map["quantidade_total"];
     observacao = map["observacao"];
     data = map["data"];
+    baia = map["baia"];
   }
 
   Map toMap() {
@@ -35,6 +36,7 @@ class NutricaoConcentrado {
       "quantidade_total": quantidadeTotal,
       "observacao": observacao,
       "data": data,
+      "baia": baia,
     };
     if (id != null) {
       map["id"] = id;

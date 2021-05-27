@@ -210,9 +210,24 @@ class _ListaInseminacaoSuinaState extends State<ListaInseminacaoSuina> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Cachaço', 'Matriz'],
-                ...tInseminacoes
-                    .map((item) => [item.nomeCachaco, item.nomeMatriz])
+                <String>[
+                  'Cachaço',
+                  'Matriz',
+                  'Data',
+                  'Inseminador',
+                  'Tipo Reprodução',
+                  'Palheta',
+                  'Observação'
+                ],
+                ...tInseminacoes.map((item) => [
+                      item.nomeCachaco,
+                      item.nomeMatriz,
+                      item.data,
+                      item.inseminador,
+                      item.tipoReproducao,
+                      item.palheta,
+                      item.observacao
+                    ])
               ])
             ]));
 

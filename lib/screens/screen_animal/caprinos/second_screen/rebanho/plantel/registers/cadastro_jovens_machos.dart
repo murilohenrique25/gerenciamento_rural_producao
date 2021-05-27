@@ -1,45 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:gerenciamento_rural/models/cavalo.dart';
-import 'package:gerenciamento_rural/models/potro.dart';
+import 'package:gerenciamento_rural/helpers/caprino_abatido_db.dart';
+import 'package:gerenciamento_rural/helpers/lote_caprino_db.dart';
+import 'package:gerenciamento_rural/helpers/reprodutor_db.dart';
+import 'package:gerenciamento_rural/models/caprino_abatido.dart';
+import 'package:gerenciamento_rural/models/jovem_macho_caprino.dart';
+import 'package:gerenciamento_rural/models/lote.dart';
+import 'package:gerenciamento_rural/models/reprodutor.dart';
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:toast/toast.dart';
 
 class CadastroJovemMacho extends StatefulWidget {
-  final Potro potro;
-  CadastroJovemMacho({this.potro});
+  final JovemMachoCaprino jovemMachoCaprino;
+  CadastroJovemMacho({this.jovemMachoCaprino});
   @override
   _CadastroJovemMachoState createState() => _CadastroJovemMachoState();
 }
 
 class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
+  LoteCaprinoDB loteCaprinoDB = LoteCaprinoDB();
+  Lote lote;
+  List<Lote> lotes = [];
   String idadeFinal = "";
   String numeroData = "";
+  String nomePai = "";
+  String nomeMae = "";
+  String nomeLote = "";
   int _radioValue = 0;
   int _radioValueSetor = 0;
   String estado;
-  List<String> situacao = ["Jovens Fêmeas", "Abatido", "Matriz"];
   final _nomeController = TextEditingController();
   var _dataNasc = MaskedTextController(mask: '00-00-0000');
+  var _dataAcontecidoController = MaskedTextController(mask: '00-00-0000');
   var _dataDesmamaController = MaskedTextController(mask: '00-00-0000');
   final _racaController = TextEditingController();
   final _paiController = TextEditingController();
   final _maeController = TextEditingController();
   final _baiaController = TextEditingController();
+  final _pesoAtualController = TextEditingController();
   final _loteController = TextEditingController();
   final _origemController = TextEditingController();
   final _obsController = TextEditingController();
   final _pesoDesmamaController = TextEditingController();
   final _pesoNascimentoController = TextEditingController();
-
+  final _descricaoController = TextEditingController();
+  final _valorVendidoController = TextEditingController();
+  final _pesoVendidoController = TextEditingController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final df = new DateFormat("dd-MM-yyyy");
 
   String _idadeAnimal = "1ano e 2meses";
-  Cavalo _editedCavalo;
-  bool _cachadoEdited = false;
+  JovemMachoCaprino _editedJM;
+  bool _jmEdited = false;
   final GlobalKey<ScaffoldState> _scaffoldstate =
       new GlobalKey<ScaffoldState>();
 
@@ -52,25 +66,44 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
   @override
   void initState() {
     super.initState();
-    if (widget.potro == null) {
-      _editedCavalo = Cavalo();
-      _editedCavalo.vm = "Vivo";
+    _getAllLotes();
+    if (widget.jovemMachoCaprino == null) {
+      _editedJM = JovemMachoCaprino();
+      _editedJM.situacao = "Vivo";
       _radioValue = 0;
+      _editedJM.setor = "Caprino";
+      _radioValueSetor = 0;
+      _editedJM.virouAdulto = 0;
     } else {
-      _editedCavalo = Cavalo.fromMap(widget.potro.toMap());
-      _nomeController.text = _editedCavalo.nome;
-      if (_editedCavalo.vm == "Vivo") {
+      _editedJM = JovemMachoCaprino.fromMap(widget.jovemMachoCaprino.toMap());
+      _nomeController.text = _editedJM.nomeAnimal;
+      if (_editedJM.situacao == "Vivo") {
         _radioValue = 0;
-      } else {
+      } else if (_editedJM.situacao == "Morto") {
         _radioValue = 1;
+      } else if (_editedJM.situacao == "Abatido") {
+        _radioValue = 2;
+      } else {
+        _radioValue = 3;
       }
-      _racaController.text = _editedCavalo.raca;
-      _paiController.text = _editedCavalo.pai;
-      _maeController.text = _editedCavalo.mae;
-      _baiaController.text = _editedCavalo.observacao;
-      _loteController.text = _editedCavalo.estado;
-      _origemController.text = _editedCavalo.origem;
-      numeroData = _editedCavalo.dataNascimento;
+
+      if (_editedJM.setor == "Caprino") {
+        _radioValueSetor = 0;
+      } else {
+        _radioValueSetor = 1;
+      }
+      _racaController.text = _editedJM.raca;
+      _paiController.text = _editedJM.pai;
+      _maeController.text = _editedJM.mae;
+      _baiaController.text = _editedJM.baia;
+      _loteController.text = _editedJM.lote;
+      _pesoAtualController.text = _editedJM.peso.toString();
+      _origemController.text = _editedJM.origem;
+      _obsController.text = _editedJM.observacao;
+      _descricaoController.text = _editedJM.descricao;
+      _dataAcontecidoController.text = _editedJM.dataAcontecido;
+      _valorVendidoController.text = _editedJM.valorVendido.toString();
+      numeroData = _editedJM.dataNascimento;
       _dataNasc.text = numeroData;
       idadeFinal = differenceDate();
     }
@@ -91,9 +124,9 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                   controller: _paiController,
                   decoration: InputDecoration(labelText: "Pai"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _jmEdited = true;
                     setState(() {
-                      _editedCavalo.pai = text;
+                      _editedJM.pai = text;
                     });
                   },
                 ),
@@ -102,9 +135,301 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                   controller: _maeController,
                   decoration: InputDecoration(labelText: "Mãe"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _jmEdited = true;
                     setState(() {
-                      _editedCavalo.mae = text;
+                      _editedJM.mae = text;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showLBDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Virar Reprodutor'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                SearchableDropdown.single(
+                  items: lotes.map((lote) {
+                    return DropdownMenuItem(
+                      value: lote,
+                      child: Row(
+                        children: [
+                          Text(lote.nome),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  value: lote,
+                  hint: "Selecione um lote",
+                  searchHint: "Selecione um lote",
+                  onChanged: (value) {
+                    _jmEdited = true;
+                    setState(() {
+                      _editedJM.idLote = value.id;
+                      nomeLote = value.nome;
+                    });
+                  },
+                  doneButton: "Pronto",
+                  displayItem: (item, selected) {
+                    return (Row(children: [
+                      selected
+                          ? Icon(
+                              Icons.radio_button_checked,
+                              color: Colors.grey,
+                            )
+                          : Icon(
+                              Icons.radio_button_unchecked,
+                              color: Colors.grey,
+                            ),
+                      SizedBox(width: 7),
+                      Expanded(
+                        child: item,
+                      ),
+                    ]));
+                  },
+                  isExpanded: true,
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _baiaController,
+                  decoration: InputDecoration(labelText: "Baia"),
+                  onChanged: (text) {
+                    _jmEdited = true;
+                    setState(() {
+                      _editedJM.baia = text;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showMortoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Causa Morte'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _descricaoController,
+                  decoration: InputDecoration(labelText: "Causa"),
+                  onChanged: (text) {
+                    _jmEdited = true;
+                    setState(() {
+                      _editedJM.descricao = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _jmEdited = true;
+                    setState(() {
+                      _editedJM.dataAcontecido = text;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showVendidoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Vendido'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _paiController,
+                  decoration: InputDecoration(labelText: "Comprador"),
+                  onChanged: (text) {
+                    _jmEdited = true;
+                    setState(() {
+                      _editedJM.descricao = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _jmEdited = true;
+                    setState(() {
+                      _editedJM.dataAcontecido = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _pesoVendidoController,
+                  decoration: InputDecoration(labelText: "Preço"),
+                  onChanged: (text) {
+                    _jmEdited = true;
+                    setState(() {
+                      _editedJM.pesoFinal = double.parse(text);
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showDoadoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Doado'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _descricaoController,
+                  decoration: InputDecoration(labelText: "Recebedor"),
+                  onChanged: (text) {
+                    _jmEdited = true;
+                    setState(() {
+                      _editedJM.descricao = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _jmEdited = true;
+                    setState(() {
+                      _editedJM.dataAcontecido = text;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showAbatidoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Abatido'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _jmEdited = true;
+                    setState(() {
+                      _editedJM.descricao = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _pesoVendidoController,
+                  decoration: InputDecoration(labelText: "Peso"),
+                  onChanged: (text) {
+                    _jmEdited = true;
+                    setState(() {
+                      _editedJM.pesoFinal = double.parse(text);
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _valorVendidoController,
+                  decoration: InputDecoration(labelText: "Preço"),
+                  onChanged: (text) {
+                    _jmEdited = true;
+                    setState(() {
+                      _editedJM.valorVendido = double.parse(text);
                     });
                   },
                 ),
@@ -132,7 +457,7 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
         key: _scaffoldstate,
         appBar: AppBar(
           title: Text(
-            "Cadastrar Jovem Fêmea",
+            "Cadastrar Jovem Macho",
             style: TextStyle(fontSize: 15.0),
           ),
           centerTitle: true,
@@ -152,7 +477,23 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
               Toast.show("Data nascimento inválida.", context,
                   duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
             } else {
-              Navigator.pop(context, _editedCavalo);
+              if (_editedJM.situacao == "Abatido") {
+                CaprinoAbatido caprinoAbatido = CaprinoAbatido();
+                CaprinoAbatidoDB caprinoAbatidoDB = CaprinoAbatidoDB();
+                caprinoAbatido.idLote = _editedJM.idLote;
+                caprinoAbatido.nome = _editedJM.nomeAnimal;
+                caprinoAbatido.peso = _editedJM.pesoFinal;
+                caprinoAbatido.data = _editedJM.dataAcontecido;
+                caprinoAbatido.tipo = "Macho Jovem";
+                caprinoAbatidoDB.insert(caprinoAbatido);
+              }
+              if (_editedJM.situacao == "Reprodutor") {
+                ReprodutorDB repDB = ReprodutorDB();
+                Reprodutor rep = Reprodutor.fromMap(_editedJM.toMap());
+                repDB.insert(rep);
+                _editedJM.virouAdulto = 1;
+              }
+              Navigator.pop(context, _editedJM);
             }
           },
           child: Icon(Icons.save),
@@ -182,7 +523,7 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                         onChanged: (int value) {
                           setState(() {
                             _radioValueSetor = value;
-                            _editedCavalo.vm = "Caprino";
+                            _editedJM.setor = "Caprino";
                           });
                         }),
                     Text("Caprino"),
@@ -192,7 +533,7 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                         onChanged: (int value) {
                           setState(() {
                             _radioValueSetor = value;
-                            _editedCavalo.vm = "Ovino";
+                            _editedJM.setor = "Ovino";
                           });
                         }),
                     Text("Ovino"),
@@ -205,50 +546,31 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                   controller: _nomeController,
                   decoration: InputDecoration(labelText: "Nome ou Nº Brinco"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _jmEdited = true;
                     setState(() {
-                      _editedCavalo.nome = text;
+                      _editedJM.nomeAnimal = text;
                     });
                   },
                 ),
-                TextField(
-                  controller: _dataNasc,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: "Data de Nascimento"),
-                  onChanged: (text) {
-                    _cachadoEdited = true;
-                    setState(() {
-                      _editedCavalo.dataNascimento = text;
-                      numeroData = _dataNasc.text;
-                      idadeFinal = differenceDate();
-                    });
-                  },
-                ),
-                SizedBox(
-                  height: 15.0,
-                ),
-                Text("Idade do animal:  $idadeFinal",
-                    style: TextStyle(
-                        fontSize: 16.0,
-                        color: Color.fromARGB(255, 4, 125, 141))),
                 SearchableDropdown.single(
-                  items: situacao.map((estado) {
+                  items: lotes.map((lote) {
                     return DropdownMenuItem(
-                      value: estado,
+                      value: lote,
                       child: Row(
                         children: [
-                          Text(estado),
+                          Text(lote.nome),
                         ],
                       ),
                     );
                   }).toList(),
-                  value: estado,
-                  hint: "Selecione uma situação",
-                  searchHint: "Selecione uma situação",
+                  value: lote,
+                  hint: "Selecione um lote",
+                  searchHint: "Selecione um lote",
                   onChanged: (value) {
-                    // _crecheEdited = true;
+                    _jmEdited = true;
                     setState(() {
-                      // _editedCreche.estado = value;
+                      _editedJM.idLote = value.id;
+                      nomeLote = value.nome;
                     });
                   },
                   doneButton: "Pronto",
@@ -272,16 +594,43 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                   isExpanded: true,
                 ),
                 SizedBox(
-                  height: 10.0,
+                  height: 5.0,
                 ),
+                Text("Lote:  $nomeLote",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                SizedBox(
+                  height: 5.0,
+                ),
+                TextField(
+                  controller: _dataNasc,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: "Data de Nascimento"),
+                  onChanged: (text) {
+                    _jmEdited = true;
+                    setState(() {
+                      _editedJM.dataNascimento = text;
+                      numeroData = _dataNasc.text;
+                      idadeFinal = differenceDate();
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 15.0,
+                ),
+                Text("Idade do animal:  $idadeFinal",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
                 TextField(
                   keyboardType: TextInputType.text,
                   controller: _racaController,
                   decoration: InputDecoration(labelText: "Raça"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _jmEdited = true;
                     setState(() {
-                      _editedCavalo.raca = text;
+                      _editedJM.raca = text;
                     });
                   },
                 ),
@@ -290,9 +639,9 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                   controller: _origemController,
                   decoration: InputDecoration(labelText: "Origem"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _jmEdited = true;
                     setState(() {
-                      _editedCavalo.origem = text;
+                      _editedJM.origem = text;
                     });
                   },
                 ),
@@ -301,9 +650,9 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                   controller: _loteController,
                   decoration: InputDecoration(labelText: "Lote"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _jmEdited = true;
                     setState(() {
-                      _editedCavalo.estado = text;
+                      _editedJM.lote = text;
                     });
                   },
                 ),
@@ -312,9 +661,9 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                   controller: _baiaController,
                   decoration: InputDecoration(labelText: "Baia"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _jmEdited = true;
                     setState(() {
-                      _editedCavalo.observacao = text;
+                      _editedJM.baia = text;
                     });
                   },
                 ),
@@ -323,11 +672,9 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(labelText: "Data da desmama"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _jmEdited = true;
                     setState(() {
-                      _editedCavalo.dataNascimento = text;
-                      numeroData = _dataNasc.text;
-                      idadeFinal = differenceDate();
+                      _editedJM.dataDesmama = text;
                     });
                   },
                 ),
@@ -336,37 +683,42 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(labelText: "Peso ao Nascimento"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _jmEdited = true;
                     setState(() {
-                      _editedCavalo.dataNascimento = text;
-                      numeroData = _dataNasc.text;
-                      idadeFinal = differenceDate();
+                      _editedJM.pesoNascimento = text;
+                    });
+                  },
+                ),
+                TextField(
+                  controller: _pesoAtualController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: "Peso Atual"),
+                  onChanged: (text) {
+                    _jmEdited = true;
+                    setState(() {
+                      _editedJM.peso = double.parse(text);
                     });
                   },
                 ),
                 TextField(
                   controller: _pesoDesmamaController,
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   decoration: InputDecoration(labelText: "Peso na desmama"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _jmEdited = true;
                     setState(() {
-                      _editedCavalo.dataNascimento = text;
-                      numeroData = _dataNasc.text;
-                      idadeFinal = differenceDate();
+                      _editedJM.pesoDesmama = text;
                     });
                   },
                 ),
                 TextField(
                   controller: _obsController,
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   decoration: InputDecoration(labelText: "Observação"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _jmEdited = true;
                     setState(() {
-                      _editedCavalo.dataNascimento = text;
-                      numeroData = _dataNasc.text;
-                      idadeFinal = differenceDate();
+                      _editedJM.observacao = text;
                     });
                   },
                 ),
@@ -376,6 +728,14 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                   },
                   child: Text("Genealogia"),
                 ),
+                Text("Pai:  $nomePai",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                Text("Mãe:  $nomeMae",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
                 SizedBox(
                   height: 15.0,
                 ),
@@ -388,7 +748,7 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                         onChanged: (int value) {
                           setState(() {
                             _radioValue = value;
-                            _editedCavalo.vm = "Vivo";
+                            _editedJM.situacao = "Vivo";
                           });
                         }),
                     Text("Vivo"),
@@ -398,10 +758,65 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                         onChanged: (int value) {
                           setState(() {
                             _radioValue = value;
-                            _editedCavalo.vm = "Morto";
+                            _editedJM.situacao = "Morto";
+                            if (_editedJM.situacao == "Morto")
+                              _showMortoDialog();
                           });
                         }),
                     Text("Morto"),
+                    Radio(
+                        value: 2,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            _editedJM.situacao = "Abatido";
+                            if (_editedJM.situacao == "Abatido")
+                              _showAbatidoDialog();
+                          });
+                        }),
+                    Text("Abatido"),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Radio(
+                        value: 3,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            _editedJM.situacao = "Reprodutor";
+                            if (_editedJM.situacao == "Reprodutor")
+                              _showLBDialog();
+                          });
+                        }),
+                    Text("Reprodutor"),
+                    Radio(
+                        value: 4,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            _editedJM.situacao = "Vendido";
+                            if (_editedJM.situacao == "Vendido")
+                              _showVendidoDialog();
+                          });
+                        }),
+                    Text("Vendido"),
+                    Radio(
+                        value: 5,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            _editedJM.situacao = "Doado";
+                            if (_editedJM.situacao == "Doado")
+                              _showDoadoDialog();
+                          });
+                        }),
+                    Text("Doado"),
                   ],
                 ),
                 SizedBox(
@@ -415,8 +830,16 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
     );
   }
 
+  void _getAllLotes() {
+    loteCaprinoDB.getAllItems().then((value) {
+      setState(() {
+        lotes = value;
+      });
+    });
+  }
+
   Future<bool> _requestPop() {
-    if (_cachadoEdited) {
+    if (_jmEdited) {
       showDialog(
           context: context,
           builder: (context) {

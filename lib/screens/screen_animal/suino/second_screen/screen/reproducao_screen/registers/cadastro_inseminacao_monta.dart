@@ -34,8 +34,8 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
   final _obsController = TextEditingController();
   final _palhetaController = TextEditingController();
   var _data = MaskedTextController(mask: '00-00-0000');
-  String nomeMatriz = "Vazio";
-  String nomeCachaco = "Vazio";
+  String nomeMatriz = "";
+  String nomeCachaco = "";
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final df = new DateFormat("dd-MM-yyyy");

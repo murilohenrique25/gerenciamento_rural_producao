@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/producao_carne_suina_db.dart';
 import 'package:gerenciamento_rural/models/producao_carne_suina.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/producao_carne/registers/cadastro_producao_carne_suina.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -241,11 +241,12 @@ class _ListaPrecoCarneSuinaState extends State<ListaPrecoCarneSuina> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Data', 'Preço', 'Quantidade', 'Machos', 'Fêmeas'],
+                <String>['Data', 'Preço', 'Quantidade', 'Total'],
                 ...precos.map((item) => [
                       item.data,
                       item.preco.toString(),
                       item.quantidade.toString(),
+                      item.total.toString(),
                     ])
               ])
             ]));

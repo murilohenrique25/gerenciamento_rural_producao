@@ -10,7 +10,10 @@ class Cavalo {
   String raca;
   String resenha;
   String observacao;
+  String baia;
+  double peso;
   String vm;
+  String pelagem;
   Cavalo();
   Cavalo.fromMap(Map map) {
     id = map["id"]; //
@@ -22,9 +25,12 @@ class Cavalo {
     pai = map["pai"]; //
     mae = map["mae"]; //
     resenha = map["resenha"]; //
+    baia = map["baia"]; //
+    peso = map["peso"]; //
     origem = map["origem"]; //
     observacao = map["observacao"]; //
     vm = map["vm"];
+    pelagem = map["pelagem"];
   }
 
   Map toMap() {
@@ -37,9 +43,12 @@ class Cavalo {
       "pai": pai,
       "mae": mae,
       "origem": origem,
+      "baia": baia,
+      "peso": peso,
       "resenha": resenha,
       "observacao": observacao,
       "vm": vm,
+      "pelagem": pelagem,
     };
     if (id != null) {
       map["id"] = id;

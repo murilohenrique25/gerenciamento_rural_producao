@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/tratamento_equino_db.dart';
+import 'package:gerenciamento_rural/helpers/tratamento_caprino_db.dart';
 import 'package:gerenciamento_rural/models/tratamento.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/tratamentos/registers/cadastrar_tratamento_caprino.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPage.dart';
@@ -17,7 +17,7 @@ class TratamentoCaprinoList extends StatefulWidget {
 
 class _TratamentoCaprinoListState extends State<TratamentoCaprinoList> {
   TextEditingController editingController = TextEditingController();
-  TratamentoEquinoDB helper = TratamentoEquinoDB();
+  TratamentoCaprinoDB helper = TratamentoCaprinoDB();
   List<Tratamento> items = [];
   List<Tratamento> tratamentos = [];
   List<Tratamento> tTratamentos = [];
@@ -210,9 +210,36 @@ class _TratamentoCaprinoListState extends State<TratamentoCaprinoList> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome', 'Animal'],
-                ...tTratamentos
-                    .map((item) => [item.nomeMedicamento, item.nomeAnimal])
+                <String>[
+                  'Animal',
+                  'Lote',
+                  'Medicamento',
+                  'Enfermidade',
+                  'Unidade',
+                  'Quantidade',
+                  'Via Aplicação',
+                  'Duração',
+                  'Início do Tratamento',
+                  'Fim do Tratamento',
+                  'Carência',
+                  'Tipo',
+                  'Observação'
+                ],
+                ...tTratamentos.map((item) => [
+                      item.nomeAnimal,
+                      item.lote,
+                      item.nomeMedicamento,
+                      item.enfermidade,
+                      item.unidade,
+                      item.quantidade.toString(),
+                      item.viaAplicacao,
+                      item.duracao,
+                      item.inicioTratamento,
+                      item.fimTratamento,
+                      item.carencia,
+                      item.tipo.toString(),
+                      item.observacao
+                    ])
               ])
             ]));
 

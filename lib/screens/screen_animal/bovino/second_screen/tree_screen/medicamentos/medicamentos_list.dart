@@ -212,15 +212,42 @@ class _MedicamentosListState extends State<MedicamentosList> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome', 'Quantidade'],
-                ...tMedicamentos.map((item) =>
-                    [item.nomeMedicamento, item.quantidade.toString()])
+                <String>[
+                  'Nome',
+                  'Quantidade',
+                  'Preço Unit.',
+                  'Preço Total',
+                  'Tempo Descarte',
+                  'Tipo Dosagem',
+                  'Carência Medicamento',
+                  'Data Vencimento',
+                  'Fornecedor',
+                  'Data Compra',
+                  'Data Abertura',
+                  'Princípio Ativo',
+                  'Observação'
+                ],
+                ...tMedicamentos.map((item) => [
+                      item.nomeMedicamento,
+                      item.quantidade.toString(),
+                      item.precoUnitario.toString(),
+                      item.precoTotal.toString(),
+                      item.tempoDescarteLeite,
+                      item.carenciaMedicamento,
+                      item.tipoDosagem,
+                      item.dataVencimento,
+                      item.fornecedor,
+                      item.dataCompra,
+                      item.dataAbertura,
+                      item.principioAtivo,
+                      item.observacao
+                    ])
               ])
             ]));
 
     final String dir = (await getApplicationDocumentsDirectory()).path;
 
-    final String path = '$dir/pdfLotes.pdf';
+    final String path = '$dir/pdf.pdf';
     final File file = File(path);
     file.writeAsBytesSync(await pdf.save());
     print("$file");

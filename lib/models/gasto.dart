@@ -5,6 +5,7 @@ class Gasto {
   int quantidade;
   String observacao;
   double valorTotal;
+  String unidade;
   String data;
 
   Gasto();
@@ -13,6 +14,7 @@ class Gasto {
     nome = map["nome"];
     quantidade = map["quantidade"];
     valorUnitario = map["valorUnitario"];
+    unidade = map["unidade"];
     observacao = map["observacao"];
     valorTotal = map["valorTotal"];
     data = map["data"];
@@ -23,6 +25,7 @@ class Gasto {
       "nome": nome,
       "quantidade": quantidade,
       "valorUnitario": valorUnitario,
+      "unidade": unidade,
       "observacao": observacao,
       "data": data,
       "valorTotal": valorTotal

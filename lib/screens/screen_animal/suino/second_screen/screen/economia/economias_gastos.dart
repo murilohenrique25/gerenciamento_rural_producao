@@ -36,11 +36,11 @@ class _EconomiaSuinaState extends State<EconomiaSuina> {
             PopupMenuButton<OrderOptions>(
               itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
                 const PopupMenuItem<OrderOptions>(
-                  child: Text("Ordenar por A-Z"),
+                  child: Text("Ordenar por Data"),
                   value: OrderOptions.orderaz,
                 ),
                 const PopupMenuItem<OrderOptions>(
-                  child: Text("Ordenar por Z-A"),
+                  child: Text("Ordenar por Data"),
                   value: OrderOptions.orderza,
                 ),
               ],
@@ -247,12 +247,12 @@ class _EconomiaSuinaState extends State<EconomiaSuina> {
     switch (result) {
       case OrderOptions.orderaz:
         gastos.sort((a, b) {
-          return a.nome.toLowerCase().compareTo(b.nome.toLowerCase());
+          return a.data.toLowerCase().compareTo(b.data.toLowerCase());
         });
         break;
       case OrderOptions.orderza:
         gastos.sort((a, b) {
-          return b.nome.toLowerCase().compareTo(a.nome.toLowerCase());
+          return b.data.toLowerCase().compareTo(a.data.toLowerCase());
         });
         break;
     }

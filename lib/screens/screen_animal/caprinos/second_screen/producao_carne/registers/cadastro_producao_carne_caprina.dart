@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/preco_carne_suina_db.dart';
-import 'package:gerenciamento_rural/models/preco_carne_suina.dart';
-import 'package:gerenciamento_rural/models/producao_carne_suina.dart';
+import 'package:gerenciamento_rural/helpers/preco_carne_caprino_db.dart';
+import 'package:gerenciamento_rural/models/preco_carne_caprina.dart';
+import 'package:gerenciamento_rural/models/producao_carne_caprina.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:toast/toast.dart';
 
 class CadastroProducaoCarneCaprina extends StatefulWidget {
-  final ProducaoCarneSuina producaoCarneSuina;
-  CadastroProducaoCarneCaprina({this.producaoCarneSuina});
+  final ProducaoCarneCaprina producaoCarneCaprina;
+  CadastroProducaoCarneCaprina({this.producaoCarneCaprina});
   @override
   _CadastroProducaoCarneCaprinaState createState() =>
       _CadastroProducaoCarneCaprinaState();
@@ -15,22 +15,24 @@ class CadastroProducaoCarneCaprina extends StatefulWidget {
 
 class _CadastroProducaoCarneCaprinaState
     extends State<CadastroProducaoCarneCaprina> {
-  PrecoCarneSuinaDB _precoCarneSuinaDB = PrecoCarneSuinaDB();
-  List<PrecoCarneSuina> precoCarne = [];
-  PrecoCarneSuina precoCarneSuina;
+  PrecoCarneCaprinaDB _precoCarneCaprinaDB = PrecoCarneCaprinaDB();
+  List<PrecoCarneCaprina> precoCarne = [];
+  PrecoCarneCaprina precoCarneCaprina;
   final precoController = TextEditingController();
-  String nomeMes = "Vazio";
+  String nomeMes = "";
   double nomePreco = 0.0;
   bool _producaoCarneEdited = false;
-  ProducaoCarneSuina _editedProducaoCarne;
+  ProducaoCarneCaprina _editedProducaoCarne;
 
   @override
   void initState() {
     super.initState();
     _getAllPreco();
-    if (widget.producaoCarneSuina == null) {
-      _editedProducaoCarne = ProducaoCarneSuina();
+    if (widget.producaoCarneCaprina == null) {
+      _editedProducaoCarne = ProducaoCarneCaprina();
     } else {
+      _editedProducaoCarne =
+          ProducaoCarneCaprina.fromMap(widget.producaoCarneCaprina.toMap());
       precoController.text = _editedProducaoCarne.preco.toString();
       nomeMes = _editedProducaoCarne.data;
       nomePreco = _editedProducaoCarne.preco;
@@ -43,7 +45,7 @@ class _CadastroProducaoCarneCaprinaState
       onWillPop: _requestPop,
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Cadastrar Preço Carne Caprina"),
+          title: Text("Cadastrar Produção Carne Caprina"),
           centerTitle: true,
         ),
         floatingActionButton: FloatingActionButton(
@@ -85,7 +87,7 @@ class _CadastroProducaoCarneCaprinaState
                 ),
                 TextField(
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: "Quantidade"),
+                  decoration: InputDecoration(labelText: "Quantidade Kg"),
                   onChanged: (text) {
                     _producaoCarneEdited = true;
                     setState(() {
@@ -104,7 +106,7 @@ class _CadastroProducaoCarneCaprinaState
                       ),
                     );
                   }).toList(),
-                  value: precoCarneSuina,
+                  value: precoCarneCaprina,
                   hint: "Selecione um mês",
                   searchHint: "Selecione um mês",
                   onChanged: (value) {
@@ -139,10 +141,14 @@ class _CadastroProducaoCarneCaprinaState
                 SizedBox(
                   height: 5.0,
                 ),
-                Text(
-                    "Mês selecionado:  $nomeMes\nPreço selecionado: $nomePreco",
+                Text("Mês selecionado:  $nomeMes\nPreço por Kg: $nomePreco",
                     style: TextStyle(
                         fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                Divider(),
+                Text("Total: ${nomePreco * _editedProducaoCarne.quantidade}",
+                    style: TextStyle(
+                        fontSize: 18.0,
                         color: Color.fromARGB(255, 4, 125, 141))),
                 SizedBox(
                   height: 10.0,
@@ -156,7 +162,7 @@ class _CadastroProducaoCarneCaprinaState
   }
 
   void _getAllPreco() {
-    _precoCarneSuinaDB.getAllItems().then((value) {
+    _precoCarneCaprinaDB.getAllItems().then((value) {
       setState(() {
         precoCarne = value;
       });

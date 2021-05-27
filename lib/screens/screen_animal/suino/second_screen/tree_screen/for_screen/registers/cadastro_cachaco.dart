@@ -54,9 +54,7 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
     } else {
       _editedCachaco = Cachaco.fromMap(widget.cachaco.toMap());
       _nomeController.text = _editedCachaco.nomeAnimal;
-      if (_editedCachaco?.peso?.isNaN ?? false) {
-        _pesoController.text = _editedCachaco.peso.toString();
-      }
+      _pesoController.text = _editedCachaco.peso.toString();
       if (_editedCachaco.identificacao == "Vivo") {
         _radioValue = 0;
       } else if (_editedCachaco.identificacao == "Morto") {
@@ -302,6 +300,11 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                           });
                         }),
                     Text("Morto"),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                     Radio(
                         value: 2,
                         groupValue: _radioValue,
@@ -312,6 +315,16 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                           });
                         }),
                     Text("Vendido"),
+                    Radio(
+                        value: 3,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            _editedCachaco.identificacao = "Abatido";
+                          });
+                        }),
+                    Text("Abatido"),
                   ],
                 ),
                 SizedBox(

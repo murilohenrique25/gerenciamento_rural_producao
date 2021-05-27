@@ -210,9 +210,36 @@ class _TratamentoListState extends State<TratamentoList> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome', 'Animal'],
-                ...tTratamentos
-                    .map((item) => [item.nomeMedicamento, item.nomeAnimal])
+                <String>[
+                  'Animal',
+                  'Lote',
+                  'Medicamento',
+                  'Enfermidade',
+                  'Unidade',
+                  'Quantidade',
+                  'Via Aplicação',
+                  'Duração',
+                  'Início do Tratamento',
+                  'Fim do Tratamento',
+                  'Carência',
+                  'Tipo',
+                  'Observação'
+                ],
+                ...tTratamentos.map((item) => [
+                      item.nomeAnimal,
+                      item.lote,
+                      item.nomeMedicamento,
+                      item.enfermidade,
+                      item.unidade,
+                      item.quantidade.toString(),
+                      item.viaAplicacao,
+                      item.duracao,
+                      item.inicioTratamento,
+                      item.fimTratamento,
+                      item.carencia,
+                      item.tipo.toString(),
+                      item.observacao
+                    ])
               ])
             ]));
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/potro_db.dart';
-import 'package:gerenciamento_rural/models/potro.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/helpers/jovem_macho_caprino_db.dart';
+import 'package:gerenciamento_rural/helpers/todos_caprinos_db.dart';
+import 'package:gerenciamento_rural/models/jovem_macho_caprino.dart';
+import 'package:gerenciamento_rural/models/todoscaprino.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/rebanho/plantel/registers/cadastro_jovens_machos.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -12,23 +14,24 @@ import 'package:toast/toast.dart';
 
 enum OrderOptions { orderaz, orderza }
 
-class ListaPotros extends StatefulWidget {
+class ListaJovensMachos extends StatefulWidget {
   @override
-  _ListaPotrosState createState() => _ListaPotrosState();
+  _ListaJovensMachosState createState() => _ListaJovensMachosState();
 }
 
-class _ListaPotrosState extends State<ListaPotros> {
+class _ListaJovensMachosState extends State<ListaJovensMachos> {
   TextEditingController editingController = TextEditingController();
-  PotroDB helper = PotroDB();
-  List<Potro> items = [];
-  List<Potro> potros = [];
-  List<Potro> tPotros = [];
+  JovemMachoCaprinoDB helper = JovemMachoCaprinoDB();
+  TodosCaprinosDB todosCaprinosDB = TodosCaprinosDB();
+  List<JovemMachoCaprino> items = [];
+  List<JovemMachoCaprino> jovensMachos = [];
+  List<JovemMachoCaprino> tJovemMacho = [];
   @override
   void initState() {
     super.initState();
-    _getAllPotro();
+    _getAllJM();
     items = [];
-    tPotros = [];
+    tJovemMacho = [];
   }
 
   @override
@@ -57,11 +60,11 @@ class _ListaPotrosState extends State<ListaPotros> {
           IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                _showTotalPotroPage();
+                _showTotalJMPage();
               }),
         ],
         centerTitle: true,
-        title: Text("Potros"),
+        title: Text("Jovens Machos"),
       ),
       body: Container(
         child: Column(
@@ -83,7 +86,7 @@ class _ListaPotrosState extends State<ListaPotros> {
             ),
             Expanded(
                 child: ListView.builder(
-                    itemCount: potros.length,
+                    itemCount: jovensMachos.length,
                     itemBuilder: (context, index) {
                       return _totalPotroCard(context, index);
                     }))
@@ -103,7 +106,7 @@ class _ListaPotrosState extends State<ListaPotros> {
             child: Row(
               children: [
                 Text(
-                  "Nome: " + potros[index].nome ?? "",
+                  "Nome: " + jovensMachos[index].nomeAnimal ?? "",
                   style: TextStyle(fontSize: 14.0),
                 ),
               ],
@@ -138,7 +141,7 @@ class _ListaPotrosState extends State<ListaPotros> {
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                          _showTotalPotroPage(potro: potros[index]);
+                          _showTotalJMPage(jovemMacho: jovensMachos[index]);
                         },
                       ),
                     ),
@@ -151,7 +154,7 @@ class _ListaPotrosState extends State<ListaPotros> {
                         ),
                         onPressed: () {
                           try {
-                            helper.delete(potros[index].id);
+                            helper.delete(jovensMachos[index].id);
                           } catch (e) {
                             Toast.show("$Exception($e)", context,
                                 duration: Toast.LENGTH_SHORT,
@@ -159,7 +162,7 @@ class _ListaPotrosState extends State<ListaPotros> {
                           }
 
                           setState(() {
-                            potros.removeAt(index);
+                            jovensMachos.removeAt(index);
                             Navigator.pop(context);
                           });
                         },
@@ -173,49 +176,79 @@ class _ListaPotrosState extends State<ListaPotros> {
         });
   }
 
-  void _showTotalPotroPage({Potro potro}) async {
+  void _showTotalJMPage({JovemMachoCaprino jovemMacho}) async {
     final recPotro = await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => CadastroJovemMacho(
-            potro: potro,
+            jovemMachoCaprino: jovemMacho,
           ),
         ));
     if (recPotro != null) {
-      if (potro != null) {
+      if (jovemMacho != null) {
         await helper.updateItem(recPotro);
       } else {
         await helper.insert(recPotro);
+        TodosCaprino todosCaprino = TodosCaprino();
+        todosCaprino.nome = recPotro.nomeAnimal;
+        await todosCaprinosDB.insert(todosCaprino);
       }
-      _getAllPotro();
+      _getAllJM();
     }
   }
 
-  void _getAllPotro() {
+  void _getAllJM() {
     items = [];
     helper.getAllItems().then((list) {
       setState(() {
-        potros = list;
-        items.addAll(potros);
+        jovensMachos = list;
+        items.addAll(jovensMachos);
       });
     });
   }
 
   _creatPdf(context) async {
-    tPotros = potros;
     final pdfLib.Document pdf = pdfLib.Document(deflate: zlib.encode);
     pdf.addPage(pdfLib.MultiPage(
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome', 'Raça', 'Sexo'],
-                ...potros.map((item) => [item.nome, item.raca, item.sexo])
+                <String>[
+                  'Setor',
+                  'Nome',
+                  'Data Nascimento',
+                  'Raça',
+                  'Baia',
+                  'Situação',
+                  'Origem',
+                  'Pai',
+                  'Mãe',
+                  'Peso Nascimento',
+                  'Peso Desmama',
+                  'Data Desmama',
+                  'Observação'
+                ],
+                ...jovensMachos.map((item) => [
+                      item.setor,
+                      item.nomeAnimal,
+                      item.dataNascimento,
+                      item.raca,
+                      item.baia,
+                      item.situacao,
+                      item.origem,
+                      item.pai,
+                      item.mae,
+                      item.pesoNascimento.toString(),
+                      item.pesoDesmama.toString(),
+                      item.dataDesmama,
+                      item.observacao
+                    ])
               ])
             ]));
 
     final String dir = (await getApplicationDocumentsDirectory()).path;
 
-    final String path = '$dir/pdfCachacos.pdf';
+    final String path = '$dir/pdf.pdf';
     final File file = File(path);
     file.writeAsBytesSync(await pdf.save());
     Navigator.of(context)
@@ -225,13 +258,17 @@ class _ListaPotrosState extends State<ListaPotros> {
   void _orderList(OrderOptions result) {
     switch (result) {
       case OrderOptions.orderaz:
-        potros.sort((a, b) {
-          return a.nome.toLowerCase().compareTo(b.nome.toLowerCase());
+        jovensMachos.sort((a, b) {
+          return a.nomeAnimal
+              .toLowerCase()
+              .compareTo(b.nomeAnimal.toLowerCase());
         });
         break;
       case OrderOptions.orderza:
-        potros.sort((a, b) {
-          return b.nome.toLowerCase().compareTo(a.nome.toLowerCase());
+        jovensMachos.sort((a, b) {
+          return b.nomeAnimal
+              .toLowerCase()
+              .compareTo(a.nomeAnimal.toLowerCase());
         });
         break;
     }
@@ -240,24 +277,24 @@ class _ListaPotrosState extends State<ListaPotros> {
 
   //filtrar resultado com o texto passado
   void filterSearchResults(String query) {
-    List<Potro> dummySearchList = [];
+    List<JovemMachoCaprino> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Potro> dummyListData = [];
+      List<JovemMachoCaprino> dummyListData = [];
       dummySearchList.forEach((item) {
-        if (item.nome.toLowerCase().contains(query.toLowerCase())) {
+        if (item.nomeAnimal.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
         }
       });
       setState(() {
-        potros.clear();
-        potros.addAll(dummyListData);
+        jovensMachos.clear();
+        jovensMachos.addAll(dummyListData);
       });
       return;
     } else {
       setState(() {
-        potros.clear();
-        potros.addAll(items);
+        jovensMachos.clear();
+        jovensMachos.addAll(items);
       });
     }
   }
@@ -284,7 +321,7 @@ class _ListaPotrosState extends State<ListaPotros> {
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
-                      pdfLib.Text('Potros',
+                      pdfLib.Text('Jovens Machos',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white))
                     ],

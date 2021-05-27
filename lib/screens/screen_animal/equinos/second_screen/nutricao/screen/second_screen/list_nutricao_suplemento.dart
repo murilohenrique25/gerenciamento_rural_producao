@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/nutricao_suplementar_equino_db.dart';
 import 'package:gerenciamento_rural/models/nutricao_suplementar.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/equinos/second_screen/nutricao/screen/second_screen/registers/cadastro_nutricao_suplemento.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -225,15 +225,19 @@ class _ListNutricaoSuplementoEquinoState
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
                 <String>[
                   'Ingredientes',
+                  'Data',
                   'Lote',
                   'Quantidade individual',
-                  'Quantidade total'
+                  'Quantidade total',
+                  'Observação'
                 ],
                 ...tnutricao.map((item) => [
                       item.ingredientes,
+                      item.data,
                       item.nomeLote,
                       item.quantidadeInd.toString(),
-                      item.quantidadeTotal.toString()
+                      item.quantidadeTotal.toString(),
+                      item.observacao
                     ])
               ])
             ]));

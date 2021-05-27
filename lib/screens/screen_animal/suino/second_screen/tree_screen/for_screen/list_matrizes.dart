@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/matriz_db.dart';
 import 'package:gerenciamento_rural/models/matriz.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/tree_screen/for_screen/registers/cadastro_matriz.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -208,9 +208,38 @@ class _ListaMatrizesState extends State<ListaMatrizes> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome / Nº Brinco', 'Procedência', 'Raça'],
-                ...matrizes
-                    .map((item) => [item.nomeAnimal, item.origem, item.raca])
+                <String>[
+                  'Nome / Nº Brinco',
+                  'Data Nascimento',
+                  'Estado',
+                  'Lote',
+                  'Identificação',
+                  'Raça',
+                  'Pai',
+                  'Mãe',
+                  'Baia',
+                  'Origem',
+                  'Número de Partos',
+                  'Parto Previsto',
+                  'Diagnóstico de Gestação',
+                  'Dias Prenha'
+                ],
+                ...matrizes.map((item) => [
+                      item.nomeAnimal,
+                      item.dataNascimento,
+                      item.estado,
+                      item.lote,
+                      item.identificacao,
+                      item.raca,
+                      item.pai,
+                      item.mae,
+                      item.baia,
+                      item.origem,
+                      item.numeroPartos.toString(),
+                      item.partoPrevisto,
+                      item.diagnosticoGestacao,
+                      item.diasPrenha.toString()
+                    ])
               ])
             ]));
 

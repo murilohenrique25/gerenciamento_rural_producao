@@ -24,6 +24,10 @@ class _CadastroCavaloState extends State<CadastroCavalo> {
   final _obsController = TextEditingController();
   final _estadoController = TextEditingController();
   final _origemController = TextEditingController();
+  final _loteController = TextEditingController();
+  final _baiaController = TextEditingController();
+  final _pesoController = TextEditingController();
+  final _pelagemController = TextEditingController();
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -31,7 +35,7 @@ class _CadastroCavaloState extends State<CadastroCavalo> {
 
   String _idadeAnimal = "1ano e 2meses";
   Cavalo _editedCavalo;
-  bool _cachadoEdited = false;
+  bool _cavaloEdited = false;
   final GlobalKey<ScaffoldState> _scaffoldstate =
       new GlobalKey<ScaffoldState>();
 
@@ -62,7 +66,11 @@ class _CadastroCavaloState extends State<CadastroCavalo> {
       _obsController.text = _editedCavalo.observacao;
       _estadoController.text = _editedCavalo.estado;
       _origemController.text = _editedCavalo.origem;
+      _baiaController.text = _editedCavalo.baia;
+      _pesoController.text = _editedCavalo.peso.toString();
+      _loteController.text = _editedCavalo.lote;
       numeroData = _editedCavalo.dataNascimento;
+      _pelagemController.text = _editedCavalo.pelagem;
       _dataNasc.text = numeroData;
       idadeFinal = differenceDate();
     }
@@ -83,7 +91,7 @@ class _CadastroCavaloState extends State<CadastroCavalo> {
                   controller: _paiController,
                   decoration: InputDecoration(labelText: "Pai"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _cavaloEdited = true;
                     setState(() {
                       _editedCavalo.pai = text;
                     });
@@ -94,7 +102,7 @@ class _CadastroCavaloState extends State<CadastroCavalo> {
                   controller: _maeController,
                   decoration: InputDecoration(labelText: "Mãe"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _cavaloEdited = true;
                     setState(() {
                       _editedCavalo.mae = text;
                     });
@@ -169,7 +177,7 @@ class _CadastroCavaloState extends State<CadastroCavalo> {
                   controller: _nomeController,
                   decoration: InputDecoration(labelText: "Nome"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _cavaloEdited = true;
                     setState(() {
                       _editedCavalo.nome = text;
                     });
@@ -180,7 +188,7 @@ class _CadastroCavaloState extends State<CadastroCavalo> {
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(labelText: "Data de Nascimento"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _cavaloEdited = true;
                     setState(() {
                       _editedCavalo.dataNascimento = text;
                       numeroData = _dataNasc.text;
@@ -200,9 +208,42 @@ class _CadastroCavaloState extends State<CadastroCavalo> {
                   controller: _racaController,
                   decoration: InputDecoration(labelText: "Raça"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _cavaloEdited = true;
                     setState(() {
                       _editedCavalo.raca = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _loteController,
+                  decoration: InputDecoration(labelText: "Lote"),
+                  onChanged: (text) {
+                    _cavaloEdited = true;
+                    setState(() {
+                      _editedCavalo.lote = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _baiaController,
+                  decoration: InputDecoration(labelText: "Baia"),
+                  onChanged: (text) {
+                    _cavaloEdited = true;
+                    setState(() {
+                      _editedCavalo.baia = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _pesoController,
+                  decoration: InputDecoration(labelText: "Peso Kg"),
+                  onChanged: (text) {
+                    _cavaloEdited = true;
+                    setState(() {
+                      _editedCavalo.peso = double.parse(text);
                     });
                   },
                 ),
@@ -211,7 +252,7 @@ class _CadastroCavaloState extends State<CadastroCavalo> {
                   controller: _origemController,
                   decoration: InputDecoration(labelText: "Origem"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _cavaloEdited = true;
                     setState(() {
                       _editedCavalo.origem = text;
                     });
@@ -222,9 +263,20 @@ class _CadastroCavaloState extends State<CadastroCavalo> {
                   controller: _estadoController,
                   decoration: InputDecoration(labelText: "Estado"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _cavaloEdited = true;
                     setState(() {
                       _editedCavalo.estado = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _pelagemController,
+                  decoration: InputDecoration(labelText: "Pelagem"),
+                  onChanged: (text) {
+                    _cavaloEdited = true;
+                    setState(() {
+                      _editedCavalo.pelagem = text;
                     });
                   },
                 ),
@@ -233,7 +285,7 @@ class _CadastroCavaloState extends State<CadastroCavalo> {
                   controller: _obsController,
                   decoration: InputDecoration(labelText: "Observação"),
                   onChanged: (text) {
-                    _cachadoEdited = true;
+                    _cavaloEdited = true;
                     setState(() {
                       _editedCavalo.observacao = text;
                     });
@@ -285,7 +337,7 @@ class _CadastroCavaloState extends State<CadastroCavalo> {
   }
 
   Future<bool> _requestPop() {
-    if (_cachadoEdited) {
+    if (_cavaloEdited) {
       showDialog(
           context: context,
           builder: (context) {

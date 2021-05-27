@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:gerenciamento_rural/helpers/cachaco_db.dart';
-import 'package:gerenciamento_rural/models/cachaco.dart';
-import 'package:gerenciamento_rural/models/inventario_semen_suino.dart';
+import 'package:gerenciamento_rural/helpers/reprodutor_db.dart';
+import 'package:gerenciamento_rural/models/inventario_semen_caprino.dart';
+import 'package:gerenciamento_rural/models/reprodutor.dart';
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:toast/toast.dart';
 
 class CadastroEstoqueSemenCaprina extends StatefulWidget {
-  final InventarioSemenSuina inventarioSemenSuina;
-  CadastroEstoqueSemenCaprina({this.inventarioSemenSuina});
+  final InventarioSemenCaprino inventarioSemenCaprino;
+  CadastroEstoqueSemenCaprina({this.inventarioSemenCaprino});
   @override
   _CadastroEstoqueSemenCaprinaState createState() =>
       _CadastroEstoqueSemenCaprinaState();
@@ -18,13 +18,13 @@ class CadastroEstoqueSemenCaprina extends StatefulWidget {
 class _CadastroEstoqueSemenCaprinaState
     extends State<CadastroEstoqueSemenCaprina> {
   String tipo;
-  CachacoDB helper = CachacoDB();
-  List<Cachaco> cachacos = [];
+  ReprodutorDB helper = ReprodutorDB();
+  List<Reprodutor> reprodutores = [];
   bool _inventarioEdited = false;
-  InventarioSemenSuina _editedInventario;
-  Cachaco cachaco = Cachaco();
+  InventarioSemenCaprino _editedInventario;
+  Reprodutor reprodutor = Reprodutor();
   String idadeFinal = "";
-  String nomeMacho = "Vazio";
+  String nomeMacho = "";
   final _vigorController = TextEditingController();
   final _obsController = TextEditingController();
   final _palhetaController = TextEditingController();
@@ -57,12 +57,12 @@ class _CadastroEstoqueSemenCaprinaState
   @override
   void initState() {
     super.initState();
-    _getAllCachacos();
-    if (widget.inventarioSemenSuina == null) {
-      _editedInventario = InventarioSemenSuina();
+    _getAllReprodutores();
+    if (widget.inventarioSemenCaprino == null) {
+      _editedInventario = InventarioSemenCaprino();
     } else {
       _editedInventario =
-          InventarioSemenSuina.fromMap(widget.inventarioSemenSuina.toMap());
+          InventarioSemenCaprino.fromMap(widget.inventarioSemenCaprino.toMap());
       _palhetaController.text = _editedInventario.identificacao;
       _quantidadeController.text = _editedInventario.quantidade.toString();
       _corController.text = _editedInventario.cor;
@@ -79,6 +79,7 @@ class _CadastroEstoqueSemenCaprinaState
           _editedInventario.celulasNormais.toString();
       _defeitosMaioresController.text = _editedInventario.defeitoMaiores;
       _defeitosMenoresController.text = _editedInventario.defeitoMenores;
+      nomeMacho = _editedInventario.nomeReprodutor;
     }
   }
 
@@ -143,24 +144,24 @@ class _CadastroEstoqueSemenCaprinaState
                   height: 20.0,
                 ),
                 SearchableDropdown.single(
-                  items: cachacos.map((cachaco) {
+                  items: reprodutores.map((reprodutor) {
                     return DropdownMenuItem(
-                      value: cachaco,
+                      value: reprodutor,
                       child: Row(
                         children: [
-                          Text(cachaco.nomeAnimal),
+                          Text(reprodutor.nomeAnimal),
                         ],
                       ),
                     );
                   }).toList(),
-                  value: cachaco,
-                  hint: "Selecione um macho",
-                  searchHint: "Selecione um macho",
+                  value: reprodutor,
+                  hint: "Selecione um reprodutor",
+                  searchHint: "Selecione um reprodutor",
                   onChanged: (value) {
                     _inventarioEdited = true;
                     setState(() {
-                      _editedInventario.idCachaco = value.idAnimal;
-                      _editedInventario.nomeCachaco = value.nomeAnimal;
+                      _editedInventario.idReprodutor = value.id;
+                      _editedInventario.nomeReprodutor = value.nomeAnimal;
                       nomeMacho = value.nomeAnimal;
                     });
                   },
@@ -187,7 +188,7 @@ class _CadastroEstoqueSemenCaprinaState
                 SizedBox(
                   height: 10.0,
                 ),
-                Text("Macho selecionado:  $nomeMacho",
+                Text("Macho:  $nomeMacho",
                     style: TextStyle(
                         fontSize: 16.0,
                         color: Color.fromARGB(255, 4, 125, 141))),
@@ -253,7 +254,7 @@ class _CadastroEstoqueSemenCaprinaState
                 TextField(
                   keyboardType: TextInputType.text,
                   controller: _mortilidadeController,
-                  decoration: InputDecoration(labelText: "Mortilidade"),
+                  decoration: InputDecoration(labelText: "Motilidade"),
                   onChanged: (text) {
                     _inventarioEdited = true;
                     setState(() {
@@ -392,10 +393,10 @@ class _CadastroEstoqueSemenCaprinaState
     }
   }
 
-  void _getAllCachacos() {
-    helper.getAllItems().then((list) {
+  void _getAllReprodutores() {
+    helper.getAllItemsVivos().then((list) {
       setState(() {
-        cachacos = list;
+        reprodutores = list;
       });
     });
   }

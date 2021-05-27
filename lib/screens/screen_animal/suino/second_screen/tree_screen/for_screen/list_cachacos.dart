@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/cachaco_db.dart';
 import 'package:gerenciamento_rural/models/cachaco.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/tree_screen/for_screen/registers/cadastro_cachaco.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -208,9 +208,34 @@ class _ListaCachacosState extends State<ListaCachacos> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome / Nº Brinco', 'Procedência', 'Raça'],
-                ...cachacos
-                    .map((item) => [item.nomeAnimal, item.origem, item.raca])
+                <String>[
+                  'Nome / Nº Brinco',
+                  'Data Nascimento',
+                  'Estado',
+                  'Lote',
+                  'Identificação',
+                  'Raça',
+                  'Pai',
+                  'Mãe',
+                  'Baia',
+                  'Origem',
+                  'Peso',
+                  'Observação'
+                ],
+                ...cachacos.map((item) => [
+                      item.nomeAnimal,
+                      item.dataNascimento,
+                      item.estado,
+                      item.lote,
+                      item.identificacao,
+                      item.raca,
+                      item.pai,
+                      item.mae,
+                      item.baia,
+                      item.origem,
+                      item.pesoNascimento,
+                      item.observacao
+                    ])
               ])
             ]));
 

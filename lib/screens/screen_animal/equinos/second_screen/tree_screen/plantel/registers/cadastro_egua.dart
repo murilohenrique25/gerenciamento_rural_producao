@@ -15,7 +15,7 @@ class CadastroEgua extends StatefulWidget {
 class _CadastroEguaState extends State<CadastroEgua> {
   String idadeFinal = "";
   String numeroData = "";
-  String nomeEstado = "Vazio";
+  String nomeEstado = "";
   int _radioValue = 0;
   String nomeD = "";
   String diagnostic = "";
@@ -30,6 +30,10 @@ class _CadastroEguaState extends State<CadastroEgua> {
   final _estadoController = TextEditingController();
   final _diasprenhaController = TextEditingController();
   final _tdPartosController = TextEditingController();
+  final _loteController = TextEditingController();
+  final _baiaController = TextEditingController();
+  final _pesoController = TextEditingController();
+  final _pelagemController = TextEditingController();
   var _dataNasc = MaskedTextController(mask: '00-00-0000');
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -104,9 +108,13 @@ class _CadastroEguaState extends State<CadastroEgua> {
       _ciosController.text = _editedEgua.cios;
       _origemController.text = _editedEgua.origem;
       _estadoController.text = _editedEgua.estado;
+      _baiaController.text = _editedEgua.baia;
+      _pesoController.text = _editedEgua.peso.toString();
+      _loteController.text = _editedEgua.lote;
+      _pelagemController.text = _editedEgua.pelagem;
       _tdPartosController.text = _editedEgua.totalPartos;
       nomeD = _editedEgua.diagnosticoGestacao;
-      _diasprenhaController.text = _editedEgua.diagnosticoGestacao;
+      _diasprenhaController.text = _editedEgua.diasPrenha.toString();
       numeroData = _editedEgua.dataNascimento;
       _dataNasc.text = numeroData;
       idadeFinal = differenceDate();
@@ -270,6 +278,39 @@ class _CadastroEguaState extends State<CadastroEgua> {
                 ),
                 TextField(
                   keyboardType: TextInputType.text,
+                  controller: _loteController,
+                  decoration: InputDecoration(labelText: "Lote"),
+                  onChanged: (text) {
+                    _eguaEdited = true;
+                    setState(() {
+                      _editedEgua.lote = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _baiaController,
+                  decoration: InputDecoration(labelText: "Baia"),
+                  onChanged: (text) {
+                    _eguaEdited = true;
+                    setState(() {
+                      _editedEgua.baia = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _pesoController,
+                  decoration: InputDecoration(labelText: "Peso Kg"),
+                  onChanged: (text) {
+                    _eguaEdited = true;
+                    setState(() {
+                      _editedEgua.peso = double.parse(text);
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
                   controller: _estadoController,
                   decoration: InputDecoration(labelText: "Estado"),
                   onChanged: (text) {
@@ -300,6 +341,30 @@ class _CadastroEguaState extends State<CadastroEgua> {
                     _eguaEdited = true;
                     setState(() {
                       _editedEgua.cios = text;
+                    });
+                  },
+                ),
+                TextField(
+                  enabled: nomeD == "Prenha" ? true : false,
+                  keyboardType: TextInputType.number,
+                  controller: _diasprenhaController,
+                  decoration:
+                      InputDecoration(labelText: "Dias que está prenha"),
+                  onChanged: (text) {
+                    _eguaEdited = true;
+                    setState(() {
+                      _editedEgua.diasPrenha = int.parse(text);
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _pelagemController,
+                  decoration: InputDecoration(labelText: "Pelagem"),
+                  onChanged: (text) {
+                    _eguaEdited = true;
+                    setState(() {
+                      _editedEgua.pelagem = text;
                     });
                   },
                 ),

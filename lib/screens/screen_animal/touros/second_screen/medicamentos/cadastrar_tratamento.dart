@@ -155,7 +155,7 @@ class _CadastroTratamentoState extends State<CadastroTratamento> {
                       controller: _enfermidadeController,
                       decoration: InputDecoration(labelText: "Enfermidade"),
                       onChanged: (text) {},
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                     ),
                     SizedBox(height: 5.0),
                     SearchableDropdown.single(
@@ -204,7 +204,7 @@ class _CadastroTratamentoState extends State<CadastroTratamento> {
                     ),
                     TextField(
                       controller: _quantidadeController,
-                      decoration: InputDecoration(labelText: "Quantidade"),
+                      decoration: InputDecoration(labelText: "Dose"),
                       onChanged: (text) {
                         _tratamentoEdited = true;
                         setState(() {

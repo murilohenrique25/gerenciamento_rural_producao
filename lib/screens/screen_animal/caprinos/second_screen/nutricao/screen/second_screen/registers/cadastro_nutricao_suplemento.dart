@@ -21,6 +21,7 @@ class _CadastroNutricaoSuplementoCaprinoState
   final _quantTotalController = TextEditingController();
   final _ingredientesController = TextEditingController();
   final _obsController = TextEditingController();
+  final _baiaController = TextEditingController();
 
   final df = new DateFormat("dd-MM-yyyy");
 
@@ -47,6 +48,7 @@ class _CadastroNutricaoSuplementoCaprinoState
       _quantTotalController.text = _editedNutricao.quantidadeTotal.toString();
       _ingredientesController.text = _editedNutricao.ingredientes;
       _obsController.text = _editedNutricao.observacao;
+      _baiaController.text = _editedNutricao.baia;
     }
   }
 
@@ -99,11 +101,22 @@ class _CadastroNutricaoSuplementoCaprinoState
                   focusNode: _nameFocus,
                   keyboardType: TextInputType.text,
                   controller: _loteController,
-                  decoration: InputDecoration(labelText: "lote"),
+                  decoration: InputDecoration(labelText: "Lote"),
                   onChanged: (text) {
                     _nutricaoEdited = true;
                     setState(() {
                       _editedNutricao.ingredientes = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _baiaController,
+                  decoration: InputDecoration(labelText: "Baia"),
+                  onChanged: (text) {
+                    _nutricaoEdited = true;
+                    setState(() {
+                      _editedNutricao.baia = text;
                     });
                   },
                 ),

@@ -13,12 +13,9 @@ class _CadastroMedicamentoState extends State<CadastroMedicamento> {
   List<TipoMedicamento> _tipos = <TipoMedicamento>[
     const TipoMedicamento("Nenhum"),
     const TipoMedicamento("ml"),
-    const TipoMedicamento("l"),
-    const TipoMedicamento("ds"),
-    const TipoMedicamento("h"),
-    const TipoMedicamento("kg"),
-    const TipoMedicamento("gr"),
-    const TipoMedicamento("am"),
+    const TipoMedicamento("L"),
+    const TipoMedicamento("g"),
+    const TipoMedicamento("Kg")
   ];
   var controleDateVencimento = MaskedTextController(mask: '00-00-0000');
   var controleDateCompra = MaskedTextController(mask: '00-00-0000');
@@ -176,7 +173,7 @@ class _CadastroMedicamentoState extends State<CadastroMedicamento> {
                           });
                         });
                       },
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                     ),
                     TextField(
                       controller: _carenciaMedicamento,
@@ -190,7 +187,7 @@ class _CadastroMedicamentoState extends State<CadastroMedicamento> {
                           });
                         });
                       },
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                     ),
                     TextField(
                       controller: controleDateCompra,
@@ -230,7 +227,7 @@ class _CadastroMedicamentoState extends State<CadastroMedicamento> {
                           });
                         });
                       },
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                     ),
                     TextField(
                       controller: controleDataAbertura,

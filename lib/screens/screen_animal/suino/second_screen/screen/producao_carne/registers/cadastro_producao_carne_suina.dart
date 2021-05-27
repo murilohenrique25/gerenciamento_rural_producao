@@ -19,7 +19,7 @@ class _CadastroProducaoCarneSuinaState
   List<PrecoCarneSuina> precoCarne = [];
   PrecoCarneSuina precoCarneSuina;
   final precoController = TextEditingController();
-  String nomeMes = "Vazio";
+  String nomeMes = "";
   double nomePreco = 0.0;
   bool _producaoCarneEdited = false;
   ProducaoCarneSuina _editedProducaoCarne;
@@ -85,7 +85,7 @@ class _CadastroProducaoCarneSuinaState
                 ),
                 TextField(
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: "Quantidade"),
+                  decoration: InputDecoration(labelText: "Quantidade Kg"),
                   onChanged: (text) {
                     _producaoCarneEdited = true;
                     setState(() {

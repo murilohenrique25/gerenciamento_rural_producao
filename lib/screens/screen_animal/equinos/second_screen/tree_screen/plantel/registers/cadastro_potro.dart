@@ -27,6 +27,9 @@ class _CadastroPotroState extends State<CadastroPotro> {
   final _estadoController = TextEditingController();
   final _obsController = TextEditingController();
   final _resenhaController = TextEditingController();
+  final _baiaController = TextEditingController();
+  final _pesoController = TextEditingController();
+  final _pelagemController = TextEditingController();
   var _dataNasc = MaskedTextController(mask: '00-00-0000');
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -58,7 +61,10 @@ class _CadastroPotroState extends State<CadastroPotro> {
       _racaController.text = _editedPotro.raca;
       _paiController.text = _editedPotro.pai;
       _maeController.text = _editedPotro.mae;
-      if (_editedPotro.estado == "Vivo") {
+      _baiaController.text = _editedPotro.baia;
+      _pelagemController.text = _editedPotro.pelagem;
+      _pesoController.text = _editedPotro.peso.toString();
+      if (_editedPotro.vm == "Vivo") {
         _radioValue = 0;
       } else {
         _radioValue = 1;
@@ -217,7 +223,7 @@ class _CadastroPotroState extends State<CadastroPotro> {
                   },
                 ),
                 TextField(
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   controller: _loteController,
                   decoration: InputDecoration(labelText: "Lote"),
                   onChanged: (text) {
@@ -228,7 +234,7 @@ class _CadastroPotroState extends State<CadastroPotro> {
                   },
                 ),
                 TextField(
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   controller: _estadoController,
                   decoration: InputDecoration(labelText: "Estado"),
                   onChanged: (text) {
@@ -239,7 +245,7 @@ class _CadastroPotroState extends State<CadastroPotro> {
                   },
                 ),
                 TextField(
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   controller: _resenhaController,
                   decoration: InputDecoration(labelText: "Resenha"),
                   onChanged: (text) {
@@ -250,7 +256,40 @@ class _CadastroPotroState extends State<CadastroPotro> {
                   },
                 ),
                 TextField(
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
+                  controller: _baiaController,
+                  decoration: InputDecoration(labelText: "Baia"),
+                  onChanged: (text) {
+                    _potroEdited = true;
+                    setState(() {
+                      _editedPotro.baia = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _pesoController,
+                  decoration: InputDecoration(labelText: "Peso Kg"),
+                  onChanged: (text) {
+                    _potroEdited = true;
+                    setState(() {
+                      _editedPotro.peso = double.parse(text);
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _pelagemController,
+                  decoration: InputDecoration(labelText: "Pelagem"),
+                  onChanged: (text) {
+                    _potroEdited = true;
+                    setState(() {
+                      _editedPotro.pelagem = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
                   controller: _obsController,
                   decoration: InputDecoration(labelText: "Observação"),
                   onChanged: (text) {
@@ -288,7 +327,7 @@ class _CadastroPotroState extends State<CadastroPotro> {
                         onChanged: (int value) {
                           setState(() {
                             _radioValueSexo = value;
-                            _editedPotro.estado = "Macho";
+                            _editedPotro.sexo = "Macho";
                           });
                         }),
                     Text("Macho"),
@@ -298,7 +337,7 @@ class _CadastroPotroState extends State<CadastroPotro> {
                         onChanged: (int value) {
                           setState(() {
                             _radioValueSexo = value;
-                            _editedPotro.estado = "Fêmea";
+                            _editedPotro.sexo = "Fêmea";
                           });
                         }),
                     Text("Fêmea"),
@@ -316,7 +355,7 @@ class _CadastroPotroState extends State<CadastroPotro> {
                         onChanged: (int value) {
                           setState(() {
                             _radioValue = value;
-                            _editedPotro.estado = "Vivo";
+                            _editedPotro.vm = "Vivo";
                           });
                         }),
                     Text("Vivo"),
@@ -326,7 +365,7 @@ class _CadastroPotroState extends State<CadastroPotro> {
                         onChanged: (int value) {
                           setState(() {
                             _radioValue = value;
-                            _editedPotro.estado = "Morto";
+                            _editedPotro.vm = "Morto";
                           });
                         }),
                     Text("Morto"),

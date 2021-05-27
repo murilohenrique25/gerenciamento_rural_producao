@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/inseminacao_suina_db.dart';
-import 'package:gerenciamento_rural/models/inseminacao_suino.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/reproducao_screen/registers/cadastro_inseminacao_monta.dart';
+import 'package:gerenciamento_rural/helpers/inseminacao_caprina_db.dart';
+import 'package:gerenciamento_rural/models/inseminacao_caprino.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/reproducao/registers/cadastro_inseminacao_monta.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPage.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -18,10 +18,10 @@ class ListaInseminacaoCaprina extends StatefulWidget {
 
 class _ListaInseminacaoCaprinaState extends State<ListaInseminacaoCaprina> {
   TextEditingController editingController = TextEditingController();
-  InseminacaoSuinaDB helper = InseminacaoSuinaDB();
-  List<InseminacaoSuino> items = [];
-  List<InseminacaoSuino> inseminacoes = [];
-  List<InseminacaoSuino> tInseminacoes = [];
+  InseminacaoCaprinaDB helper = InseminacaoCaprinaDB();
+  List<InseminacaoCaprino> items = [];
+  List<InseminacaoCaprino> inseminacoes = [];
+  List<InseminacaoCaprino> tInseminacoes = [];
 
   @override
   void initState() {
@@ -74,8 +74,8 @@ class _ListaInseminacaoCaprinaState extends State<ListaInseminacaoCaprina> {
                 },
                 controller: editingController,
                 decoration: InputDecoration(
-                    labelText: "Buscar Inseminação Macho",
-                    hintText: "Buscar Inseminação Macho",
+                    labelText: "Buscar Inseminação Reprodutor",
+                    hintText: "Buscar Inseminação Reprodutor",
                     prefixIcon: Icon(Icons.search),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(25.0)))),
@@ -104,7 +104,7 @@ class _ListaInseminacaoCaprinaState extends State<ListaInseminacaoCaprina> {
           child: Row(
             children: [
               Text(
-                "Cachaço: " + inseminacoes[index].nomeCachaco ?? "",
+                "Reprodutor: " + inseminacoes[index].nomeReprodutor ?? "",
                 style: TextStyle(fontSize: 14.0),
               ),
               SizedBox(
@@ -138,7 +138,7 @@ class _ListaInseminacaoCaprinaState extends State<ListaInseminacaoCaprina> {
     });
   }
 
-  void _showPage({InseminacaoSuino inseminacao}) async {
+  void _showPage({InseminacaoCaprino inseminacao}) async {
     final recInventario = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -211,15 +211,30 @@ class _ListaInseminacaoCaprinaState extends State<ListaInseminacaoCaprina> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Cachaço', 'Matriz'],
-                ...tInseminacoes
-                    .map((item) => [item.nomeCachaco, item.nomeMatriz])
+                <String>[
+                  'Reprodutor',
+                  'Matriz',
+                  'Data',
+                  'Inseminador',
+                  'Tipo Reprodução',
+                  'Palheta',
+                  'Observação'
+                ],
+                ...tInseminacoes.map((item) => [
+                      item.nomeReprodutor,
+                      item.nomeMatriz,
+                      item.data,
+                      item.inseminador,
+                      item.tipoReproducao,
+                      item.palheta,
+                      item.observacao
+                    ])
               ])
             ]));
 
     final String dir = (await getApplicationDocumentsDirectory()).path;
 
-    final String path = '$dir/pdfISS.pdf';
+    final String path = '$dir/pdf.pdf';
     final File file = File(path);
     file.writeAsBytesSync(await pdf.save());
     Navigator.of(context)
@@ -230,16 +245,16 @@ class _ListaInseminacaoCaprinaState extends State<ListaInseminacaoCaprina> {
     switch (result) {
       case OrderOptions.orderaz:
         inseminacoes.sort((a, b) {
-          return a.nomeCachaco
+          return a.nomeReprodutor
               .toLowerCase()
-              .compareTo(b.nomeCachaco.toLowerCase());
+              .compareTo(b.nomeReprodutor.toLowerCase());
         });
         break;
       case OrderOptions.orderza:
         inseminacoes.sort((a, b) {
-          return b.nomeCachaco
+          return b.nomeReprodutor
               .toLowerCase()
-              .compareTo(a.nomeCachaco.toLowerCase());
+              .compareTo(a.nomeReprodutor.toLowerCase());
         });
         break;
     }
@@ -247,12 +262,12 @@ class _ListaInseminacaoCaprinaState extends State<ListaInseminacaoCaprina> {
   }
 
   void filterSearchResults(String query) {
-    List<InseminacaoSuino> dummySearchList = [];
+    List<InseminacaoCaprino> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<InseminacaoSuino> dummyListData = [];
+      List<InseminacaoCaprino> dummyListData = [];
       dummySearchList.forEach((item) {
-        if (item.nomeCachaco.toLowerCase().contains(query.toLowerCase())) {
+        if (item.nomeReprodutor.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
         }
       });
@@ -291,7 +306,7 @@ class _ListaInseminacaoCaprinaState extends State<ListaInseminacaoCaprina> {
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
-                      pdfLib.Text('Inseminação Suína',
+                      pdfLib.Text('Inseminação Caprina',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white))
                     ],

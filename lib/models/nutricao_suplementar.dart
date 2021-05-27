@@ -7,6 +7,7 @@ class NutricaoSuplementar {
   double quantidadeTotal;
   String observacao;
   String data;
+  String baia;
 
   NutricaoSuplementar();
   NutricaoSuplementar.fromMap(Map map) {
@@ -18,6 +19,7 @@ class NutricaoSuplementar {
     quantidadeTotal = map["quantidade_total"];
     observacao = map["observacao"];
     data = map["data"];
+    baia = map["baia"];
   }
 
   Map toMap() {
@@ -29,6 +31,7 @@ class NutricaoSuplementar {
       "quantidade_total": quantidadeTotal,
       "observacao": observacao,
       "data": data,
+      "baia": baia,
     };
     if (id != null) {
       map["id"] = id;

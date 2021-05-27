@@ -27,8 +27,8 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
   List<Matriz> _matrizes = [];
   List<Medicamento> _medicamentos = [];
 
-  String nomeAnimal = "Vazio";
-  String nomeMedicamento = "Vazio";
+  String nomeAnimal = "";
+  String nomeMedicamento = "";
   final _nomeAnimalController = TextEditingController();
   final _idVacaController = TextEditingController();
   final _numeroLoteController = TextEditingController();
@@ -221,7 +221,7 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
                       controller: _enfermidadeController,
                       decoration: InputDecoration(labelText: "Enfermidade"),
                       onChanged: (text) {},
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                     ),
                     SizedBox(height: 5.0),
                     SearchableDropdown.single(
@@ -279,7 +279,7 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
                     ),
                     TextField(
                       controller: _quantidadeController,
-                      decoration: InputDecoration(labelText: "Quantidade"),
+                      decoration: InputDecoration(labelText: "Dose"),
                       onChanged: (text) {
                         _tratamentoEdited = true;
                         setState(() {

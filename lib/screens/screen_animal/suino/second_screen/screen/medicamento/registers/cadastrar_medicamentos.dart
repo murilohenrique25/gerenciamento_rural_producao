@@ -14,12 +14,9 @@ class _CadastroMedicamentoSuinoState extends State<CadastroMedicamentoSuino> {
   List<TipoMedicamento> _tipos = <TipoMedicamento>[
     const TipoMedicamento("Nenhum"),
     const TipoMedicamento("ml"),
-    const TipoMedicamento("l"),
-    const TipoMedicamento("ds"),
-    const TipoMedicamento("h"),
-    const TipoMedicamento("kg"),
-    const TipoMedicamento("gr"),
-    const TipoMedicamento("am"),
+    const TipoMedicamento("L"),
+    const TipoMedicamento("g"),
+    const TipoMedicamento("Kg"),
   ];
   var controleDateVencimento = MaskedTextController(mask: '00-00-0000');
   var controleDateCompra = MaskedTextController(mask: '00-00-0000');
@@ -177,7 +174,7 @@ class _CadastroMedicamentoSuinoState extends State<CadastroMedicamentoSuino> {
                           });
                         });
                       },
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                     ),
                     TextField(
                       controller: _carenciaMedicamento,
@@ -191,7 +188,7 @@ class _CadastroMedicamentoSuinoState extends State<CadastroMedicamentoSuino> {
                           });
                         });
                       },
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                     ),
                     TextField(
                       controller: controleDateCompra,
@@ -218,7 +215,7 @@ class _CadastroMedicamentoSuinoState extends State<CadastroMedicamentoSuino> {
                           });
                         });
                       },
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                     ),
                     TextField(
                       controller: _fornecedor,
@@ -231,7 +228,7 @@ class _CadastroMedicamentoSuinoState extends State<CadastroMedicamentoSuino> {
                           });
                         });
                       },
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                     ),
                     TextField(
                       controller: controleDataAbertura,
@@ -255,20 +252,6 @@ class _CadastroMedicamentoSuinoState extends State<CadastroMedicamentoSuino> {
                         setState(() {
                           setState(() {
                             _editedMedicamento.principioAtivo = text;
-                          });
-                        });
-                      },
-                      keyboardType: TextInputType.text,
-                    ),
-                    TextField(
-                      controller: _tempoDescarteLeite,
-                      decoration: InputDecoration(
-                          labelText: "Tempo de Descarte do Leite"),
-                      onChanged: (text) {
-                        _medicamentoEdited = true;
-                        setState(() {
-                          setState(() {
-                            _editedMedicamento.tempoDescarteLeite = text;
                           });
                         });
                       },

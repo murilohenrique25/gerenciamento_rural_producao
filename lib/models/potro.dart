@@ -12,8 +12,11 @@ class Potro {
   String resenha;
   String observacao;
   String situacao;
+  String baia;
+  double peso;
   int virouAdulto;
   String vm;
+  String pelagem;
   Potro();
   Potro.fromMap(Map map) {
     id = map["id"]; //
@@ -25,12 +28,15 @@ class Potro {
     raca = map["raca"]; //
     pai = map["pai"]; //
     mae = map["mae"]; //
+    baia = map["baia"]; //
+    peso = map["peso"]; //
     resenha = map["resenha"]; //
     origem = map["origem"]; //
     observacao = map["observacao"]; //
     situacao = map["situacao"]; //
     virouAdulto = map["virou_adulto"];
     vm = map["vm"];
+    pelagem = map["pelagem"];
   }
 
   Map toMap() {
@@ -45,10 +51,13 @@ class Potro {
       "sexo": sexo,
       "origem": origem,
       "resenha": resenha,
+      "baia": baia,
+      "peso": peso,
       "observacao": observacao,
       "situacao": situacao,
       "virou_adulto": virouAdulto,
       "vm": vm,
+      "pelagem": pelagem,
     };
     if (id != null) {
       map["id"] = id;

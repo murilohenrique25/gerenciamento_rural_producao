@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/vaca_db.dart';
 import 'package:gerenciamento_rural/models/vaca.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/cadastro_vaca.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
@@ -213,14 +213,35 @@ class _ListaVacasState extends State<ListaVacas> {
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
                 <String>[
                   'Nome / Nº Brinco',
-                  'Última Inseminação',
+                  'Data Nascimento',
+                  'Peso Nascimento',
+                  'Ultima Inseminação',
+                  'Parto Previsto',
+                  'Secagem Prevista',
+                  'Diagnóstico de Gestação',
+                  'Pai',
+                  'Mãe',
+                  'Avó Materno',
+                  'Avô Materno',
+                  'Avó Paterno',
+                  'Avô Paterno',
                   'Raça',
                   'Estado',
                   "Lote"
                 ],
                 ...tvacas.map((item) => [
                       item.nome,
+                      item.dataNascimento,
                       item.ultimaInseminacao,
+                      item.partoPrevisto,
+                      item.secagemPrevista,
+                      item.diagnosticoGestacao,
+                      item.pai,
+                      item.mae,
+                      item.avoFMaterno,
+                      item.avoMMaterno,
+                      item.avoFPaterno,
+                      item.avoMPaterno,
                       item.raca,
                       item.estado,
                       item.idLote.toString()

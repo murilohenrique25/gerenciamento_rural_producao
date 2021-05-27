@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/producao_carne_suina_db.dart';
-import 'package:gerenciamento_rural/models/producao_carne_suina.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/helpers/pesagem_lote_caprino_db.dart';
+import 'package:gerenciamento_rural/models/pesagem_lote_caprina.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/producao_carne/registers/cadastro_pesagem_lote.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -20,16 +20,14 @@ class ListaPesagemLoteCaprino extends StatefulWidget {
 
 class _ListaPesagemLoteCaprinoState extends State<ListaPesagemLoteCaprino> {
   TextEditingController editingController = TextEditingController();
-  ProducaoCarneSuinaDB helper = ProducaoCarneSuinaDB();
-  List<ProducaoCarneSuina> items = [];
-  List<ProducaoCarneSuina> precos = [];
-  List<ProducaoCarneSuina> tPrecos = [];
+  PesagemLoteCaprinaDB helper = PesagemLoteCaprinaDB();
+  List<PesagemLoteCaprina> items = [];
+  List<PesagemLoteCaprina> pesagens = [];
   @override
   void initState() {
     super.initState();
     _getAllTerminacao();
     items = [];
-    tPrecos = [];
   }
 
   @override
@@ -58,7 +56,7 @@ class _ListaPesagemLoteCaprinoState extends State<ListaPesagemLoteCaprino> {
           IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                _showTotalTerminacoesPage();
+                _showTotalPesagensPage();
               }),
         ],
         centerTitle: true,
@@ -84,9 +82,9 @@ class _ListaPesagemLoteCaprinoState extends State<ListaPesagemLoteCaprino> {
             ),
             Expanded(
                 child: ListView.builder(
-                    itemCount: precos.length,
+                    itemCount: pesagens.length,
                     itemBuilder: (context, index) {
-                      return _totalTerminacaoCard(context, index);
+                      return _totalPesagensCard(context, index);
                     }))
           ],
         ),
@@ -94,7 +92,7 @@ class _ListaPesagemLoteCaprinoState extends State<ListaPesagemLoteCaprino> {
     );
   }
 
-  Widget _totalTerminacaoCard(BuildContext context, int index) {
+  Widget _totalPesagensCard(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
         child: Padding(
@@ -104,7 +102,7 @@ class _ListaPesagemLoteCaprinoState extends State<ListaPesagemLoteCaprino> {
             child: Row(
               children: [
                 Text(
-                  "Data: " + precos[index].data ?? "",
+                  "Lote: " + pesagens[index].lote ?? "",
                   style: TextStyle(fontSize: 14.0),
                 ),
                 SizedBox(
@@ -115,7 +113,7 @@ class _ListaPesagemLoteCaprinoState extends State<ListaPesagemLoteCaprino> {
                   width: 15,
                 ),
                 Text(
-                  "Quantidade: " + precos[index].quantidade.toString() ?? "",
+                  "Baia: " + pesagens[index].baia ?? "",
                   style: TextStyle(fontSize: 14.0),
                 ),
                 SizedBox(
@@ -126,7 +124,7 @@ class _ListaPesagemLoteCaprinoState extends State<ListaPesagemLoteCaprino> {
                   width: 15,
                 ),
                 Text(
-                  "Preço Por kg: " + precos[index].preco.toString() ?? "",
+                  "Data: " + pesagens[index].data ?? "",
                   style: TextStyle(fontSize: 14.0),
                 ),
                 SizedBox(
@@ -137,7 +135,7 @@ class _ListaPesagemLoteCaprinoState extends State<ListaPesagemLoteCaprino> {
                   width: 15,
                 ),
                 Text(
-                  "Preço Total: " + precos[index].total.toString() ?? "",
+                  "Animal: " + pesagens[index].animal ?? "",
                   style: TextStyle(fontSize: 14.0),
                 )
               ],
@@ -172,7 +170,7 @@ class _ListaPesagemLoteCaprinoState extends State<ListaPesagemLoteCaprino> {
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                          _showTotalTerminacoesPage(producao: precos[index]);
+                          _showTotalPesagensPage(pesagem: pesagens[index]);
                         },
                       ),
                     ),
@@ -185,7 +183,7 @@ class _ListaPesagemLoteCaprinoState extends State<ListaPesagemLoteCaprino> {
                         ),
                         onPressed: () {
                           try {
-                            helper.delete(precos[index].id);
+                            helper.delete(pesagens[index].id);
                           } catch (e) {
                             Toast.show("$Exception($e)", context,
                                 duration: Toast.LENGTH_SHORT,
@@ -193,7 +191,7 @@ class _ListaPesagemLoteCaprinoState extends State<ListaPesagemLoteCaprino> {
                           }
 
                           setState(() {
-                            precos.removeAt(index);
+                            pesagens.removeAt(index);
                             Navigator.pop(context);
                           });
                         },
@@ -207,16 +205,16 @@ class _ListaPesagemLoteCaprinoState extends State<ListaPesagemLoteCaprino> {
         });
   }
 
-  void _showTotalTerminacoesPage({ProducaoCarneSuina producao}) async {
+  void _showTotalPesagensPage({PesagemLoteCaprina pesagem}) async {
     final recCachaco = await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => CadastroPesagemLoteCaprino(
-            producaoCarneSuina: producao,
+            pesagemLoteCaprina: pesagem,
           ),
         ));
     if (recCachaco != null) {
-      if (producao != null) {
+      if (pesagem != null) {
         await helper.updateItem(recCachaco);
       } else {
         await helper.insert(recCachaco);
@@ -229,31 +227,42 @@ class _ListaPesagemLoteCaprinoState extends State<ListaPesagemLoteCaprino> {
     items = [];
     helper.getAllItems().then((list) {
       setState(() {
-        precos = list;
-        items.addAll(precos);
+        pesagens = list;
+        items.addAll(pesagens);
       });
     });
   }
 
   _creatPdf(context) async {
-    tPrecos = precos;
     final pdfLib.Document pdf = pdfLib.Document(deflate: zlib.encode);
     pdf.addPage(pdfLib.MultiPage(
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Data', 'Preço', 'Quantidade', 'Machos', 'Fêmeas'],
-                ...precos.map((item) => [
+                <String>[
+                  'Lote',
+                  'Baia',
+                  'Data',
+                  'Animal',
+                  'Peso Kg',
+                  'Média Peso',
+                  'Observação'
+                ],
+                ...pesagens.map((item) => [
+                      item.lote,
+                      item.baia.toString(),
                       item.data,
-                      item.preco.toString(),
-                      item.quantidade.toString(),
+                      item.animal,
+                      item.peso.toString(),
+                      item.media.toString(),
+                      item.observacao
                     ])
               ])
             ]));
 
     final String dir = (await getApplicationDocumentsDirectory()).path;
 
-    final String path = '$dir/pdfTerminação.pdf';
+    final String path = '$dir/pdf.pdf';
     final File file = File(path);
     file.writeAsBytesSync(await pdf.save());
     Navigator.of(context)
@@ -263,12 +272,12 @@ class _ListaPesagemLoteCaprinoState extends State<ListaPesagemLoteCaprino> {
   void _orderList(OrderOptions result) {
     switch (result) {
       case OrderOptions.orderaz:
-        precos.sort((a, b) {
+        pesagens.sort((a, b) {
           return a.data.toLowerCase().compareTo(b.data.toLowerCase());
         });
         break;
       case OrderOptions.orderza:
-        precos.sort((a, b) {
+        pesagens.sort((a, b) {
           return b.data.toLowerCase().compareTo(a.data.toLowerCase());
         });
         break;
@@ -278,24 +287,24 @@ class _ListaPesagemLoteCaprinoState extends State<ListaPesagemLoteCaprino> {
 
   //filtrar resultado com o texto passado
   void filterSearchResults(String query) {
-    List<ProducaoCarneSuina> dummySearchList = [];
+    List<PesagemLoteCaprina> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<ProducaoCarneSuina> dummyListData = [];
+      List<PesagemLoteCaprina> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.data.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
         }
       });
       setState(() {
-        precos.clear();
-        precos.addAll(dummyListData);
+        pesagens.clear();
+        pesagens.addAll(dummyListData);
       });
       return;
     } else {
       setState(() {
-        precos.clear();
-        precos.addAll(items);
+        pesagens.clear();
+        pesagens.addAll(items);
       });
     }
   }
@@ -322,7 +331,7 @@ class _ListaPesagemLoteCaprinoState extends State<ListaPesagemLoteCaprino> {
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
-                      pdfLib.Text('Produção de Carne',
+                      pdfLib.Text('Pesagem Lote',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white))
                     ],

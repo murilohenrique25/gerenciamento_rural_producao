@@ -1,22 +1,23 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/equinos/second_screen/tree_screen/plantel/list_eguas.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/rebanho/plantel/list_jovens_machos.dart';
 
-class EguaScreen extends StatefulWidget {
+class JovemMachoCaprinoScreen extends StatefulWidget {
   @override
-  _EguaScreenState createState() => _EguaScreenState();
+  _JovemMachoCaprinoScreenState createState() =>
+      _JovemMachoCaprinoScreenState();
 }
 
-class _EguaScreenState extends State<EguaScreen> {
+class _JovemMachoCaprinoScreenState extends State<JovemMachoCaprinoScreen> {
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         GestureDetector(
           onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => ListaEguas()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ListaJovensMachos()));
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),
@@ -40,7 +41,7 @@ class _EguaScreenState extends State<EguaScreen> {
                       //   size: 21.0,
                       // ),
                       Text(
-                        "Éguas",
+                        "Jovem Macho",
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 16.5,

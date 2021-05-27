@@ -297,7 +297,7 @@ class _CadastroNovilhaState extends State<CadastroNovilha> {
                       value: lote.id,
                       child: Row(
                         children: [
-                          Text(lote.name),
+                          Text(lote.nome),
                         ],
                       ),
                     );

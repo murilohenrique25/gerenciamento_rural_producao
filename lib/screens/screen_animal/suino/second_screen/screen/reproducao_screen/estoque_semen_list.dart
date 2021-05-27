@@ -212,9 +212,42 @@ class _ListaEstoqueSemenSuinaState extends State<ListaEstoqueSemenSuina> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Cachaço', 'Quantidade'],
-                ...tInventarioSemens.map(
-                    (item) => [item.nomeCachaco, item.quantidade.toString()])
+                <String>[
+                  'Cachaço',
+                  'Identificação',
+                  'Quantidade',
+                  'Cor',
+                  'Data Cadastro',
+                  'Data Validade',
+                  'Vigor',
+                  'Motilidade',
+                  'Turbilhamento',
+                  'Concentração',
+                  'Volume',
+                  'Aspecto',
+                  'Células Normais',
+                  'Defeitos Maiores',
+                  'Defeitos Menores',
+                  'Observação'
+                ],
+                ...tInventarioSemens.map((item) => [
+                      item.nomeCachaco,
+                      item.identificacao,
+                      item.quantidade.toString(),
+                      item.cor,
+                      item.dataCadastro,
+                      item.dataValidade,
+                      item.vigor,
+                      item.mortalidade,
+                      item.turbilhamento,
+                      item.concentracao,
+                      item.volume.toString(),
+                      item.aspecto,
+                      item.celulasNormais.toString(),
+                      item.defeitoMaiores,
+                      item.defeitoMenores,
+                      item.observacao
+                    ])
               ])
             ]));
 

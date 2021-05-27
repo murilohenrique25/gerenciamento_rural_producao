@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/nutricao_volumoso_equino_db.dart';
 import 'package:gerenciamento_rural/models/nutricao_volumoso.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/nutricao/screen/second_screen/registers/cadastro_nutricao_volumoso.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -224,15 +224,28 @@ class _ListNutricaoVolumosoCaprinoState
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
                 <String>[
-                  'Ingredientes',
+                  'Tipo',
+                  'Data',
                   'Lote',
+                  'PB %',
+                  'NDT %',
+                  'MS %',
+                  'Umidade',
                   'Quantidade individual',
-                  'Quantidade total'
+                  'Quantidade total',
+                  'Observação'
                 ],
                 ...tnutricao.map((item) => [
+                      item.tipo,
+                      item.data,
                       item.nomeLote,
+                      item.pb.toString(),
+                      item.ndt.toString(),
+                      item.ms.toString(),
+                      item.umidade.toString(),
                       item.quantidadeInd.toString(),
-                      item.quantidadeTotal.toString()
+                      item.quantidadeTotal.toString(),
+                      item.observacao
                     ])
               ])
             ]));

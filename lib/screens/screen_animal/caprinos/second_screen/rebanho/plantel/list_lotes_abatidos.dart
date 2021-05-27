@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/potro_db.dart';
-import 'package:gerenciamento_rural/models/potro.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/helpers/caprino_abatido_db.dart';
+import 'package:gerenciamento_rural/models/caprino_abatido.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
@@ -9,23 +9,22 @@ import 'package:path_provider/path_provider.dart';
 
 enum OrderOptions { orderaz, orderza }
 
-class ListaPotros extends StatefulWidget {
+class ListaAbatidosCaprino extends StatefulWidget {
   @override
-  _ListaPotrosState createState() => _ListaPotrosState();
+  _ListaAbatidosCaprinoState createState() => _ListaAbatidosCaprinoState();
 }
 
-class _ListaPotrosState extends State<ListaPotros> {
+class _ListaAbatidosCaprinoState extends State<ListaAbatidosCaprino> {
   TextEditingController editingController = TextEditingController();
-  PotroDB helper = PotroDB();
-  List<Potro> items = [];
-  List<Potro> potros = [];
-  List<Potro> tPotros = [];
+  CaprinoAbatidoDB helper = CaprinoAbatidoDB();
+  List<CaprinoAbatido> items = [];
+  List<CaprinoAbatido> abatidos = [];
+
   @override
   void initState() {
     super.initState();
     _getAllPotro();
     items = [];
-    tPotros = [];
   }
 
   @override
@@ -53,7 +52,7 @@ class _ListaPotrosState extends State<ListaPotros> {
               }),
         ],
         centerTitle: true,
-        title: Text("Potros"),
+        title: Text("Lotes Abatidos"),
       ),
       body: Container(
         child: Column(
@@ -66,8 +65,8 @@ class _ListaPotrosState extends State<ListaPotros> {
                 },
                 controller: editingController,
                 decoration: InputDecoration(
-                    labelText: "Buscar potros",
-                    hintText: "Buscar potros",
+                    labelText: "Buscar lote",
+                    hintText: "Buscar lote",
                     prefix: Icon(Icons.search),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(25.0)))),
@@ -75,7 +74,7 @@ class _ListaPotrosState extends State<ListaPotros> {
             ),
             Expanded(
                 child: ListView.builder(
-                    itemCount: potros.length,
+                    itemCount: abatidos.length,
                     itemBuilder: (context, index) {
                       return _totalPotroCard(context, index);
                     }))
@@ -95,7 +94,31 @@ class _ListaPotrosState extends State<ListaPotros> {
             child: Row(
               children: [
                 Text(
-                  "Nome: " + potros[index].nome ?? "",
+                  "Nome: " + abatidos[index].nome ?? "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                Text(
+                  " - ",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                Text(
+                  "Peso: " + abatidos[index].peso.toString() ?? "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                Text(
+                  " - ",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                Text(
+                  "Data: " + abatidos[index].data ?? "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                Text(
+                  " - ",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                Text(
+                  "Tipo: " + abatidos[index].tipo ?? "",
                   style: TextStyle(fontSize: 14.0),
                 ),
               ],
@@ -110,27 +133,26 @@ class _ListaPotrosState extends State<ListaPotros> {
     items = [];
     helper.getAllItems().then((list) {
       setState(() {
-        potros = list;
-        items.addAll(potros);
+        abatidos = list;
+        items.addAll(abatidos);
       });
     });
   }
 
   _creatPdf(context) async {
-    tPotros = potros;
     final pdfLib.Document pdf = pdfLib.Document(deflate: zlib.encode);
     pdf.addPage(pdfLib.MultiPage(
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome', 'Raça', 'Sexo'],
-                ...potros.map((item) => [item.nome, item.raca, item.sexo])
+                <String>['Nome', 'Peso'],
+                ...abatidos.map((item) => [item.nome, item.peso.toString()])
               ])
             ]));
 
     final String dir = (await getApplicationDocumentsDirectory()).path;
 
-    final String path = '$dir/pdfCachacos.pdf';
+    final String path = '$dir/pdf.pdf';
     final File file = File(path);
     file.writeAsBytesSync(await pdf.save());
     Navigator.of(context)
@@ -140,12 +162,12 @@ class _ListaPotrosState extends State<ListaPotros> {
   void _orderList(OrderOptions result) {
     switch (result) {
       case OrderOptions.orderaz:
-        potros.sort((a, b) {
+        abatidos.sort((a, b) {
           return a.nome.toLowerCase().compareTo(b.nome.toLowerCase());
         });
         break;
       case OrderOptions.orderza:
-        potros.sort((a, b) {
+        abatidos.sort((a, b) {
           return b.nome.toLowerCase().compareTo(a.nome.toLowerCase());
         });
         break;
@@ -155,24 +177,24 @@ class _ListaPotrosState extends State<ListaPotros> {
 
   //filtrar resultado com o texto passado
   void filterSearchResults(String query) {
-    List<Potro> dummySearchList = [];
+    List<CaprinoAbatido> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Potro> dummyListData = [];
+      List<CaprinoAbatido> dummyListData = [];
       dummySearchList.forEach((item) {
         if (item.nome.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
         }
       });
       setState(() {
-        potros.clear();
-        potros.addAll(dummyListData);
+        abatidos.clear();
+        abatidos.addAll(dummyListData);
       });
       return;
     } else {
       setState(() {
-        potros.clear();
-        potros.addAll(items);
+        abatidos.clear();
+        abatidos.addAll(items);
       });
     }
   }

@@ -25,6 +25,7 @@ class _CadastroNutricaoVolumosoCaprinoState
   final _msController = TextEditingController();
   final _umidController = TextEditingController();
   final _obsController = TextEditingController();
+  final _baiaController = TextEditingController();
 
   final df = new DateFormat("dd-MM-yyyy");
 
@@ -55,6 +56,7 @@ class _CadastroNutricaoVolumosoCaprinoState
       _pbController.text = _editedNutricao.pb.toString();
       _ndtController.text = _editedNutricao.ndt.toString();
       _obsController.text = _editedNutricao.observacao;
+      _baiaController.text = _editedNutricao.baia;
     }
   }
 
@@ -111,6 +113,17 @@ class _CadastroNutricaoVolumosoCaprinoState
                     _nutricaoEdited = true;
                     setState(() {
                       _editedNutricao.tipo = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _baiaController,
+                  decoration: InputDecoration(labelText: "Baia"),
+                  onChanged: (text) {
+                    _nutricaoEdited = true;
+                    setState(() {
+                      _editedNutricao.baia = text;
                     });
                   },
                 ),

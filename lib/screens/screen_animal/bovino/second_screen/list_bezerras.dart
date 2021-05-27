@@ -4,7 +4,7 @@ import 'package:gerenciamento_rural/helpers/novilha_db.dart';
 import 'package:gerenciamento_rural/models/bezerra.dart';
 import 'package:gerenciamento_rural/models/novilha.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/cadastro_bezerra.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
@@ -250,13 +250,35 @@ class _ListaBezerrasState extends State<ListaBezerras> {
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
                 <String>[
                   'Nome / Nº Brinco',
-                  'Última Inseminação',
+                  'Data Nascimento',
+                  'Peso Nascimento',
+                  'Peso Desmama',
+                  'Data Desmama',
+                  'Pai',
+                  'Mãe',
+                  'Avó Materno',
+                  'Avô Materno',
+                  'Avó Paterno',
+                  'Avô Paterno',
                   'Raça',
                   'Estado',
                   "Lote"
                 ],
-                ...tbezerras.map((item) =>
-                    [item.nome, item.raca, item.estado, item.idLote.toString()])
+                ...tbezerras.map((item) => [
+                      item.nome,
+                      item.dataNascimento,
+                      item.pesoDesmama.toString(),
+                      item.dataDesmama,
+                      item.pai,
+                      item.mae,
+                      item.avoFMaterno,
+                      item.avoMMaterno,
+                      item.avoFPaterno,
+                      item.avoMPaterno,
+                      item.raca,
+                      item.estado,
+                      item.idLote.toString()
+                    ])
               ])
             ]));
 

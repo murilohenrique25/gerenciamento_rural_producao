@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/inventario_semen_suina_db.dart';
-import 'package:gerenciamento_rural/models/inventario_semen_suino.dart';
+import 'package:gerenciamento_rural/helpers/inventario_semen_caprino_db.dart';
+import 'package:gerenciamento_rural/models/inventario_semen_caprino.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/reproducao/registers/cadastro_estoque_semen.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPage.dart';
 import 'package:pdf/pdf.dart';
@@ -18,10 +18,10 @@ class ListaEstoqueSemenCaprina extends StatefulWidget {
 
 class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
   TextEditingController editingController = TextEditingController();
-  InventarioSemenSuinaDB helper = InventarioSemenSuinaDB();
-  List<InventarioSemenSuina> items = [];
-  List<InventarioSemenSuina> inventarioSemens = [];
-  List<InventarioSemenSuina> tInventarioSemens = [];
+  InventarioSemenCaprinoDB helper = InventarioSemenCaprinoDB();
+  List<InventarioSemenCaprino> items = [];
+  List<InventarioSemenCaprino> inventarioSemens = [];
+  List<InventarioSemenCaprino> tInventarioSemens = [];
 
   @override
   void initState() {
@@ -74,8 +74,8 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
                 },
                 controller: editingController,
                 decoration: InputDecoration(
-                    labelText: "Buscar Sêmen por Macho",
-                    hintText: "Buscar Sêmen por Macho",
+                    labelText: "Buscar Sêmen por Reprodutor",
+                    hintText: "Buscar Sêmen por Reprodutor",
                     prefixIcon: Icon(Icons.search),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(25.0)))),
@@ -104,7 +104,7 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
           child: Row(
             children: [
               Text(
-                "Cachaço: " + inventarioSemens[index].nomeCachaco ?? "",
+                "Cachaço: " + inventarioSemens[index].nomeReprodutor ?? "",
                 style: TextStyle(fontSize: 14.0),
               ),
               SizedBox(
@@ -140,12 +140,12 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
     });
   }
 
-  void _showPage({InventarioSemenSuina inventario}) async {
+  void _showPage({InventarioSemenCaprino inventario}) async {
     final recInventario = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => CadastroEstoqueSemenCaprina(
-                  inventarioSemenSuina: inventario,
+                  inventarioSemenCaprino: inventario,
                 )));
     if (recInventario != null) {
       if (inventario != null) {
@@ -213,15 +213,48 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Cachaço', 'Quantidade'],
-                ...tInventarioSemens.map(
-                    (item) => [item.nomeCachaco, item.quantidade.toString()])
+                <String>[
+                  'Reprodutor',
+                  'Identificação',
+                  'Quantidade',
+                  'Cor',
+                  'Data Cadastro',
+                  'Data Validade',
+                  'Vigor',
+                  'Motilidade',
+                  'Turbilhamento',
+                  'Concentração',
+                  'Volume',
+                  'Aspecto',
+                  'Células Normais',
+                  'Defeitos Maiores',
+                  'Defeitos Menores',
+                  'Observação'
+                ],
+                ...tInventarioSemens.map((item) => [
+                      item.nomeReprodutor,
+                      item.identificacao,
+                      item.quantidade.toString(),
+                      item.cor,
+                      item.dataCadastro,
+                      item.dataValidade,
+                      item.vigor,
+                      item.mortalidade,
+                      item.turbilhamento,
+                      item.concentracao,
+                      item.volume.toString(),
+                      item.aspecto,
+                      item.celulasNormais.toString(),
+                      item.defeitoMaiores,
+                      item.defeitoMenores,
+                      item.observacao
+                    ])
               ])
             ]));
 
     final String dir = (await getApplicationDocumentsDirectory()).path;
 
-    final String path = '$dir/pdfISS.pdf';
+    final String path = '$dir/pdf.pdf';
     final File file = File(path);
     file.writeAsBytesSync(await pdf.save());
     Navigator.of(context)
@@ -232,16 +265,16 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
     switch (result) {
       case OrderOptions.orderaz:
         inventarioSemens.sort((a, b) {
-          return a.nomeCachaco
+          return a.nomeReprodutor
               .toLowerCase()
-              .compareTo(b.nomeCachaco.toLowerCase());
+              .compareTo(b.nomeReprodutor.toLowerCase());
         });
         break;
       case OrderOptions.orderza:
         inventarioSemens.sort((a, b) {
-          return b.nomeCachaco
+          return b.nomeReprodutor
               .toLowerCase()
-              .compareTo(a.nomeCachaco.toLowerCase());
+              .compareTo(a.nomeReprodutor.toLowerCase());
         });
         break;
     }
@@ -249,12 +282,12 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
   }
 
   void filterSearchResults(String query) {
-    List<InventarioSemenSuina> dummySearchList = [];
+    List<InventarioSemenCaprino> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<InventarioSemenSuina> dummyListData = [];
+      List<InventarioSemenCaprino> dummyListData = [];
       dummySearchList.forEach((item) {
-        if (item.nomeCachaco.toLowerCase().contains(query.toLowerCase())) {
+        if (item.nomeReprodutor.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
         }
       });
@@ -293,7 +326,7 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
-                      pdfLib.Text('Inventário Sêmen Suína',
+                      pdfLib.Text('Inventário Sêmen Caprino',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white))
                     ],

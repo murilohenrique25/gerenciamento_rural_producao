@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/gasto_suino_db.dart';
+import 'package:gerenciamento_rural/helpers/gasto_caprino_db.dart';
 import 'package:gerenciamento_rural/models/gasto.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/economia/registers/cadastrar_economia_gastos.dart';
 import 'package:pdf/pdf.dart';
@@ -16,7 +16,7 @@ class EconomiaCaprino extends StatefulWidget {
 
 class _EconomiaCaprinoState extends State<EconomiaCaprino> {
   TextEditingController editingController = TextEditingController();
-  GastoSuinoDB helper = GastoSuinoDB();
+  GastoCaprinoDB helper = GastoCaprinoDB();
   List<Gasto> items = [];
   List<Gasto> gastos = [];
   List<Gasto> tGastos = [];
@@ -283,7 +283,6 @@ class _EconomiaCaprinoState extends State<EconomiaCaprino> {
   }
 
   _creatPdf(context) async {
-    tGastos = gastos;
     final pdfLib.Document pdf = pdfLib.Document(deflate: zlib.encode);
     pdf.addPage(pdfLib.MultiPage(
         header: _buildHeade,
@@ -294,14 +293,16 @@ class _EconomiaCaprinoState extends State<EconomiaCaprino> {
                   'Data',
                   'Valor Unitário',
                   'Quantidade',
-                  'Valor Total'
+                  'Valor Total',
+                  'Observação'
                 ],
-                ...tGastos.map((item) => [
+                ...gastos.map((item) => [
                       item.nome,
                       item.data,
                       item.valorUnitario.toString(),
                       item.quantidade.toString(),
-                      item.valorTotal.toString()
+                      item.valorTotal.toString(),
+                      item.observacao
                     ])
               ])
             ]));

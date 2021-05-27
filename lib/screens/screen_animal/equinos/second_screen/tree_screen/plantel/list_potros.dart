@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/potro_db.dart';
 import 'package:gerenciamento_rural/models/potro.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/equinos/second_screen/tree_screen/plantel/registers/cadastro_potro.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -208,8 +208,36 @@ class _ListaPotrosState extends State<ListaPotros> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome', 'Raça', 'Sexo'],
-                ...potros.map((item) => [item.nome, item.raca, item.sexo])
+                <String>[
+                  'Nome',
+                  'Raça',
+                  'Sexo',
+                  'Data Nascimento',
+                  'Pai',
+                  'Mãe',
+                  'Lote',
+                  'Estado',
+                  'Origem',
+                  'Raça',
+                  'Rsenha',
+                  'Situação',
+                  'Observação'
+                ],
+                ...potros.map((item) => [
+                      item.nome,
+                      item.raca,
+                      item.sexo,
+                      item.dataNascimento,
+                      item.pai,
+                      item.mae,
+                      item.lote,
+                      item.estado,
+                      item.origem,
+                      item.raca,
+                      item.resenha,
+                      item.situacao,
+                      item.observacao
+                    ])
               ])
             ]));
 

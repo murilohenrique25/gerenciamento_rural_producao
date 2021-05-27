@@ -16,9 +16,9 @@ class _CadastroNutricaoSuinoState extends State<CadastroNutricaoSuino> {
     "Creche",
     "Terminação",
     "Matrizes",
-    "Cahcaços"
+    "Cachaços"
   ];
-  String nomeEstado = "Vazio";
+  String nomeEstado = "";
   double quantidadeTotal = 0;
   double quantidadeInd = 0;
   bool _nutricaoEdited = false;
@@ -237,7 +237,7 @@ class _CadastroNutricaoSuinoState extends State<CadastroNutricaoSuino> {
                   keyboardType: TextInputType.number,
                   controller: _quantidadeIndividualController,
                   decoration:
-                      InputDecoration(labelText: "Quantidade Individual"),
+                      InputDecoration(labelText: "Quantidade por dia Kg"),
                   onChanged: (text) {
                     _nutricaoEdited = true;
                     setState(() {
@@ -263,7 +263,7 @@ class _CadastroNutricaoSuinoState extends State<CadastroNutricaoSuino> {
                   height: 15.0,
                 ),
                 Text(
-                  "Quantidade Total: ${calcularTotal()}",
+                  "Quantidade total por dia Kg: ${calcularTotal()}",
                   style: TextStyle(
                       fontSize: 16.0, color: Color.fromARGB(255, 4, 125, 141)),
                 ),

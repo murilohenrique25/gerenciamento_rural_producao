@@ -210,8 +210,32 @@ class _ListaNutricaoSuinaState extends State<ListaNutricaoSuina> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Lote', 'Fase'],
-                ...tNutricoes.map((item) => [item.nomeLote, item.fase])
+                <String>[
+                  'Lote',
+                  'Fase',
+                  'Ingredientes',
+                  'Baia',
+                  'Quant. Individual',
+                  'Quant. Total',
+                  'PB',
+                  'NDT',
+                  'ED',
+                  'Quantidade de Animais',
+                  'Data'
+                ],
+                ...tNutricoes.map((item) => [
+                      item.nomeLote,
+                      item.fase,
+                      item.ingredientes,
+                      item.baia,
+                      item.quantidadeInd.toString(),
+                      item.quantidadeTotal.toString(),
+                      item.pb.toString(),
+                      item.ndt.toString(),
+                      item.ed.toString(),
+                      item.quantidadeAnimais.toString(),
+                      item.data,
+                    ])
               ])
             ]));
 

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:gerenciamento_rural/helpers/cachaco_db.dart';
-import 'package:gerenciamento_rural/models/cachaco.dart';
+import 'package:gerenciamento_rural/helpers/cavalo_db.dart';
+import 'package:gerenciamento_rural/models/cavalo.dart';
 import 'package:gerenciamento_rural/models/inventario_semen_equino.dart';
-import 'package:gerenciamento_rural/models/inventario_semen_suino.dart';
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:toast/toast.dart';
@@ -19,18 +18,18 @@ class CadastroEstoqueSemenEquino extends StatefulWidget {
 class _CadastroEstoqueSemenEquinoState
     extends State<CadastroEstoqueSemenEquino> {
   String tipo;
-  CachacoDB helper = CachacoDB();
-  List<Cachaco> cachacos;
+  CavaloDB helper = CavaloDB();
+  List<Cavalo> cavalos;
   bool _inventarioEdited = false;
-  InventarioSemenSuina _editedInventario;
-  Cachaco cachaco = Cachaco();
+  InventarioSemenEquino _editedInventario;
+  Cavalo cavalo = Cavalo();
   String idadeFinal = "";
-  String nomeCachaco = "Vazio";
+  String nomeCachaco = "";
   final _vigorController = TextEditingController();
   final _obsController = TextEditingController();
   final _palhetaController = TextEditingController();
   final _quantidadeController = TextEditingController();
-  final _mortilidadeController = TextEditingController();
+  final _motilidadeController = TextEditingController();
   final _turbilhamentoController = TextEditingController();
   final _concentracaoController = TextEditingController();
   final _volumeController = TextEditingController();
@@ -58,12 +57,12 @@ class _CadastroEstoqueSemenEquinoState
   @override
   void initState() {
     super.initState();
-    _getAllCachacos();
+    _getAllCavalos();
     if (widget.inventarioSemenEquino == null) {
-      _editedInventario = InventarioSemenSuina();
+      _editedInventario = InventarioSemenEquino();
     } else {
       _editedInventario =
-          InventarioSemenSuina.fromMap(widget.inventarioSemenEquino.toMap());
+          InventarioSemenEquino.fromMap(widget.inventarioSemenEquino.toMap());
       _palhetaController.text = _editedInventario.identificacao;
       _quantidadeController.text = _editedInventario.quantidade.toString();
       _corController.text = _editedInventario.cor;
@@ -72,7 +71,7 @@ class _CadastroEstoqueSemenEquinoState
       _obsController.text = _editedInventario.observacao;
       _vigorController.text = _editedInventario.vigor;
       _aspectoController.text = _editedInventario.aspecto;
-      _mortilidadeController.text = _editedInventario.mortalidade;
+      _motilidadeController.text = _editedInventario.mortalidade;
       _turbilhamentoController.text = _editedInventario.turbilhamento;
       _concentracaoController.text = _editedInventario.concentracao;
       _volumeController.text = _editedInventario.volume.toString();
@@ -144,24 +143,24 @@ class _CadastroEstoqueSemenEquinoState
                   height: 20.0,
                 ),
                 SearchableDropdown.single(
-                  items: cachacos.map((cachaco) {
+                  items: cavalos.map((cavalo) {
                     return DropdownMenuItem(
-                      value: cachaco,
+                      value: cavalo,
                       child: Row(
                         children: [
-                          Text(cachaco.nomeAnimal),
+                          Text(cavalo.nome),
                         ],
                       ),
                     );
                   }).toList(),
-                  value: cachaco,
-                  hint: "Selecione um cachaço",
-                  searchHint: "Selecione um cachaço",
+                  value: cavalo,
+                  hint: "Selecione um cavalo",
+                  searchHint: "Selecione um cavalo",
                   onChanged: (value) {
                     _inventarioEdited = true;
                     setState(() {
-                      _editedInventario.idCachaco = value.idAnimal;
-                      _editedInventario.nomeCachaco = value.nomeAnimal;
+                      _editedInventario.id = value.id;
+                      _editedInventario.nomeCavalo = value.nome;
                     });
                   },
                   doneButton: "Pronto",
@@ -197,7 +196,8 @@ class _CadastroEstoqueSemenEquinoState
                 TextField(
                   keyboardType: TextInputType.number,
                   controller: _quantidadeController,
-                  decoration: InputDecoration(labelText: "Quantidade"),
+                  decoration:
+                      InputDecoration(labelText: "Quantidade de palhetas"),
                   onChanged: (text) {
                     _inventarioEdited = true;
                     setState(() {
@@ -252,8 +252,8 @@ class _CadastroEstoqueSemenEquinoState
                 ),
                 TextField(
                   keyboardType: TextInputType.text,
-                  controller: _mortilidadeController,
-                  decoration: InputDecoration(labelText: "Mortilidade"),
+                  controller: _motilidadeController,
+                  decoration: InputDecoration(labelText: "Motilidade"),
                   onChanged: (text) {
                     _inventarioEdited = true;
                     setState(() {
@@ -392,10 +392,10 @@ class _CadastroEstoqueSemenEquinoState
     }
   }
 
-  void _getAllCachacos() {
+  void _getAllCavalos() {
     helper.getAllItems().then((list) {
       setState(() {
-        cachacos = list;
+        cavalos = list;
       });
     });
   }

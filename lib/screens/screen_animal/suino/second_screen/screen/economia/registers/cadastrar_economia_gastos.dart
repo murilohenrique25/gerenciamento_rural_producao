@@ -14,6 +14,7 @@ class _CadastroEconomiaGastoState extends State<CadastroEconomiaGasto> {
   final _nomeLoteController = TextEditingController();
   final _valorController = TextEditingController();
   final _quantidadeController = TextEditingController();
+  final _unidadeController = TextEditingController();
   final _obsController = TextEditingController();
   double quantidadeTotal = 0;
   int quantidadeInd = 0;
@@ -123,7 +124,7 @@ class _CadastroEconomiaGastoState extends State<CadastroEconomiaGasto> {
                   ),
                   TextField(
                     controller: _valorController,
-                    decoration: InputDecoration(labelText: "Valor"),
+                    decoration: InputDecoration(labelText: "Valor unitário"),
                     onChanged: (text) {
                       _gastoEdited = true;
                       setState(() {
@@ -141,6 +142,17 @@ class _CadastroEconomiaGastoState extends State<CadastroEconomiaGasto> {
                       setState(() {
                         quantidadeInd = int.parse(text);
                         _editedGasto.quantidade = int.parse(text);
+                      });
+                    },
+                    keyboardType: TextInputType.number,
+                  ),
+                  TextField(
+                    controller: _unidadeController,
+                    decoration: InputDecoration(labelText: "Unidade"),
+                    onChanged: (text) {
+                      _gastoEdited = true;
+                      setState(() {
+                        _editedGasto.unidade = text;
                       });
                     },
                     keyboardType: TextInputType.number,

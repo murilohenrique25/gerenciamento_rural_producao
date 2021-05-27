@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/producao_leite_db.dart';
 import 'package:gerenciamento_rural/models/leite.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/cadastro_leite.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
@@ -282,7 +282,7 @@ class _ProducoesLeiteState extends State<ProducoesLeite> {
                   'Lactose',
                   'Ureia %',
                   "CCS %",
-                  "CBT %"
+                  "CBT %",
                 ],
                 ...tLeites.map((item) => [
                       item.dataColeta,
@@ -292,7 +292,7 @@ class _ProducoesLeiteState extends State<ProducoesLeite> {
                       item.lactose.toString(),
                       item.ureia.toString(),
                       item.ccs.toString(),
-                      item.cbt.toString()
+                      item.cbt.toString(),
                     ])
               ])
             ]));

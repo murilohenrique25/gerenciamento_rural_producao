@@ -39,18 +39,3 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
     return introScreen();
   }
 }
-
-// void main() {
-//   runApp(
-//     MaterialApp(
-//         title: "Controle de Gestão Animal",
-//         theme: ThemeData(
-//             primaryColor: Color.fromARGB(255, 4, 125, 141),
-//             primarySwatch: Colors.blue),
-//         debugShowCheckedModeBanner: false,
-//         home: new SplashScreen(),
-//         routes: {
-//           '/home': (context) => Home(),
-//         }),
-//   );
-// }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/rebanho/plantel/screen/abatidos_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/rebanho/plantel/screen/jovem_femea_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/rebanho/plantel/screen/jovem_macho_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/rebanho/plantel/screen/matriz_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/rebanho/plantel/screen/reprodutor_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/equinos/second_screen/tree_screen/plantel/screen/potros_screen.dart';
 
 class DescriptionPlantelCaprinos extends StatefulWidget {
   @override
@@ -77,7 +79,40 @@ class _DescriptionPlantelCaprinosState
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: PotroScreen(),
+                          child: JovemMachoCaprinoScreen(),
+                        ),
+                      ],
+                    ),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: _width,
+                          height: _height,
+                          color: Colors.grey[50],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: JovemFemeaCaprinoScreen(),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: _width,
+                          height: _height,
+                          color: Colors.grey[50],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: CaprinoAbatidosScreen(),
                         ),
                       ],
                     ),

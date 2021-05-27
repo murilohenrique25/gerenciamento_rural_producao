@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/egua_db.dart';
-import 'package:gerenciamento_rural/models/egua.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPageleite.dart';
+import 'package:gerenciamento_rural/helpers/reprodutor_db.dart';
+import 'package:gerenciamento_rural/helpers/todos_caprinos_db.dart';
+import 'package:gerenciamento_rural/models/reprodutor.dart';
+import 'package:gerenciamento_rural/models/todoscaprino.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/rebanho/plantel/registers/cadastro_reprodutor.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -19,16 +21,17 @@ class ListaReprodutores extends StatefulWidget {
 
 class _ListaReprodutoresState extends State<ListaReprodutores> {
   TextEditingController editingController = TextEditingController();
-  EguaDB helper = EguaDB();
-  List<Egua> items = [];
-  List<Egua> eguas = [];
-  List<Egua> tEguas = [];
+  ReprodutorDB helper = ReprodutorDB();
+  TodosCaprinosDB todosCaprinosDB = TodosCaprinosDB();
+  List<Reprodutor> items = [];
+  List<Reprodutor> reprodutores = [];
+  List<Reprodutor> tReprodutores = [];
   @override
   void initState() {
     super.initState();
     _getAllAnimais();
     items = [];
-    tEguas = [];
+    tReprodutores = [];
   }
 
   @override
@@ -83,7 +86,7 @@ class _ListaReprodutoresState extends State<ListaReprodutores> {
             ),
             Expanded(
                 child: ListView.builder(
-                    itemCount: eguas.length,
+                    itemCount: reprodutores.length,
                     itemBuilder: (context, index) {
                       return _totalAnimalCard(context, index);
                     }))
@@ -103,7 +106,7 @@ class _ListaReprodutoresState extends State<ListaReprodutores> {
             child: Row(
               children: [
                 Text(
-                  "Nome: " + eguas[index].nome,
+                  "Nome: " + reprodutores[index].nomeAnimal,
                   style: TextStyle(fontSize: 14.0),
                 ),
               ],
@@ -138,7 +141,7 @@ class _ListaReprodutoresState extends State<ListaReprodutores> {
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                          _showTotalAnimalPage(egua: eguas[index]);
+                          _showTotalAnimalPage(reprodutor: reprodutores[index]);
                         },
                       ),
                     ),
@@ -151,7 +154,7 @@ class _ListaReprodutoresState extends State<ListaReprodutores> {
                         ),
                         onPressed: () {
                           try {
-                            helper.delete(eguas[index].id);
+                            helper.delete(reprodutores[index].id);
                           } catch (e) {
                             Toast.show("$Exception($e)", context,
                                 duration: Toast.LENGTH_SHORT,
@@ -159,7 +162,7 @@ class _ListaReprodutoresState extends State<ListaReprodutores> {
                           }
 
                           setState(() {
-                            eguas.removeAt(index);
+                            reprodutores.removeAt(index);
                             Navigator.pop(context);
                           });
                         },
@@ -173,19 +176,24 @@ class _ListaReprodutoresState extends State<ListaReprodutores> {
         });
   }
 
-  void _showTotalAnimalPage({Egua egua}) async {
-    final recEgua = await Navigator.push(
+  void _showTotalAnimalPage({Reprodutor reprodutor}) async {
+    final recReprodutor = await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => CadastroReprodutor(
-            egua: egua,
+            reprodutor: reprodutor,
           ),
         ));
-    if (recEgua != null) {
-      if (egua != null) {
-        await helper.updateItem(recEgua);
+    if (recReprodutor != null) {
+      // reprodutor.lote;
+      if (reprodutor != null) {
+        await helper.updateItem(recReprodutor);
       } else {
-        await helper.insert(recEgua);
+        await helper.insert(recReprodutor);
+        TodosCaprino todosCaprino = TodosCaprino();
+        todosCaprino.nome = recReprodutor.nomeAnimal;
+        // todosCaprino.nome = recReprodutor.pesoFinal;
+        await todosCaprinosDB.insert(todosCaprino);
       }
       _getAllAnimais();
     }
@@ -193,23 +201,54 @@ class _ListaReprodutoresState extends State<ListaReprodutores> {
 
   void _getAllAnimais() {
     items = [];
-    helper.getAllItems().then((list) {
+    helper.getAllItemsVivos().then((list) {
       setState(() {
-        eguas = list;
-        items.addAll(eguas);
+        reprodutores = list;
+        items.addAll(reprodutores);
       });
     });
   }
 
   _creatPdf(context) async {
-    tEguas = eguas;
+    tReprodutores = reprodutores;
     final pdfLib.Document pdf = pdfLib.Document(deflate: zlib.encode);
     pdf.addPage(pdfLib.MultiPage(
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome', 'Procedência', 'Raça'],
-                ...eguas.map((item) => [item.nome, item.origem, item.raca])
+                <String>[
+                  'Setor',
+                  'Nome',
+                  'Data Nascimento',
+                  'Raça',
+                  'Lote',
+                  'Baia',
+                  'Origem',
+                  'Situação',
+                  'Procedência',
+                  'Pai',
+                  'Mãe',
+                  'Data Abatido',
+                  'Peso Abatido',
+                  'Idade 1º Parto',
+                  'Observação'
+                ],
+                ...reprodutores.map((item) => [
+                      item.setor,
+                      item.nomeAnimal,
+                      item.dataNascimento,
+                      item.raca,
+                      item.lote,
+                      item.baia,
+                      item.origem,
+                      item.situacao,
+                      item.procedencia,
+                      item.pai,
+                      item.mae,
+                      item.dataAbatido,
+                      item.pesoAbatido.toString(),
+                      item.observacao,
+                    ])
               ])
             ]));
 
@@ -225,13 +264,17 @@ class _ListaReprodutoresState extends State<ListaReprodutores> {
   void _orderList(OrderOptions result) {
     switch (result) {
       case OrderOptions.orderaz:
-        eguas.sort((a, b) {
-          return a.nome.toLowerCase().compareTo(b.nome.toLowerCase());
+        reprodutores.sort((a, b) {
+          return a.nomeAnimal
+              .toLowerCase()
+              .compareTo(b.nomeAnimal.toLowerCase());
         });
         break;
       case OrderOptions.orderza:
-        eguas.sort((a, b) {
-          return b.nome.toLowerCase().compareTo(a.nome.toLowerCase());
+        reprodutores.sort((a, b) {
+          return b.nomeAnimal
+              .toLowerCase()
+              .compareTo(a.nomeAnimal.toLowerCase());
         });
         break;
     }
@@ -240,24 +283,24 @@ class _ListaReprodutoresState extends State<ListaReprodutores> {
 
   //filtrar resultado com o texto passado
   void filterSearchResults(String query) {
-    List<Egua> dummySearchList = [];
+    List<Reprodutor> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<Egua> dummyListData = [];
+      List<Reprodutor> dummyListData = [];
       dummySearchList.forEach((item) {
-        if (item.nome.toLowerCase().contains(query.toLowerCase())) {
+        if (item.nomeAnimal.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
         }
       });
       setState(() {
-        eguas.clear();
-        eguas.addAll(dummyListData);
+        reprodutores.clear();
+        reprodutores.addAll(dummyListData);
       });
       return;
     } else {
       setState(() {
-        eguas.clear();
-        eguas.addAll(items);
+        reprodutores.clear();
+        reprodutores.addAll(items);
       });
     }
   }

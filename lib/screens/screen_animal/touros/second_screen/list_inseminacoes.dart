@@ -249,12 +249,21 @@ class _ListInseminacoesState extends State<ListInseminacoes> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome Vaca', 'Nome Touro', 'Data', 'Inseminador'],
-                ...tinseminacoes.map((item) => [
-                      item.nomeVaca,
+                <String>[
+                  'Touro',
+                  'Vaca',
+                  'Data',
+                  'Inseminador',
+                  'Tipo Reprodução',
+                  'Palheta',
+                  'Observação'
+                ],
+                ...inseminacoes.map((item) => [
                       item.nomeTouro,
+                      item.nomeVaca,
                       item.data,
-                      item.inseminador
+                      item.inseminador,
+                      item.observacao
                     ])
               ])
             ]));

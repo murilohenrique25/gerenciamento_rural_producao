@@ -15,12 +15,9 @@ class _CadastroMedicamentoCaprinoState
   List<TipoMedicamento> _tipos = <TipoMedicamento>[
     const TipoMedicamento("Nenhum"),
     const TipoMedicamento("ml"),
-    const TipoMedicamento("l"),
-    const TipoMedicamento("ds"),
-    const TipoMedicamento("h"),
-    const TipoMedicamento("kg"),
-    const TipoMedicamento("gr"),
-    const TipoMedicamento("am"),
+    const TipoMedicamento("L"),
+    const TipoMedicamento("g"),
+    const TipoMedicamento("Kg"),
   ];
   var controleDateVencimento = MaskedTextController(mask: '00-00-0000');
   var controleDateCompra = MaskedTextController(mask: '00-00-0000');
@@ -83,6 +80,7 @@ class _CadastroMedicamentoCaprinoState
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               setState(() {
+                _quantidadeController.text = '10';
                 double quantidade = double.parse(_quantidadeController.text);
                 double valorUnitario = double.parse(_precoController.text);
                 if (quantidade > 0 && valorUnitario > 0.0) {
@@ -121,24 +119,24 @@ class _CadastroMedicamentoCaprinoState
                     ),
                     Row(
                       children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _quantidadeController,
-                            decoration:
-                                InputDecoration(labelText: "Quantidade"),
-                            onChanged: (text) {
-                              _medicamentoEdited = true;
-                              setState(() {
-                                _editedMedicamento.quantidade =
-                                    double.parse(text);
-                              });
-                            },
-                            keyboardType: TextInputType.number,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 30.0,
-                        ),
+                        // Expanded(
+                        //   child: TextField(
+                        //     controller: _quantidadeController,
+                        //     decoration:
+                        //         InputDecoration(labelText: "Quantidade"),
+                        //     onChanged: (text) {
+                        //       _medicamentoEdited = true;
+                        //       setState(() {
+                        //         _editedMedicamento.quantidade =
+                        //             double.parse(text);
+                        //       });
+                        //     },
+                        //     keyboardType: TextInputType.number,
+                        //   ),
+                        // ),
+                        // SizedBox(
+                        //   width: 30.0,
+                        // ),
                         Expanded(
                             flex: 1,
                             child: Padding(
@@ -164,6 +162,9 @@ class _CadastroMedicamentoCaprinoState
                                 }).toList(),
                               ),
                             )),
+                        SizedBox(
+                          width: 80.0,
+                        ),
                       ],
                     ),
                     TextField(
@@ -192,7 +193,7 @@ class _CadastroMedicamentoCaprinoState
                           });
                         });
                       },
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                     ),
                     TextField(
                       controller: controleDateCompra,
@@ -205,7 +206,7 @@ class _CadastroMedicamentoCaprinoState
                           });
                         });
                       },
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                     ),
                     TextField(
                       controller: controleDateVencimento,
@@ -219,7 +220,7 @@ class _CadastroMedicamentoCaprinoState
                           });
                         });
                       },
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                     ),
                     TextField(
                       controller: _fornecedor,
@@ -232,7 +233,7 @@ class _CadastroMedicamentoCaprinoState
                           });
                         });
                       },
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                     ),
                     TextField(
                       controller: controleDataAbertura,
@@ -246,7 +247,6 @@ class _CadastroMedicamentoCaprinoState
                           });
                         });
                       },
-                      keyboardType: TextInputType.number,
                     ),
                     TextField(
                       controller: _principioAtivo,
@@ -259,21 +259,6 @@ class _CadastroMedicamentoCaprinoState
                           });
                         });
                       },
-                      keyboardType: TextInputType.text,
-                    ),
-                    TextField(
-                      controller: _tempoDescarteLeite,
-                      decoration: InputDecoration(
-                          labelText: "Tempo de Descarte do Leite"),
-                      onChanged: (text) {
-                        _medicamentoEdited = true;
-                        setState(() {
-                          setState(() {
-                            _editedMedicamento.tempoDescarteLeite = text;
-                          });
-                        });
-                      },
-                      keyboardType: TextInputType.text,
                     ),
                     TextField(
                       controller: _observacao,
@@ -286,7 +271,6 @@ class _CadastroMedicamentoCaprinoState
                           });
                         });
                       },
-                      keyboardType: TextInputType.text,
                     ),
                     Padding(padding: EdgeInsets.only(bottom: 35.0))
                   ],

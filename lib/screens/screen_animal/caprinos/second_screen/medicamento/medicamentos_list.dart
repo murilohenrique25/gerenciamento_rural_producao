@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/medicamento_equino_db.dart';
+import 'package:gerenciamento_rural/helpers/medicamento_caprino_db.dart';
 import 'package:gerenciamento_rural/models/medicamento.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/medicamento/registers/cadastrar_medicamentos.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPage.dart';
@@ -18,7 +18,7 @@ class MedicamentosCaprinoList extends StatefulWidget {
 
 class _MedicamentosCaprinoListState extends State<MedicamentosCaprinoList> {
   TextEditingController editingController = TextEditingController();
-  MedicamentoEquinoDB helper = MedicamentoEquinoDB();
+  MedicamentoCaprinoDB helper = MedicamentoCaprinoDB();
   List<Medicamento> items = [];
   List<Medicamento> medicamentos = [];
   List<Medicamento> tMedicamentos = [];
@@ -213,9 +213,36 @@ class _MedicamentosCaprinoListState extends State<MedicamentosCaprinoList> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>['Nome', 'Quantidade'],
-                ...tMedicamentos.map((item) =>
-                    [item.nomeMedicamento, item.quantidade.toString()])
+                <String>[
+                  'Nome',
+                  'Quantidade',
+                  'Preço Unit.',
+                  'Preço Total',
+                  'Tempo Descarte',
+                  'Tipo Dosagem',
+                  'Carência Medicamento',
+                  'Data Vencimento',
+                  'Fornecedor',
+                  'Data Compra',
+                  'Data Abertura',
+                  'Princípio Ativo',
+                  'Observação'
+                ],
+                ...tMedicamentos.map((item) => [
+                      item.nomeMedicamento,
+                      item.quantidade.toString(),
+                      item.precoUnitario.toString(),
+                      item.precoTotal.toString(),
+                      item.tempoDescarteLeite,
+                      item.carenciaMedicamento,
+                      item.tipoDosagem,
+                      item.dataVencimento,
+                      item.fornecedor,
+                      item.dataCompra,
+                      item.dataAbertura,
+                      item.principioAtivo,
+                      item.observacao
+                    ])
               ])
             ]));
 

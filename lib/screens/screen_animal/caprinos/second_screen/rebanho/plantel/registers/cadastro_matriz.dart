@@ -1,28 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:gerenciamento_rural/models/cavalo.dart';
-import 'package:gerenciamento_rural/models/egua.dart';
+import 'package:gerenciamento_rural/helpers/caprino_abatido_db.dart';
+import 'package:gerenciamento_rural/helpers/lote_caprino_db.dart';
+import 'package:gerenciamento_rural/models/caprino_abatido.dart';
+import 'package:gerenciamento_rural/models/lote.dart';
+import 'package:gerenciamento_rural/models/matriz_caprino.dart';
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:toast/toast.dart';
 
 class CadastroMatrizCaprino extends StatefulWidget {
-  final Cavalo cavalo;
-  CadastroMatrizCaprino({this.cavalo});
+  final MatrizCaprino matrizCaprino;
+  CadastroMatrizCaprino({this.matrizCaprino});
   @override
   _CadastroMatrizCaprinoState createState() => _CadastroMatrizCaprinoState();
 }
 
 class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
+  LoteCaprinoDB loteCaprinoDB = LoteCaprinoDB();
+  Lote lote;
+  List<Lote> lotes = [];
   String idadeFinal = "";
   String numeroData = "";
   String nomeEstado = "Vazia";
+  String nomePai = "";
+  String nomeMae = "";
   int _radioValue = 0;
   int _radioValueSetor = 0;
   String nomeD = "";
   String diagnostic = "";
   String ultimainseminacao = "";
-  List<String> diagnosticos = ["Vazia", "Prenha", "Aborto"];
   final _nomeController = TextEditingController();
   final _racaController = TextEditingController();
   final _paiController = TextEditingController();
@@ -30,18 +37,25 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
   final _obsController = TextEditingController();
   final _baiaController = TextEditingController();
   final _origemController = TextEditingController();
+  final _pesoController = TextEditingController();
   final _loteController = TextEditingController();
   final _diasprenhaController = TextEditingController();
   final _pesoPrimeiroPartoController = TextEditingController();
+  final _descricaoController = TextEditingController();
+  final _dataAcontecidoController = TextEditingController();
+  final _valorVendidoController = TextEditingController();
+  final _pesoVendidoController = TextEditingController();
   var _dataNasc = MaskedTextController(mask: '00-00-0000');
-
+  var _idadePrimeiroPartoController = MaskedTextController(mask: '00-00-0000');
+  List<String> diagnosticos = ["Vazia", "Prenha", "Aborto"];
+  String d;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final df = new DateFormat("dd-MM-yyyy");
 
   String _idadeAnimal = "1ano e 2meses";
-  Egua _editedEgua;
-  bool _eguaEdited = false;
+  MatrizCaprino _editedMatriz;
+  bool _matrizEdited = false;
 
   final GlobalKey<ScaffoldState> _scaffoldstate =
       new GlobalKey<ScaffoldState>();
@@ -66,13 +80,233 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                   keyboardType: TextInputType.text,
                   controller: _paiController,
                   decoration: InputDecoration(labelText: "Pai"),
-                  onChanged: (text) {},
+                  onChanged: (text) {
+                    _editedMatriz.pai = text;
+                    nomePai = text;
+                  },
                 ),
                 TextField(
                   keyboardType: TextInputType.text,
                   controller: _maeController,
                   decoration: InputDecoration(labelText: "Mãe"),
-                  onChanged: (text) {},
+                  onChanged: (text) {
+                    _editedMatriz.mae = text;
+                    nomeMae = text;
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showMortoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Causa Morte'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _descricaoController,
+                  decoration: InputDecoration(labelText: "Causa"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.descricao = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.dataAcontecido = text;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showVendidoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Vendido'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _paiController,
+                  decoration: InputDecoration(labelText: "Comprador"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.descricao = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.dataAcontecido = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _valorVendidoController,
+                  decoration: InputDecoration(labelText: "Preço"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.dataAcontecido = text;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showDoadoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Doado'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _descricaoController,
+                  decoration: InputDecoration(labelText: "Recebedor"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.descricao = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.dataAcontecido = text;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showAbatidoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Abatido'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.descricao = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _pesoVendidoController,
+                  decoration: InputDecoration(labelText: "Peso"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.pesoFinal = double.parse(text);
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _valorVendidoController,
+                  decoration: InputDecoration(labelText: "Preço"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.valorVendido = double.parse(text);
+                    });
+                  },
                 ),
               ],
             ),
@@ -93,25 +327,50 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
   @override
   void initState() {
     super.initState();
-    _getAllLotes();
-    if (widget.cavalo == null) {
-      _editedEgua = Egua();
-      _editedEgua.vm = "Vivo";
+    getAllLotes();
+    if (widget.matrizCaprino == null) {
+      _editedMatriz = MatrizCaprino();
+      _editedMatriz.situacao = "Vivo";
+      _radioValue = 0;
+      _editedMatriz.setor = "Caprino";
+      _radioValueSetor = 0;
     } else {
-      _editedEgua = Egua.fromMap(widget.cavalo.toMap());
-      _nomeController.text = _editedEgua.nome;
-      _racaController.text = _editedEgua.raca;
-      _paiController.text = _editedEgua.pai;
-      _maeController.text = _editedEgua.mae;
-      _obsController.text = _editedEgua.observacao;
-      _baiaController.text = _editedEgua.cios;
-      _origemController.text = _editedEgua.origem;
-      _loteController.text = _editedEgua.estado;
-      nomeD = _editedEgua.diagnosticoGestacao;
-      _diasprenhaController.text = _editedEgua.diagnosticoGestacao;
-      numeroData = _editedEgua.dataNascimento;
+      _editedMatriz = MatrizCaprino.fromMap(widget.matrizCaprino.toMap());
+      _nomeController.text = _editedMatriz.nomeAnimal;
+      _racaController.text = _editedMatriz.raca;
+      _paiController.text = _editedMatriz.pai;
+      _maeController.text = _editedMatriz.mae;
+      _obsController.text = _editedMatriz.observacao;
+      _pesoController.text = _editedMatriz.peso.toString();
+      _baiaController.text = _editedMatriz.baia;
+      _origemController.text = _editedMatriz.origem;
+      _loteController.text = _editedMatriz.lote;
+      _idadePrimeiroPartoController.text = _editedMatriz.idadePrimeiroParto;
+      nomeD = _editedMatriz.diagnosticoGestacao;
+      _diasprenhaController.text = _editedMatriz.diasPrenha.toString();
+      _descricaoController.text = _editedMatriz.descricao;
+      _dataAcontecidoController.text = _editedMatriz.dataAcontecido;
+      _valorVendidoController.text = _editedMatriz.valorVendido.toString();
+      numeroData = _editedMatriz.dataNascimento;
       _dataNasc.text = numeroData;
       idadeFinal = differenceDate();
+
+      if (_editedMatriz.situacao == "Viva") {
+        _radioValue = 0;
+      } else if (_editedMatriz.situacao == "Morta") {
+        _radioValue = 1;
+      } else if (_editedMatriz.situacao == "Vendida") {
+        _radioValue = 2;
+      } else if (_editedMatriz.situacao == "Doada") {
+        _radioValue = 3;
+      } else {
+        _radioValue = 4;
+      }
+      if (_editedMatriz.setor == "Caprino") {
+        _radioValueSetor = 0;
+      } else {
+        _radioValueSetor = 1;
+      }
     }
   }
 
@@ -145,7 +404,17 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
             //       duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
             // }
             else {
-              Navigator.pop(context, _editedEgua);
+              if (_editedMatriz.situacao == "Abatida") {
+                CaprinoAbatido caprinoAbatido = CaprinoAbatido();
+                CaprinoAbatidoDB caprinoAbatidoDB = CaprinoAbatidoDB();
+                caprinoAbatido.idLote = _editedMatriz.idLote;
+                caprinoAbatido.nome = _editedMatriz.nomeAnimal;
+                caprinoAbatido.peso = _editedMatriz.pesoFinal;
+                caprinoAbatido.data = _editedMatriz.dataAcontecido;
+                caprinoAbatido.tipo = "Matriz";
+                caprinoAbatidoDB.insert(caprinoAbatido);
+              }
+              Navigator.pop(context, _editedMatriz);
             }
           },
           child: Icon(Icons.save),
@@ -195,21 +464,64 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                   controller: _nomeController,
                   decoration: InputDecoration(labelText: "Nome"),
                   onChanged: (text) {
-                    _eguaEdited = true;
+                    _matrizEdited = true;
                     setState(() {
-                      _editedEgua.nome = text;
+                      _editedMatriz.nomeAnimal = text;
                     });
                   },
+                ),
+                SearchableDropdown.single(
+                  items: lotes.map((lote) {
+                    return DropdownMenuItem(
+                      value: lote,
+                      child: Row(
+                        children: [
+                          Text(lote.nome),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  value: lote,
+                  hint: "Selecione um lote",
+                  searchHint: "Selecione um lote",
+                  onChanged: (value) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.idLote = value.id;
+                    });
+                  },
+                  doneButton: "Pronto",
+                  displayItem: (item, selected) {
+                    return (Row(children: [
+                      selected
+                          ? Icon(
+                              Icons.radio_button_checked,
+                              color: Colors.grey,
+                            )
+                          : Icon(
+                              Icons.radio_button_unchecked,
+                              color: Colors.grey,
+                            ),
+                      SizedBox(width: 7),
+                      Expanded(
+                        child: item,
+                      ),
+                    ]));
+                  },
+                  isExpanded: true,
+                ),
+                SizedBox(
+                  height: 5.0,
                 ),
                 TextField(
                   controller: _dataNasc,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(labelText: "Data de Nascimento"),
                   onChanged: (text) {
-                    _eguaEdited = true;
+                    _matrizEdited = true;
                     setState(() {
                       numeroData = _dataNasc.text;
-                      _editedEgua.dataNascimento = _dataNasc.text;
+                      _editedMatriz.dataNascimento = _dataNasc.text;
                       idadeFinal = differenceDate();
                     });
                   },
@@ -229,9 +541,9 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                   controller: _racaController,
                   decoration: InputDecoration(labelText: "Raça"),
                   onChanged: (text) {
-                    _eguaEdited = true;
+                    _matrizEdited = true;
                     setState(() {
-                      _editedEgua.raca = text;
+                      _editedMatriz.raca = text;
                     });
                   },
                 ),
@@ -240,28 +552,33 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                   controller: _origemController,
                   decoration: InputDecoration(labelText: "Origem"),
                   onChanged: (text) {
-                    _eguaEdited = true;
-                    setState(() {});
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.origem = text;
+                    });
                   },
                 ),
+                SizedBox(
+                  height: 20.0,
+                ),
                 SearchableDropdown.single(
-                  items: diagnosticos.map((diagnostic) {
+                  items: diagnosticos.map((d) {
                     return DropdownMenuItem(
-                      value: diagnostic,
+                      value: d,
                       child: Row(
                         children: [
-                          Text(diagnostic),
+                          Text(d),
                         ],
                       ),
                     );
                   }).toList(),
-                  value: diagnostic,
-                  hint: "Selecione um diagnóstico",
-                  searchHint: "Selecione um diagnóstico",
+                  value: d,
+                  hint: "Selecione um diagnostico",
+                  searchHint: "Selecione um diagnostico",
                   onChanged: (value) {
-                    _eguaEdited = true;
+                    _matrizEdited = true;
                     setState(() {
-                      _editedEgua.diagnosticoGestacao = value;
+                      _editedMatriz.diagnosticoGestacao = value;
                       nomeD = value;
                     });
                   },
@@ -288,21 +605,40 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                 SizedBox(
                   height: 20.0,
                 ),
-                Text("Diagnóstico selecionado:  $nomeD",
+                Text("Diagnóstico:  $nomeD",
                     style: TextStyle(
                         fontSize: 16.0,
                         color: Color.fromARGB(255, 4, 125, 141))),
                 SizedBox(
                   height: 10.0,
                 ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                TextField(
+                  enabled: nomeD == "Prenha" ? true : false,
+                  keyboardType: TextInputType.number,
+                  controller: _diasprenhaController,
+                  decoration:
+                      InputDecoration(labelText: "Dias que está prenha"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.diasPrenha = int.parse(text);
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
                 TextField(
                   keyboardType: TextInputType.text,
                   controller: _loteController,
                   decoration: InputDecoration(labelText: "Lote"),
                   onChanged: (text) {
-                    _eguaEdited = true;
+                    _matrizEdited = true;
                     setState(() {
-                      _editedEgua.estado = text;
+                      _editedMatriz.lote = text;
                     });
                   },
                 ),
@@ -344,7 +680,7 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                   controller: _pesoPrimeiroPartoController,
                   decoration: InputDecoration(labelText: "Peso ao 1º parto"),
                   onChanged: (text) {
-                    _eguaEdited = true;
+                    _matrizEdited = true;
                     setState(() {});
                   },
                 ),
@@ -353,9 +689,31 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                   controller: _baiaController,
                   decoration: InputDecoration(labelText: "Baia"),
                   onChanged: (text) {
-                    _eguaEdited = true;
+                    _matrizEdited = true;
                     setState(() {
-                      _editedEgua.cios = text;
+                      _editedMatriz.baia = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _idadePrimeiroPartoController,
+                  decoration: InputDecoration(labelText: "Idade 1º Parto"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.idadePrimeiroParto = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _pesoController,
+                  decoration: InputDecoration(labelText: "Peso"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.peso = double.parse(text);
                     });
                   },
                 ),
@@ -364,9 +722,9 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                   controller: _obsController,
                   decoration: InputDecoration(labelText: "Observação"),
                   onChanged: (text) {
-                    _eguaEdited = true;
+                    _matrizEdited = true;
                     setState(() {
-                      _editedEgua.observacao = text;
+                      _editedMatriz.observacao = text;
                     });
                   },
                 ),
@@ -376,6 +734,14 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                   },
                   child: Text("Genealogia"),
                 ),
+                Text("Pai:  $nomePai",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                Text("Mãe:  $nomeMae",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
                 SizedBox(
                   height: 10.0,
                 ),
@@ -388,20 +754,63 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                         onChanged: (int value) {
                           setState(() {
                             _radioValue = value;
-                            _editedEgua.vm = "Vivo";
+                            _editedMatriz.situacao = "Viva";
                           });
                         }),
-                    Text("Vivo"),
+                    Text("Viva"),
                     Radio(
                         value: 1,
                         groupValue: _radioValue,
                         onChanged: (int value) {
                           setState(() {
                             _radioValue = value;
-                            _editedEgua.vm = "Morto";
+                            _editedMatriz.situacao = "Morta";
+                            if (_editedMatriz.situacao == "Morta")
+                              _showMortoDialog();
                           });
                         }),
-                    Text("Morto"),
+                    Text("Morta"),
+                    Radio(
+                        value: 2,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            _editedMatriz.situacao = "Vendida";
+                            if (_editedMatriz.situacao == "Vendida")
+                              _showVendidoDialog();
+                          });
+                        }),
+                    Text("Vendida"),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Radio(
+                        value: 3,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            _editedMatriz.situacao = "Doada";
+                            if (_editedMatriz.situacao == "Doada")
+                              _showDoadoDialog();
+                          });
+                        }),
+                    Text("Doada"),
+                    Radio(
+                        value: 4,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            _editedMatriz.situacao = "Abatida";
+                            if (_editedMatriz.situacao == "Abatida")
+                              _showAbatidoDialog();
+                          });
+                        }),
+                    Text("Abatida"),
                   ],
                 ),
               ],
@@ -413,7 +822,7 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
   }
 
   Future<bool> _requestPop() {
-    if (_eguaEdited) {
+    if (_matrizEdited) {
       showDialog(
           context: context,
           builder: (context) {
@@ -442,6 +851,14 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
     } else {
       return Future.value(true);
     }
+  }
+
+  void getAllLotes() {
+    loteCaprinoDB.getAllItems().then((value) {
+      setState(() {
+        lotes = value;
+      });
+    });
   }
 
   String differenceDate() {
@@ -479,18 +896,5 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
       _idadeAnimal = "6 ano e $dias dias";
     }
     return _idadeAnimal;
-  }
-
-  void _getAllLotes() {
-    // matrizDB.getAllItems().then((value) {
-    //   setState(() {
-    //     matrizes = value;
-    //   });
-    // });
-    // cachacoDB.getAllItems().then((value) {
-    //   setState(() {
-    //     cachacos = value;
-    //   });
-    // });
   }
 }

@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:gerenciamento_rural/helpers/cavalo_db.dart';
-import 'package:gerenciamento_rural/helpers/egua_db.dart';
-import 'package:gerenciamento_rural/helpers/medicamento_equino_db.dart';
-import 'package:gerenciamento_rural/helpers/potro_db.dart';
-import 'package:gerenciamento_rural/models/cavalo.dart';
-import 'package:gerenciamento_rural/models/egua.dart';
+import 'package:gerenciamento_rural/helpers/jovem_femea_caprino_db.dart';
+import 'package:gerenciamento_rural/helpers/jovem_macho_caprino_db.dart';
+import 'package:gerenciamento_rural/helpers/matriz_caprino_db.dart';
+import 'package:gerenciamento_rural/helpers/medicamento_caprino_db.dart';
+import 'package:gerenciamento_rural/helpers/reprodutor_db.dart';
+import 'package:gerenciamento_rural/models/jovem_femea_caprino.dart';
+import 'package:gerenciamento_rural/models/jovem_macho_caprino.dart';
+import 'package:gerenciamento_rural/models/matriz_caprino.dart';
 import 'package:gerenciamento_rural/models/medicamento.dart';
-import 'package:gerenciamento_rural/models/potro.dart';
+import 'package:gerenciamento_rural/models/reprodutor.dart';
 import 'package:gerenciamento_rural/models/tratamento.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
-import 'package:toast/toast.dart';
 
 class CadastroTratamentoCaprino extends StatefulWidget {
   final Tratamento tratamento;
@@ -21,18 +22,20 @@ class CadastroTratamentoCaprino extends StatefulWidget {
 }
 
 class _CadastroTratamentoCaprinoState extends State<CadastroTratamentoCaprino> {
-  MedicamentoEquinoDB medicamentoDB = MedicamentoEquinoDB();
-  CavaloDB _cavaloDB = CavaloDB();
-  EguaDB _eguaDB = EguaDB();
-  PotroDB _potroDB = PotroDB();
+  ReprodutorDB _reprodutorDB = ReprodutorDB();
+  MatrizCaprinoDB _matrizDB = MatrizCaprinoDB();
+  JovemFemeaCaprinoDB _jovemFDB = JovemFemeaCaprinoDB();
+  JovemMachoCaprinoDB _jovemMDB = JovemMachoCaprinoDB();
+  MedicamentoCaprinoDB _medicamentoCaprinoDB = MedicamentoCaprinoDB();
 
-  List<Cavalo> _cavalos = [];
-  List<Egua> _eguas = [];
-  List<Potro> _potros = [];
   List<Medicamento> _medicamentos = [];
+  List<Reprodutor> _reprodutores = [];
+  List<MatrizCaprino> _matrizes = [];
+  List<JovemFemeaCaprino> _jovensF = [];
+  List<JovemMachoCaprino> _jovensM = [];
 
-  String nomeAnimal = "Vazio";
-  String nomeMedicamento = "Vazio";
+  String nomeAnimal = "";
+  String nomeMedicamento = "";
   final _nomeAnimalController = TextEditingController();
   final _idAnimalController = TextEditingController();
   final _numeroLoteController = TextEditingController();
@@ -49,16 +52,18 @@ class _CadastroTratamentoCaprinoState extends State<CadastroTratamentoCaprino> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _tratamentoEdited = false;
   Tratamento _editedTratamento;
-  Cavalo cavalo;
-  Egua egua;
-  Potro potro;
+  Reprodutor reprodutor;
+  MatrizCaprino matrizCaprino;
+  JovemFemeaCaprino jovemFemeaCaprino;
+  JovemMachoCaprino jovemMachoCaprino;
+
   @override
   void initState() {
     super.initState();
-    _cavalos = [];
-    _eguas = [];
-    _potros = [];
-    _medicamentos = [];
+    _reprodutores = [];
+    _matrizes = [];
+    _jovensF = [];
+    _jovensM = [];
     if (widget.tratamento == null) {
       _editedTratamento = Tratamento();
     } else {
@@ -90,15 +95,7 @@ class _CadastroTratamentoCaprinoState extends State<CadastroTratamentoCaprino> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              if (med.quantidade >= _editedTratamento.quantidade) {
-                med.quantidade = med.quantidade - _editedTratamento.quantidade;
-                medicamentoDB.updateItem(med);
-                Navigator.pop(context, _editedTratamento);
-              } else {
-                Toast.show(
-                    "Estoque insuficiente.\nEstoque:${med.quantidade}", context,
-                    duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
-              }
+              Navigator.pop(context, _editedTratamento);
             },
             child: Icon(Icons.save),
             backgroundColor: Colors.green[700],
@@ -117,24 +114,24 @@ class _CadastroTratamentoCaprinoState extends State<CadastroTratamentoCaprino> {
                       color: Color.fromARGB(255, 4, 125, 141),
                     ),
                     SearchableDropdown.single(
-                      items: _cavalos.map((cavalo) {
+                      items: _reprodutores.map((reprodutor) {
                         return DropdownMenuItem(
-                          value: cavalo,
+                          value: reprodutor,
                           child: Row(
                             children: [
-                              Text(cavalo.nome),
+                              Text(reprodutor.nomeAnimal),
                             ],
                           ),
                         );
                       }).toList(),
-                      value: cavalo,
-                      hint: "Selecione cavalo",
-                      searchHint: "Selecione cavalo",
+                      value: reprodutor,
+                      hint: "Selecione reprodutor",
+                      searchHint: "Selecione reprodutor",
                       onChanged: (value) {
                         setState(() {
                           _editedTratamento.idAnimal = value.id;
-                          _editedTratamento.nomeAnimal = value.nome;
-                          nomeAnimal = value.nome;
+                          _editedTratamento.nomeAnimal = value.nomeAnimal;
+                          nomeAnimal = value.nomeAnimal;
                         });
                       },
                       doneButton: "Pronto",
@@ -162,24 +159,24 @@ class _CadastroTratamentoCaprinoState extends State<CadastroTratamentoCaprino> {
                     ),
                     Text("OU"),
                     SearchableDropdown.single(
-                      items: _eguas.map((egua) {
+                      items: _matrizes.map((matrizCaprino) {
                         return DropdownMenuItem(
-                          value: egua,
+                          value: matrizCaprino,
                           child: Row(
                             children: [
-                              Text(egua.nome),
+                              Text(matrizCaprino.nomeAnimal),
                             ],
                           ),
                         );
                       }).toList(),
-                      value: egua,
-                      hint: "Selecione égua",
-                      searchHint: "Selecione égua",
+                      value: matrizCaprino,
+                      hint: "Selecione matriz",
+                      searchHint: "Selecione matriz",
                       onChanged: (value) {
                         setState(() {
                           _editedTratamento.idAnimal = value.id;
-                          _editedTratamento.nomeAnimal = value.nome;
-                          nomeAnimal = value.nome;
+                          _editedTratamento.nomeAnimal = value.nomeAnimal;
+                          nomeAnimal = value.nomeAnimal;
                         });
                       },
                       doneButton: "Pronto",
@@ -207,24 +204,69 @@ class _CadastroTratamentoCaprinoState extends State<CadastroTratamentoCaprino> {
                     ),
                     Text("OU"),
                     SearchableDropdown.single(
-                      items: _potros.map((potro) {
+                      items: _jovensF.map((jovemFemeaCaprino) {
                         return DropdownMenuItem(
-                          value: potro,
+                          value: jovemFemeaCaprino,
                           child: Row(
                             children: [
-                              Text(potro.nome),
+                              Text(jovemFemeaCaprino.nomeAnimal),
                             ],
                           ),
                         );
                       }).toList(),
-                      value: egua,
-                      hint: "Selecione potro",
-                      searchHint: "Selecione potro",
+                      value: jovemFemeaCaprino,
+                      hint: "Selecione jovem fêmea",
+                      searchHint: "Selecione jovem fêmea",
                       onChanged: (value) {
                         setState(() {
                           _editedTratamento.idAnimal = value.id;
-                          _editedTratamento.nomeAnimal = value.nome;
-                          nomeAnimal = value.nome;
+                          _editedTratamento.nomeAnimal = value.nomeAnimal;
+                          nomeAnimal = value.nomeAnimal;
+                        });
+                      },
+                      doneButton: "Pronto",
+                      displayItem: (item, selected) {
+                        return (Row(children: [
+                          selected
+                              ? Icon(
+                                  Icons.radio_button_checked,
+                                  color: Colors.grey,
+                                )
+                              : Icon(
+                                  Icons.radio_button_unchecked,
+                                  color: Colors.grey,
+                                ),
+                          SizedBox(width: 7),
+                          Expanded(
+                            child: item,
+                          ),
+                        ]));
+                      },
+                      isExpanded: true,
+                    ),
+                    SizedBox(
+                      height: 5.0,
+                    ),
+                    Text("OU"),
+                    SearchableDropdown.single(
+                      items: _jovensM.map((jovemMachoCaprino) {
+                        return DropdownMenuItem(
+                          value: jovemMachoCaprino,
+                          child: Row(
+                            children: [
+                              Text(jovemMachoCaprino.nomeAnimal),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                      value: jovemMachoCaprino,
+                      hint: "Selecione jovem macho",
+                      searchHint: "Selecione jovem macho",
+                      onChanged: (value) {
+                        setState(() {
+                          _editedTratamento.idAnimal = value.id;
+                          _editedTratamento.nomeAnimal = value.nomeAnimal;
+                          nomeAnimal = value.nomeAnimal;
                         });
                       },
                       doneButton: "Pronto",
@@ -266,36 +308,34 @@ class _CadastroTratamentoCaprinoState extends State<CadastroTratamentoCaprino> {
                           _editedTratamento.lote = text;
                         });
                       },
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                     ),
                     TextField(
                       controller: _enfermidadeController,
                       decoration: InputDecoration(labelText: "Enfermidade"),
                       onChanged: (text) {},
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                     ),
                     SizedBox(height: 5.0),
                     SearchableDropdown.single(
-                      items: _medicamentos.map((medicamento) {
+                      items: _medicamentos.map((med) {
                         return DropdownMenuItem(
-                          value: medicamento,
+                          value: med,
                           child: Row(
                             children: [
-                              Text(medicamento.nomeMedicamento),
+                              Text(med.nomeMedicamento),
                             ],
                           ),
                         );
                       }).toList(),
                       value: med,
-                      hint: "Selecione um medicamento",
-                      searchHint: "Selecione um medicamento",
+                      hint: "Selecione medicamento",
+                      searchHint: "Selecione medicamento",
                       onChanged: (value) {
                         setState(() {
-                          med = value;
                           _editedTratamento.idMedicamento = value.id;
                           _editedTratamento.nomeMedicamento =
                               value.nomeMedicamento;
-                          nomeMedicamento = value.nomeMedicamento;
                         });
                       },
                       doneButton: "Pronto",
@@ -318,19 +358,9 @@ class _CadastroTratamentoCaprinoState extends State<CadastroTratamentoCaprino> {
                       },
                       isExpanded: true,
                     ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text("Medicamento selecionado:  $nomeMedicamento",
-                        style: TextStyle(
-                            fontSize: 16.0,
-                            color: Color.fromARGB(255, 4, 125, 141))),
-                    SizedBox(
-                      height: 10.0,
-                    ),
                     TextField(
                       controller: _quantidadeController,
-                      decoration: InputDecoration(labelText: "Quantidade"),
+                      decoration: InputDecoration(labelText: "Dose"),
                       onChanged: (text) {
                         _tratamentoEdited = true;
                         setState(() {
@@ -442,22 +472,27 @@ class _CadastroTratamentoCaprinoState extends State<CadastroTratamentoCaprino> {
   }
 
   void _carregaDados() {
-    _cavaloDB.getAllItems().then((value) {
+    _reprodutorDB.getAllItems().then((value) {
       setState(() {
-        _cavalos = value;
+        _reprodutores = value;
       });
     });
-    _eguaDB.getAllItems().then((value) {
+    _matrizDB.getAllItems().then((value) {
       setState(() {
-        _eguas = value;
+        _matrizes = value;
       });
     });
-    _potroDB.getAllItems().then((value) {
+    _jovemFDB.getAllItems().then((value) {
       setState(() {
-        _potros = value;
+        _jovensF = value;
       });
     });
-    medicamentoDB.getAllItems().then((value) {
+    _jovemMDB.getAllItems().then((value) {
+      setState(() {
+        _jovensM = value;
+      });
+    });
+    _medicamentoCaprinoDB.getAllItems().then((value) {
       setState(() {
         _medicamentos = value;
       });

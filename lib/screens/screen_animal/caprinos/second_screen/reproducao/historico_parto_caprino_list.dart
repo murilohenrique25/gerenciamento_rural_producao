@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/historico_parto_suino_db.dart';
-import 'package:gerenciamento_rural/models/historico_parto_suino.dart';
+import 'package:gerenciamento_rural/helpers/registro_parto_caprino_db.dart';
+import 'package:gerenciamento_rural/models/registro_partos_caprinos.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/reproducao/registers/cadastro_historico_parto.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPage.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
@@ -18,10 +19,10 @@ class ListaHistoricoPartoCaprino extends StatefulWidget {
 class _ListaHistoricoPartoCaprinoState
     extends State<ListaHistoricoPartoCaprino> {
   TextEditingController editingController = TextEditingController();
-  HistoricoPartoSuinoDB helper = HistoricoPartoSuinoDB();
-  List<HistoricoPartoSuino> items = [];
-  List<HistoricoPartoSuino> historicos = [];
-  List<HistoricoPartoSuino> tHistoricos = [];
+  RegistroPartoCaprinoDB helper = RegistroPartoCaprinoDB();
+  List<RegistroPartoCaprino> items = [];
+  List<RegistroPartoCaprino> historicos = [];
+  List<RegistroPartoCaprino> tHistoricos = [];
 
   @override
   void initState() {
@@ -53,6 +54,11 @@ class _ListaHistoricoPartoCaprinoState
               icon: Icon(Icons.picture_as_pdf),
               onPressed: () {
                 _creatPdf(context);
+              }),
+          IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {
+                _showPage();
               }),
         ],
         centerTitle: true,
@@ -101,7 +107,7 @@ class _ListaHistoricoPartoCaprinoState
             child: Row(
               children: [
                 Text(
-                  "Ninhada: " + historicos[index].nome ?? "",
+                  "Matriz: " + historicos[index].nomeMatriz ?? "",
                   style: TextStyle(fontSize: 14.0),
                 ),
                 SizedBox(
@@ -112,21 +118,7 @@ class _ListaHistoricoPartoCaprinoState
                   width: 15,
                 ),
                 Text(
-                  "Matriz: " + historicos[index].mae ?? "",
-                  style: TextStyle(fontSize: 14.0),
-                ),
-                SizedBox(
-                  width: 15,
-                ),
-                Text(
-                  "Cachaço: " + historicos[index].pai ?? "",
-                  style: TextStyle(fontSize: 14.0),
-                ),
-                SizedBox(
-                  width: 15,
-                ),
-                Text(
-                  "Data: " + historicos[index].dataNascimento ?? "",
+                  "Pai: " + historicos[index].nomeReprodutor ?? "",
                   style: TextStyle(fontSize: 14.0),
                 ),
                 SizedBox(
@@ -141,40 +133,129 @@ class _ListaHistoricoPartoCaprinoState
                   width: 15,
                 ),
                 Text(
-                  "Machos: " + historicos[index].sexoM.toString() ?? "",
+                  "Data: " + historicos[index].data ?? "",
                   style: TextStyle(fontSize: 14.0),
                 ),
                 SizedBox(
                   width: 15,
                 ),
                 Text(
-                  "Fêmeas: " + historicos[index].sexoF.toString() ?? "",
+                  "Quantidade Machos: " +
+                          historicos[index].quantMachos.toString() ??
+                      "",
                   style: TextStyle(fontSize: 14.0),
                 ),
                 SizedBox(
                   width: 15,
                 ),
                 Text(
-                  "Vivos: " + historicos[index].vivos.toString() ?? "",
+                  "Quantidade Fêmeas: " +
+                          historicos[index].quantFemeas.toString() ??
+                      "",
                   style: TextStyle(fontSize: 14.0),
                 ),
                 SizedBox(
                   width: 15,
                 ),
                 Text(
-                  "Mortos: " + historicos[index].mortos.toString() ?? "",
+                  "Problemas: " + historicos[index].problema.toString() ?? "",
                   style: TextStyle(fontSize: 14.0),
-                )
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                Text(
+                  "Tipo: " + historicos[index].tipoInseminacao ?? "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
               ],
             ),
           ),
         ),
       ),
-      onTap: () {},
+      onTap: () {
+        _showOptions(context, index);
+      },
     );
   }
 
   void _getAllHistorico() {
+    items = [];
+    helper.getAllItems().then((value) {
+      setState(() {
+        historicos = value;
+        items.addAll(historicos);
+      });
+    });
+  }
+
+  void _showPage({RegistroPartoCaprino registroPartoCaprino}) async {
+    final recRegistro = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => CadastroHistoricoPartoCaprino(
+                  registroPartoCaprino: registroPartoCaprino,
+                )));
+    if (recRegistro != null) {
+      if (registroPartoCaprino != null) {
+        await helper.updateItem(recRegistro);
+      } else {
+        await helper.insert(recRegistro);
+      }
+      _getAllRegistros();
+    }
+  }
+
+  void _showOptions(BuildContext context, int index) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return BottomSheet(
+            onClosing: () {},
+            builder: (context) {
+              return Container(
+                padding: EdgeInsets.all(10.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: ElevatedButton(
+                        child: Text(
+                          "Editar",
+                          style: TextStyle(color: Colors.red, fontSize: 20.0),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _showPage(registroPartoCaprino: historicos[index]);
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: ElevatedButton(
+                        child: Text(
+                          "Excluir",
+                          style: TextStyle(color: Colors.red, fontSize: 20.0),
+                        ),
+                        onPressed: () {
+                          helper.delete(historicos[index].id);
+                          setState(() {
+                            historicos.removeAt(index);
+                            Navigator.pop(context);
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        });
+  }
+
+  void _getAllRegistros() {
     items = [];
     helper.getAllItems().then((value) {
       setState(() {
@@ -192,26 +273,24 @@ class _ListaHistoricoPartoCaprinoState
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
                 <String>[
-                  'Ninhada',
-                  'Cachaço',
                   'Matriz',
+                  'Reprodutor',
                   'Data',
                   'Quantidade',
-                  'Machos',
-                  'Fêmeas',
-                  'Vivos',
-                  'Mortos'
+                  'Quantidade Machos',
+                  'Quantidade Fêmeas',
+                  'Problemas',
+                  'Tipo'
                 ],
                 ...tHistoricos.map((item) => [
-                      item.nome,
-                      item.mae,
-                      item.pai,
-                      item.dataNascimento,
+                      item.nomeMatriz,
+                      item.nomeReprodutor,
+                      item.data,
                       item.quantidade.toString(),
-                      item.sexoM.toString(),
-                      item.sexoF.toString(),
-                      item.vivos.toString(),
-                      item.mortos.toString()
+                      item.quantMachos.toString(),
+                      item.quantFemeas.toString(),
+                      item.problema,
+                      item.tipoInseminacao
                     ])
               ])
             ]));
@@ -229,12 +308,16 @@ class _ListaHistoricoPartoCaprinoState
     switch (result) {
       case OrderOptions.orderaz:
         historicos.sort((a, b) {
-          return a.mae.toLowerCase().compareTo(b.mae.toLowerCase());
+          return a.nomeMatriz
+              .toLowerCase()
+              .compareTo(b.nomeMatriz.toLowerCase());
         });
         break;
       case OrderOptions.orderza:
         historicos.sort((a, b) {
-          return b.mae.toLowerCase().compareTo(a.mae.toLowerCase());
+          return b.nomeMatriz
+              .toLowerCase()
+              .compareTo(a.nomeMatriz.toLowerCase());
         });
         break;
     }
@@ -242,12 +325,12 @@ class _ListaHistoricoPartoCaprinoState
   }
 
   void filterSearchResults(String query) {
-    List<HistoricoPartoSuino> dummySearchList = [];
+    List<RegistroPartoCaprino> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<HistoricoPartoSuino> dummyListData = [];
+      List<RegistroPartoCaprino> dummyListData = [];
       dummySearchList.forEach((item) {
-        if (item.mae.toLowerCase().contains(query.toLowerCase())) {
+        if (item.nomeMatriz.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
         }
       });
@@ -286,7 +369,7 @@ class _ListaHistoricoPartoCaprinoState
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
-                      pdfLib.Text('Histórico Parto Suíno',
+                      pdfLib.Text('Histórico Parto Caprinos',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white))
                     ],
