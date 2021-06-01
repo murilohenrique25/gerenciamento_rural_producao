@@ -6,7 +6,7 @@ class Aleitamento extends Suinos {
   Aleitamento();
   Aleitamento.fromMap(Map map) {
     idAnimal = map["id_animal"];
-    // id = map["id"];
+    id = map["id"];
     nome = map["nome"];
     dataNascimento = map["data_nascimento"];
     quantidade = map["quantidade"];

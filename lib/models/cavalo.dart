@@ -14,6 +14,9 @@ class Cavalo {
   double peso;
   String vm;
   String pelagem;
+  String descricao;
+  String dataAcontecido;
+  double valorVendido;
   Cavalo();
   Cavalo.fromMap(Map map) {
     id = map["id"]; //
@@ -31,6 +34,9 @@ class Cavalo {
     observacao = map["observacao"]; //
     vm = map["vm"];
     pelagem = map["pelagem"];
+    descricao = map["descricao"];
+    dataAcontecido = map["data_acontecido"];
+    valorVendido = map["valor_vendido"];
   }
 
   Map toMap() {
@@ -49,6 +55,9 @@ class Cavalo {
       "observacao": observacao,
       "vm": vm,
       "pelagem": pelagem,
+      "descricao": pelagem,
+      "data_acontecido": dataAcontecido,
+      "valor_vendido": valorVendido,
     };
     if (id != null) {
       map["id"] = id;

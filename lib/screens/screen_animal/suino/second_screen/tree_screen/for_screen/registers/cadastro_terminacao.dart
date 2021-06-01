@@ -137,7 +137,7 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
             //       duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
             // }
             else {
-              if (_editedTerminacao.estado == "Terminacao") {
+              if (_editedTerminacao.estado == "Terminação") {
                 Navigator.pop(context, _editedTerminacao);
               } else if (_editedTerminacao.estado == "Abatidos") {
                 TerminacaoDB terminacaoDB = TerminacaoDB();

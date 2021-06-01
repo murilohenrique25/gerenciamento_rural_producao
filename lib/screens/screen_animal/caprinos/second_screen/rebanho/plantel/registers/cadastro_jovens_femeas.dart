@@ -248,7 +248,7 @@ class _CadastroJovemFemeaState extends State<CadastroJovemFemea> {
                   onChanged: (text) {
                     _jfEdited = true;
                     setState(() {
-                      _editedJF.dataAcontecido = text;
+                      _editedJF.valorVendido = double.parse(text);
                     });
                   },
                 ),
@@ -577,6 +577,7 @@ class _CadastroJovemFemeaState extends State<CadastroJovemFemea> {
                     _jfEdited = true;
                     setState(() {
                       _editedJF.idLote = value.id;
+                      _editedJF.lote = value.nome;
                       nomeLote = value.nome;
                     });
                   },

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/cadastrar_animal.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/listar_animais.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/nutricao.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/rebanho.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/reproducao.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/saude_tratamento.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/touro_e_inseminacao.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/dados_rebanho_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/historico_animal_abatido_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/nutricao_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/producao_carne_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/rebanho_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/reproducao_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/saude_tratamento_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/economia_screen.dart';
 
 class DescriptionBovinoCorte extends StatefulWidget {
   @override
@@ -26,11 +27,11 @@ class _DescriptionBovinoCorteState extends State<DescriptionBovinoCorte> {
       body: SingleChildScrollView(
         child: Stack(
           children: [
-            // Image.asset(
-            //   "images/telainicial.png",
-            //   fit: BoxFit.cover,
-            //   height: 600.0,
-            // ),
+            Image.asset(
+              "images/telainicial.png",
+              fit: BoxFit.cover,
+              height: 800.0,
+            ),
             Column(
               children: [
                 Padding(padding: EdgeInsets.only(top: 60)),
@@ -48,7 +49,7 @@ class _DescriptionBovinoCorteState extends State<DescriptionBovinoCorte> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: CadastrarAnimal(),
+                          child: RebanhoScreen(),
                         ),
                       ],
                     ),
@@ -62,7 +63,7 @@ class _DescriptionBovinoCorteState extends State<DescriptionBovinoCorte> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: ListarAnimais(),
+                          child: DadosRebanhoScreen(),
                         ),
                       ],
                     ),
@@ -82,7 +83,7 @@ class _DescriptionBovinoCorteState extends State<DescriptionBovinoCorte> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: Nutricao(),
+                          child: ProducaoCarneScreen(),
                         ),
                       ],
                     ),
@@ -96,7 +97,7 @@ class _DescriptionBovinoCorteState extends State<DescriptionBovinoCorte> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: Reproducao(),
+                          child: HistoricoAnimalAbatidoScreen(),
                         ),
                       ],
                     ),
@@ -116,7 +117,7 @@ class _DescriptionBovinoCorteState extends State<DescriptionBovinoCorte> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: Rebanho(),
+                          child: NutricaoScreen(),
                         ),
                       ],
                     ),
@@ -130,7 +131,7 @@ class _DescriptionBovinoCorteState extends State<DescriptionBovinoCorte> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: SaudeTratamento(),
+                          child: ReproducaoScreen(),
                         ),
                       ],
                     ),
@@ -150,7 +151,21 @@ class _DescriptionBovinoCorteState extends State<DescriptionBovinoCorte> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: TouroInseminacao(),
+                          child: SaudeTratamentoScreen(),
+                        ),
+                      ],
+                    ),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: _width,
+                          height: _height,
+                          color: Colors.grey[50],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: EconomiaScreen(),
                         ),
                       ],
                     ),

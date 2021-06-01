@@ -25,6 +25,7 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
   String nomeEstado = "Vazia";
   String nomePai = "";
   String nomeMae = "";
+  String nomeLote = "";
   int _radioValue = 0;
   int _radioValueSetor = 0;
   String nomeD = "";
@@ -197,7 +198,7 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                   onChanged: (text) {
                     _matrizEdited = true;
                     setState(() {
-                      _editedMatriz.dataAcontecido = text;
+                      _editedMatriz.valorVendido = double.parse(text);
                     });
                   },
                 ),
@@ -444,7 +445,7 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                         onChanged: (int value) {
                           setState(() {
                             _radioValueSetor = value;
-                            //_editedPotro.estado = "Caprino";
+                            _editedMatriz.setor = "Caprino";
                           });
                         }),
                     Text("Caprino"),
@@ -454,7 +455,7 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                         onChanged: (int value) {
                           setState(() {
                             _radioValueSetor = value;
-                            // _editedPotro.estado = "Ovino";
+                            _editedMatriz.setor = "Ovino";
                           });
                         }),
                     Text("Ovino"),
@@ -488,6 +489,8 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                     _matrizEdited = true;
                     setState(() {
                       _editedMatriz.idLote = value.id;
+                      _editedMatriz.lote = value.nome;
+                      nomeLote = value.nome;
                     });
                   },
                   doneButton: "Pronto",
@@ -510,6 +513,10 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                   },
                   isExpanded: true,
                 ),
+                Text("Lote:  $nomeLote",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
                 SizedBox(
                   height: 5.0,
                 ),
@@ -630,17 +637,6 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                 ),
                 SizedBox(
                   height: 20.0,
-                ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _loteController,
-                  decoration: InputDecoration(labelText: "Lote"),
-                  onChanged: (text) {
-                    _matrizEdited = true;
-                    setState(() {
-                      _editedMatriz.lote = text;
-                    });
-                  },
                 ),
                 SizedBox(
                   height: 10.0,

@@ -46,7 +46,7 @@ class _DescriptionCaprinosState extends State<DescriptionCaprinos> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: PlantelEquinosScreen(),
+                          child: PlantelCaprinoScreen(),
                         ),
                       ],
                     ),

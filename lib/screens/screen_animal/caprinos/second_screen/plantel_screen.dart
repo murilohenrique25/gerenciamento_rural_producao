@@ -2,12 +2,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/rebanho/description_rebanho.dart';
 
-class PlantelEquinosScreen extends StatefulWidget {
+class PlantelCaprinoScreen extends StatefulWidget {
   @override
-  _PlantelEquinosScreenState createState() => _PlantelEquinosScreenState();
+  _PlantelCaprinoScreenState createState() => _PlantelCaprinoScreenState();
 }
 
-class _PlantelEquinosScreenState extends State<PlantelEquinosScreen> {
+class _PlantelCaprinoScreenState extends State<PlantelCaprinoScreen> {
   @override
   Widget build(BuildContext context) {
     return Column(

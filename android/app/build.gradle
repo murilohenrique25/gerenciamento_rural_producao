@@ -42,8 +42,8 @@ android {
         applicationId "br.com.devmurilo.gerenciamento_rural"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        versionCode 2
+        versionName "1.0.2"
     }
 
     signingConfigs {

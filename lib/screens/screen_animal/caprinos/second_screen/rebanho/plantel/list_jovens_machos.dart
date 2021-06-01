@@ -177,20 +177,22 @@ class _ListaJovensMachosState extends State<ListaJovensMachos> {
   }
 
   void _showTotalJMPage({JovemMachoCaprino jovemMacho}) async {
-    final recPotro = await Navigator.push(
+    final recJM = await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => CadastroJovemMacho(
             jovemMachoCaprino: jovemMacho,
           ),
         ));
-    if (recPotro != null) {
+    if (recJM != null) {
       if (jovemMacho != null) {
-        await helper.updateItem(recPotro);
+        await helper.updateItem(recJM);
       } else {
-        await helper.insert(recPotro);
+        await helper.insert(recJM);
         TodosCaprino todosCaprino = TodosCaprino();
-        todosCaprino.nome = recPotro.nomeAnimal;
+        todosCaprino.nome = recJM.nomeAnimal;
+        todosCaprino.lote = recJM.lote;
+        todosCaprino.tipo = "Jovem Macho";
         await todosCaprinosDB.insert(todosCaprino);
       }
       _getAllJM();

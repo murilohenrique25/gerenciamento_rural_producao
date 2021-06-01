@@ -24,6 +24,9 @@ class _CadastroPotroState extends State<CadastroPotro> {
   final _maeController = TextEditingController();
   final _sexoController = TextEditingController();
   final _loteController = TextEditingController();
+  final _origemController = TextEditingController();
+  final _valorVendidoController = TextEditingController();
+  final _descricaoController = TextEditingController();
   final _estadoController = TextEditingController();
   final _obsController = TextEditingController();
   final _resenhaController = TextEditingController();
@@ -32,6 +35,7 @@ class _CadastroPotroState extends State<CadastroPotro> {
   final _pelagemController = TextEditingController();
   var _dataNasc = MaskedTextController(mask: '00-00-0000');
 
+  var _dataAcontecidoController = MaskedTextController(mask: '00-00-0000');
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final df = new DateFormat("dd-MM-yyyy");
@@ -54,6 +58,7 @@ class _CadastroPotroState extends State<CadastroPotro> {
     if (widget.potro == null) {
       _editedPotro = Potro();
       _editedPotro.vm = "Vivo";
+      _editedPotro.sexo = "Macho";
     } else {
       _editedPotro = Potro.fromMap(widget.potro.toMap());
       _nomeController.text = _editedPotro.nome;
@@ -62,8 +67,14 @@ class _CadastroPotroState extends State<CadastroPotro> {
       _paiController.text = _editedPotro.pai;
       _maeController.text = _editedPotro.mae;
       _baiaController.text = _editedPotro.baia;
+      _origemController.text = _editedPotro.origem;
       _pelagemController.text = _editedPotro.pelagem;
-      _pesoController.text = _editedPotro.peso.toString();
+      if (_editedPotro.peso != null) {
+        _pesoController.text = _editedPotro.peso.toString();
+      } else {
+        _pesoController.text = "0";
+      }
+
       if (_editedPotro.vm == "Vivo") {
         _radioValue = 0;
       } else {
@@ -78,7 +89,115 @@ class _CadastroPotroState extends State<CadastroPotro> {
       _loteController.text = _editedPotro.lote;
       numeroData = _editedPotro.dataNascimento;
       _dataNasc.text = numeroData;
+      idadeFinal = differenceDate();
     }
+  }
+
+  Future<void> _showMortoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Causa Morte'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _descricaoController,
+                  decoration: InputDecoration(labelText: "Causa"),
+                  onChanged: (text) {
+                    _potroEdited = true;
+                    setState(() {
+                      _editedPotro.descricao = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _potroEdited = true;
+                    setState(() {
+                      _editedPotro.dataAcontecido = text;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showVendidoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Vendido'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _paiController,
+                  decoration: InputDecoration(labelText: "Comprador"),
+                  onChanged: (text) {
+                    _potroEdited = true;
+                    setState(() {
+                      _editedPotro.descricao = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _potroEdited = true;
+                    setState(() {
+                      _editedPotro.dataAcontecido = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _valorVendidoController,
+                  decoration: InputDecoration(labelText: "Preço"),
+                  onChanged: (text) {
+                    _potroEdited = true;
+                    setState(() {
+                      _editedPotro.valorVendido = double.parse(text);
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _showMyDialog() async {
@@ -268,6 +387,17 @@ class _CadastroPotroState extends State<CadastroPotro> {
                 ),
                 TextField(
                   keyboardType: TextInputType.text,
+                  controller: _origemController,
+                  decoration: InputDecoration(labelText: "Origem"),
+                  onChanged: (text) {
+                    _potroEdited = true;
+                    setState(() {
+                      _editedPotro.origem = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
                   controller: _pesoController,
                   decoration: InputDecoration(labelText: "Peso Kg"),
                   onChanged: (text) {
@@ -366,9 +496,22 @@ class _CadastroPotroState extends State<CadastroPotro> {
                           setState(() {
                             _radioValue = value;
                             _editedPotro.vm = "Morto";
+                            if (_editedPotro.vm == "Morto") _showMortoDialog();
                           });
                         }),
                     Text("Morto"),
+                    Radio(
+                        value: 2,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            _editedPotro.vm = "Vendido";
+                            if (_editedPotro.vm == "Vendido")
+                              _showVendidoDialog();
+                          });
+                        }),
+                    Text("Vendido"),
                   ],
                 ),
                 SizedBox(

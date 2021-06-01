@@ -1,6 +1,8 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:gerenciamento_rural/helpers/abatidos_db.dart';
+import 'package:gerenciamento_rural/models/abatidos.dart';
 import 'package:gerenciamento_rural/models/matriz.dart';
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
@@ -27,11 +29,16 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
   final _origemController = TextEditingController();
   final _racaController = TextEditingController();
   final _paiController = TextEditingController();
+  final _descricaoController = TextEditingController();
+  final _pesoController = TextEditingController();
   final _maeController = TextEditingController();
+  final _precoVendidoController = TextEditingController();
   final _baiaController = TextEditingController();
+  final _procedenciaController = TextEditingController();
   final _loteController = TextEditingController();
   final _diasprenhaController = TextEditingController();
   var _dataNasc = MaskedTextController(mask: '00-00-0000');
+  var _dataAcontecidoController = MaskedTextController(mask: '00-00-0000');
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -62,14 +69,17 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
       _racaController.text = _editedMatriz.raca;
       _paiController.text = _editedMatriz.pai;
       _maeController.text = _editedMatriz.mae;
-      if (_editedMatriz.estado == "Vivo") {
+      _procedenciaController.text = _editedMatriz.procedencia;
+      if (_editedMatriz.estado == "Viva") {
         _radioValue = 0;
-      } else if (_editedMatriz.estado == "Morto") {
+      } else if (_editedMatriz.estado == "Morta") {
         _radioValue = 1;
-      } else {
+      } else if (_editedMatriz.estado == "Abatida") {
         _radioValue = 2;
+      } else {
+        _radioValue = 3;
       }
-
+      partoPrevisto = dataPrevistaPartoString(_editedMatriz.diasPrenha);
       _diasprenhaController.text = _editedMatriz.diasPrenha.toString();
       nomeD = _editedMatriz.diagnosticoGestacao;
       numPartos = _editedMatriz.numeroPartos;
@@ -77,6 +87,7 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
       _loteController.text = _editedMatriz.lote;
       numeroData = _editedMatriz.dataNascimento;
       _dataNasc.text = numeroData;
+      idadeFinal = differenceDate();
     }
   }
 
@@ -128,6 +139,161 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
     );
   }
 
+  Future<void> _showMortoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Causa Morte'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _descricaoController,
+                  decoration: InputDecoration(labelText: "Causa"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.descricao = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.dataAcontecido = text;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showVendidoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Vendido'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _paiController,
+                  decoration: InputDecoration(labelText: "Comprador"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.descricao = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.dataAcontecido = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _precoVendidoController,
+                  decoration: InputDecoration(labelText: "Preço"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.precoFinal = double.parse(text);
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showAbatidoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Abatido'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.dataAcontecido = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _pesoController,
+                  decoration: InputDecoration(labelText: "Peso"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.peso = double.parse(text);
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -158,6 +324,14 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
             } else {
               if (_diasprenhaController.text == null) {
                 _editedMatriz.diasPrenha = 0;
+              }
+              if (_editedMatriz.estado == "Abatida") {
+                AbatidosDB abatidosDB = AbatidosDB();
+                Abatido abatido;
+                _editedMatriz.estado = "Abatida";
+                abatido = Abatido.fromMap(_editedMatriz.toMap());
+                abatidosDB.insert(abatido);
+                Navigator.pop(context, _editedMatriz);
               }
               Navigator.pop(context, _editedMatriz);
             }
@@ -243,6 +417,17 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                     _matrizEdited = true;
                     setState(() {
                       _editedMatriz.origem = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _procedenciaController,
+                  decoration: InputDecoration(labelText: "Procedência"),
+                  onChanged: (text) {
+                    _matrizEdited = true;
+                    setState(() {
+                      _editedMatriz.procedencia = text;
                     });
                   },
                 ),
@@ -344,29 +529,45 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                 SizedBox(
                   height: 15.0,
                 ),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Radio(
+                      value: 0,
+                      groupValue: _radioValue,
+                      onChanged: (int value) {
+                        setState(() {
+                          _radioValue = value;
+                          _editedMatriz.estado = "Viva";
+                        });
+                      }),
+                  Text("Viva"),
+                  Radio(
+                      value: 1,
+                      groupValue: _radioValue,
+                      onChanged: (int value) {
+                        setState(() {
+                          _radioValue = value;
+                          _editedMatriz.estado = "Morta";
+                          if (_editedMatriz.estado == "Morta")
+                            _showMortoDialog();
+                        });
+                      }),
+                  Text("Morta"),
+                ]),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Radio(
-                        value: 0,
-                        groupValue: _radioValue,
-                        onChanged: (int value) {
-                          setState(() {
-                            _radioValue = value;
-                            _editedMatriz.estado = "Viva";
-                          });
-                        }),
-                    Text("Vivo"),
                     Radio(
                         value: 1,
                         groupValue: _radioValue,
                         onChanged: (int value) {
                           setState(() {
                             _radioValue = value;
-                            _editedMatriz.estado = "Morta";
+                            _editedMatriz.estado = "Abatida";
+                            if (_editedMatriz.estado == "Abatida")
+                              _showAbatidoDialog();
                           });
                         }),
-                    Text("Morto"),
+                    Text("Abatida"),
                     Radio(
                         value: 2,
                         groupValue: _radioValue,
@@ -374,6 +575,8 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                           setState(() {
                             _radioValue = value;
                             _editedMatriz.estado = "Vendida";
+                            if (_editedMatriz.estado == "Vendida")
+                              _showVendidoDialog();
                           });
                         }),
                     Text("Vendida"),
@@ -420,6 +623,21 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
     } else {
       return Future.value(true);
     }
+  }
+
+  String dataPrevistaPartoString(int dias) {
+    if (_editedMatriz.partoPrevisto == null) {
+      return null;
+    } else {
+      String num = _editedMatriz.partoPrevisto.split('-').reversed.join();
+      DateTime dates = DateTime.parse(num);
+      DateTime dateParto = dates.add(new Duration(days: -dias));
+      var format = new DateFormat("dd-MM-yyyy");
+      String dataParto = format.format(dateParto);
+      _editedMatriz.partoPrevisto = dataParto;
+    }
+
+    return _editedMatriz.partoPrevisto;
   }
 
   String differenceDate() {

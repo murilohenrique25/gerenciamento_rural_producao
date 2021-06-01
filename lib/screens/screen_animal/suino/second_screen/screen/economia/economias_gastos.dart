@@ -283,7 +283,6 @@ class _EconomiaSuinaState extends State<EconomiaSuina> {
   }
 
   _creatPdf(context) async {
-    tGastos = gastos;
     final pdfLib.Document pdf = pdfLib.Document(deflate: zlib.encode);
     pdf.addPage(pdfLib.MultiPage(
         header: _buildHeade,
@@ -296,7 +295,7 @@ class _EconomiaSuinaState extends State<EconomiaSuina> {
                   'Quantidade',
                   'Valor Total'
                 ],
-                ...tGastos.map((item) => [
+                ...gastos.map((item) => [
                       item.nome,
                       item.data,
                       item.valorUnitario.toString(),

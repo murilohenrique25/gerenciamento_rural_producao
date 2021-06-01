@@ -92,6 +92,14 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
               if (_radioValue == 0) {
                 inventarioSemen.quantidade = inventarioSemen.quantidade - 1;
                 _inventarioSemenDB.updateItem(inventarioSemen);
+                matriz.diasPrenha = 0;
+                String num = _editedInseminacao.data.split('-').reversed.join();
+                DateTime dates = DateTime.parse(num);
+                DateTime dateParto = dates.add(new Duration(days: 144));
+                var format = new DateFormat("dd-MM-yyyy");
+                String dataParto = format.format(dateParto);
+                matriz.partoPrevisto = dataParto;
+                matrizDB.updateItem(matriz);
               }
               Navigator.pop(context, _editedInseminacao);
             }
@@ -213,6 +221,7 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
                     setState(() {
                       _editedInseminacao.idSemen = value.idCachaco;
                       _editedInseminacao.nomeCachaco = value.nomeCachaco;
+                      nomeCachaco = value.nomeCachaco;
                     });
                   },
                   doneButton: "Pronto",

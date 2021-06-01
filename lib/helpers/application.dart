@@ -1,6 +1,6 @@
-String dbName = 'final2605a5.db';
-int dbVersion = 1;
-
+String dbName = 'profavormaio2705.db';
+int dbVersion = 2;
+//antunesaugustocmdf
 List<String> dbCreate = [
   //tb lote
   """CREATE TABLE lote(
@@ -113,6 +113,7 @@ List<String> dbCreate = [
       id INTEGER PRIMARY KEY,
       nome TEXT,
       data TEXT,
+      unidade TEXT,
       quantidade INTEGER,
       observacao TEXT,
       valorUnitario REAL,
@@ -346,9 +347,12 @@ List<String> dbCreate = [
   pai TEXT,
   mae TEXT,
   baia TEXT,
-  peso double,
   origem TEXT,
-  observacao TEXT
+  observacao TEXT,
+  preco_final REAL,
+   data_acontecido TEXT,
+   peso REAL,
+   procedencia TEXT,
   )""",
   //TB matriz
   """CREATE TABLE matriz(
@@ -367,7 +371,12 @@ List<String> dbCreate = [
   numero_partos INTEGER,
   parto_previsto TEXT,
   diagnostico_gestacao TEXT,
-  dias_prenha INTEGER
+  dias_prenha INTEGER,
+  descricao TEXT,
+  preco_final REAL,
+   data_acontecido TEXT,
+   peso REAL,
+   procedencia TEXT,
   )""",
   //tabela medicamentoSuino
   """CREATE TABLE medicamentoSuino(
@@ -496,7 +505,10 @@ List<String> dbCreate = [
       resenha TEXT,
       observacao TEXT,
       vm TEXT,
-      pelagem TEXT
+      pelagem TEXT,
+      descricao TEXT,
+      data_acontecido TEXT,
+      valor_vendido REAL
      )""",
   //tabela egua
   """CREATE TABLE egua(
@@ -519,7 +531,11 @@ List<String> dbCreate = [
       baia TEXT,
       peso REAL,
       vm TEXT,
-      pelagem TEXT
+      pelagem TEXT,
+      parto_previsto TEXT,
+      descricao TEXT,
+      data_acontecido TEXT,
+      valor_vendido REAL
      )""",
   //tabela potro
   """CREATE TABLE potro(
@@ -540,7 +556,10 @@ List<String> dbCreate = [
       sexo TEXT,
       virou_adulto INTEGER,
       vm TEXT,
-      pelagem TEXT
+      pelagem TEXT,
+      descricao TEXT,
+      data_acontecido TEXT,
+      valor_vendido REAL
      )""",
   //tb volumoso
   """CREATE TABLE nutricaoVolumosoEquino(
@@ -897,6 +916,8 @@ List<String> dbCreate = [
   """CREATE TABLE todosCaprinos(
     id INTEGER PRIMARY KEY,
     nome TEXT,
+    lote TEXT,
+    tipo TEXT,
     id_lote INTEGER,
     FOREIGN KEY (id_lote) REFERENCES loteCaprino(id)
     )""",
@@ -920,6 +941,7 @@ List<String> dbCreate = [
       id INTEGER PRIMARY KEY,
       nome TEXT,
       data TEXT,
+      unidade TEXT,
       quantidade INTEGER,
       observacao TEXT,
       valorUnitario REAL,
@@ -943,4 +965,289 @@ List<String> dbCreate = [
   observacao TEXT,
   baia TEXT
   )""",
+  //tb Vaca
+  """CREATE TABLE vacaCorte(
+    id INTEGER PRIMARY KEY, 
+    nome TEXT,
+    ultima_inseminacao TEXT,
+    data_nascimento TEXT,
+    data_diagnostico_gestacao TEXT,
+    parto_previsto TEXT,
+    data_parto TEXT,
+    secagem_prevista TEXT, 
+    diagnostico_gestacao TEXT,
+    raca TEXT, 
+    origem TEXT, 
+    nome_lote TEXT, 
+    id_lote INTEGER,
+    estado TEXT,
+    pai TEXT,
+    mae TEXT,
+    situacao TEXT,
+    observacao TEXT,
+    cec TEXT,
+    data_acontecido TEXT,
+    peso_final REAL,
+    comprador TEXT,
+    preco_vivo REAL,
+    dias_prenha INTEGER
+    )""",
+  //tb bezerra
+  """CREATE TABLE bezerraCorte(
+    id INTEGER PRIMARY KEY, 
+    nome TEXT,
+    data_nascimento TEXT,
+    raca TEXT, 
+    origem TEXT, 
+    peso REAL,
+    nome_lote TEXT, 
+    id_lote INTEGER,
+    pai TEXT,
+    mae TEXT,
+    situacao TEXT,
+    observacao TEXT,
+    data_acontecido TEXT,
+    peso_final REAL,
+    comprador TEXT,
+    preco_vivo REAL,
+    idade_desmama TEXT,
+    peso_desmama REAL,
+    virou_adulto INTEGER
+    )""",
+  //tb bezerro
+  """CREATE TABLE bezerroCorte(
+    id INTEGER PRIMARY KEY, 
+    nome TEXT,
+    data_nascimento TEXT,
+    raca TEXT, 
+    origem TEXT, 
+    peso REAL,
+    nome_lote TEXT, 
+    id_lote INTEGER,
+    pai TEXT,
+    mae TEXT,
+    situacao TEXT,
+    observacao TEXT,
+    data_acontecido TEXT,
+    peso_final REAL,
+    comprador TEXT,
+    preco_vivo REAL,
+    idade_desmama TEXT,
+    peso_desmama REAL,
+    virou_adulto INTEGER
+    )""",
+  //tb bezerro
+  """CREATE TABLE garroteCorte(
+    id INTEGER PRIMARY KEY, 
+    nome TEXT,
+    data_nascimento TEXT,
+    raca TEXT, 
+    origem TEXT, 
+    peso REAL,
+    nome_lote TEXT, 
+    id_lote INTEGER,
+    pai TEXT,
+    mae TEXT,
+    situacao TEXT,
+    observacao TEXT,
+    data_acontecido TEXT,
+    peso_final REAL,
+    comprador TEXT,
+    preco_vivo REAL,
+    idade_desmama TEXT,
+    peso_desmama REAL,
+    virou_adulto INTEGER
+    )""",
+  //tb Novilha
+  """CREATE TABLE novilhaCorte(
+    id INTEGER PRIMARY KEY, 
+    nome TEXT,
+    ultima_inseminacao TEXT,
+    data_nascimento TEXT,
+    data_diagnostico_gestacao TEXT,
+    parto_previsto TEXT,
+    data_parto TEXT,
+    secagem_prevista TEXT, 
+    diagnostico_gestacao TEXT,
+    raca TEXT, 
+    origem TEXT, 
+    nome_lote TEXT, 
+    id_lote INTEGER,
+    estado TEXT,
+    pai TEXT,
+    mae TEXT,
+    situacao TEXT,
+    observacao TEXT,
+    cec TEXT,
+    data_acontecido TEXT,
+    peso_final REAL,
+    comprador TEXT,
+    preco_vivo REAL,
+    dias_prenha INTEGER,
+    idade_desmama TEXT,
+    peso_desmama REAL,
+    idade_primeira_cobertura TEXT,
+    peso_primeira_cobertura REAL,
+    idade_primeiro_parto TEXT,
+    peso_primeiro_parto REAL,
+    virou_adulto INTEGER,
+    )""",
+  """CREATE TABLE touroCorte(
+    id INTEGER PRIMARY KEY, 
+    nome TEXT,
+    dataNascimento TEXT,
+    raca TEXT,
+    origem TEXT,
+    id_lote INTEGER,
+    nome_lote TEXT,
+    peso REAL,
+    cec TEXT,
+    pai TEXT,
+    mae TEXT,
+    situacao TEXT,
+    observacao TEXT,
+    data_acontecido TEXT,
+    peso_final REAL,
+    comprador TEXT,
+    preco_vivo REAL,
+    exame_geral TEXT,
+    exame_sistema_genital TEXT,
+    perimetro_escrotal TEXT,
+    consistencia_escrotal TEXT,
+    glandulas_sexuais_acessorias TEXT,
+    regiao_prepucial TEXT,
+    exame_observacao TEXT,
+    temperamento TEXT,
+    texte_libido TEXT,
+    reflexo_fleming TEXT,
+    capacidade_identicar_femea_cio TEXT,
+    perseguicao_femea_persistencia TEXT,
+    tentativas_montas TEXT,
+    monta TEXT,
+    saltos TEXT,
+    avaliacao TEXT,
+    tipo_avaliacao TEXT,
+    vigor TEXT,
+    motilidade TEXT,
+    turbilhamento TEXT,
+    concentracao TEXT,
+    volume TEXT,
+    aspecto TEXT,
+    celulas_normais TEXT,
+    defeitos_menores TEXT,
+    defeitos_maiores TEXT,
+    cor TEXT,
+    data_exame TEXT,
+    )""",
+  //tb volumoso
+  """CREATE TABLE nutricaoVolumosoBovinoCorte(
+    id INTEGER PRIMARY KEY,
+    id_lote INTEGER,
+    nome_lote TEXT,
+    tipo TEXT,
+    pb REAL,
+    ndt REAL,
+    ms REAL,
+    umidade REAL,
+    quantidade_individual REAL,
+    quantidade_total REAL,
+    observacao TEXT,
+    data TEXT,
+    baia TEXT
+  )""",
+  //tb volumoso
+  """CREATE TABLE nutricaoConcentradoBovinoCorte(
+    id INTEGER PRIMARY KEY,
+    id_lote INTEGER,
+    nome_lote TEXT,
+    ingredientes TEXT,
+    pb REAL,
+    ndt REAL,
+    quantidade_individual REAL,
+    quantidade_total REAL,
+    observacao TEXT,
+    data TEXT,
+    baia TEXT
+  )""",
+  //tb volumoso
+  """CREATE TABLE nutricaoSuplementarBovinoCorte(
+    id INTEGER PRIMARY KEY,
+    id_lote INTEGER,
+    nome_lote TEXT,
+    ingredientes TEXT,
+    quantidade_individual REAL,
+    quantidade_total REAL,
+    observacao TEXT,
+    data TEXT,
+    baia TEXT
+  )""",
+  //tb tratamentoBovinoCorte
+  """CREATE TABLE tratamentoBovinoCorte(
+    id INTEGER PRIMARY KEY,
+    lote TEXT,
+    idAnimal INTEGER, 
+    nomeAnimal TEXT,
+    enfermidade TEXT,
+    idMedicamento INTEGER,
+    quantidade REAL,
+    nomeMedicamento TEXT,
+    unidade TEXT,
+    viaAplicacao TEXT,
+    duracao TEXT,
+    inicioTratamento TEXT,
+    fimTratamento TEXT,
+    carencia TEXT,
+    observacao TEXT,
+    tipo INTEGER
+    )""",
+  //tb lote
+  """CREATE TABLE loteBovinoCorte(
+    id INTEGER PRIMARY KEY, 
+    nome TEXT 
+    )""",
+  //tb cortesAbatidos
+  """CREATE TABLE cortesAbatidos(
+    id INTEGER PRIMARY KEY, 
+    nome_animal TEXT ,
+    categoria TEXT,
+    idade TEXT,
+    peso_arroba REAL,
+    preco_kg_arrocha REAL,
+    data TEXT,
+    comprador TEXT,
+    observacao TEXT,
+    )""",
+  //tabela gastoBovinoCorte
+  """CREATE TABLE gastoBovinoCorte(
+      id INTEGER PRIMARY KEY,
+      nome TEXT,
+      data TEXT,
+      unidade TEXT,
+      quantidade INTEGER,
+      observacao TEXT,
+      valorUnitario REAL,
+      valorTotal REAL
+     )""",
+  //tb insemincacao
+  """CREATE TABLE inseminacaoBovinoCorte(
+    id INTEGER PRIMARY KEY, 
+    idVaca INTEGER, 
+    nomeVaca TEXT,
+    idSemen INTEGER,
+    nomeTouro TEXT,
+    data TEXT,
+    observacao TEXT,
+    inseminador TEXT
+    )""",
+  //tabela inventarioSemenBovinoCorte
+  """CREATE TABLE inventarioSemenBovinoCorte(
+      id_inventario INTEGER PRIMARY KEY,
+      codigoIA TEXT,
+      tamanho TEXT,
+      quantidade INTEGER,
+      cor TEXT,
+      idTouro INTEGER,
+      nomeTouro TEXT,
+      dataCadastro TEXT,
+    )""",
 ];

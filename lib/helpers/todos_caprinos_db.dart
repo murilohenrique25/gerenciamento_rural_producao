@@ -79,4 +79,15 @@ class TodosCaprinosDB extends HelperDB {
     }
     return list;
   }
+
+  Future<List> getAllItemsPorLote(String where) async {
+    Database db = await this.getDb();
+    List listMap =
+        await db.rawQuery("SELECT * FROM todosCaprinos WHERE lote == '$where'");
+    List<TodosCaprino> list = [];
+    for (Map m in listMap) {
+      list.add(TodosCaprino.fromMap(m));
+    }
+    return list;
+  }
 }

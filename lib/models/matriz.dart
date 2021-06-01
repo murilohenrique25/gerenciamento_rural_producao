@@ -6,6 +6,7 @@ class Matriz extends Suinos {
   String partoPrevisto;
   String diagnosticoGestacao;
   int diasPrenha;
+  String procedencia;
   Matriz();
   Matriz.fromMap(Map map) {
     idAnimal = map["id_animal"]; //
@@ -23,6 +24,11 @@ class Matriz extends Suinos {
     partoPrevisto = map["parto_previsto"]; //
     diagnosticoGestacao = map["diagnostico_gestacao"]; //
     diasPrenha = map["dias_prenha"]; //
+    descricao = map["descricao"]; //
+    precoFinal = map["preco_final"]; //
+    dataAcontecido = map["data_acontecido"]; //
+    peso = map["peso"];
+    procedencia = map["procedencia"];
   }
 
   Map toMap() {
@@ -41,6 +47,11 @@ class Matriz extends Suinos {
       "parto_previsto": partoPrevisto,
       "diagnostico_gestacao": diagnosticoGestacao,
       "dias_prenha": diasPrenha,
+      "descricao": descricao,
+      "preco_final": precoFinal,
+      "data_acontecido": dataAcontecido,
+      "peso": peso,
+      "procedencia": procedencia,
     };
     if (idAnimal != null) {
       map["id_animal"] = idAnimal;

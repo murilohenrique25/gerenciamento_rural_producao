@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:gerenciamento_rural/helpers/abatidos_db.dart';
+import 'package:gerenciamento_rural/models/abatidos.dart';
 import 'package:gerenciamento_rural/models/cachaco.dart';
 import 'package:intl/intl.dart';
 import 'package:toast/toast.dart';
@@ -23,10 +25,13 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
   final _paiController = TextEditingController();
   final _maeController = TextEditingController();
   final _obsController = TextEditingController();
+  final _descricaoController = TextEditingController();
   final _procedenciaController = TextEditingController();
   final _estadoController = TextEditingController();
+  final _precoVendidoController = TextEditingController();
   final _baiaController = TextEditingController();
   var _dataNasc = MaskedTextController(mask: '00-00-0000');
+  var _dataAcontecidoController = MaskedTextController(mask: '00-00-0000');
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -59,8 +64,10 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
         _radioValue = 0;
       } else if (_editedCachaco.identificacao == "Morto") {
         _radioValue = 1;
-      } else {
+      } else if (_editedCachaco.identificacao == "Vendido") {
         _radioValue = 2;
+      } else {
+        _radioValue = 3;
       }
       _racaController.text = _editedCachaco.raca;
       _paiController.text = _editedCachaco.pai;
@@ -69,6 +76,9 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
       _procedenciaController.text = _editedCachaco.origem;
       _estadoController.text = _editedCachaco.estado;
       _baiaController.text = _editedCachaco.baia;
+      _descricaoController.text = _editedCachaco.descricao;
+      _precoVendidoController.text = _editedCachaco.precoFinal.toString();
+      _dataAcontecidoController.text = _editedCachaco.dataAcontecido;
       numeroData = _editedCachaco.dataNascimento;
       _dataNasc.text = numeroData;
       idadeFinal = differenceDate();
@@ -123,6 +133,161 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
     );
   }
 
+  Future<void> _showMortoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Causa Morte'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _descricaoController,
+                  decoration: InputDecoration(labelText: "Causa"),
+                  onChanged: (text) {
+                    _cachadoEdited = true;
+                    setState(() {
+                      _editedCachaco.descricao = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _cachadoEdited = true;
+                    setState(() {
+                      _editedCachaco.dataAcontecido = text;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showVendidoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Vendido'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _paiController,
+                  decoration: InputDecoration(labelText: "Comprador"),
+                  onChanged: (text) {
+                    _cachadoEdited = true;
+                    setState(() {
+                      _editedCachaco.descricao = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _cachadoEdited = true;
+                    setState(() {
+                      _editedCachaco.dataAcontecido = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _precoVendidoController,
+                  decoration: InputDecoration(labelText: "Preço"),
+                  onChanged: (text) {
+                    _cachadoEdited = true;
+                    setState(() {
+                      _editedCachaco.precoFinal = double.parse(text);
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showAbatidoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Abatido'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _cachadoEdited = true;
+                    setState(() {
+                      _editedCachaco.dataAcontecido = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _pesoController,
+                  decoration: InputDecoration(labelText: "Peso"),
+                  onChanged: (text) {
+                    _cachadoEdited = true;
+                    setState(() {
+                      _editedCachaco.peso = double.parse(text);
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -151,7 +316,14 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
               Toast.show("Data nascimento inválida.", context,
                   duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
             } else {
-              Navigator.pop(context, _editedCachaco);
+              if (_editedCachaco.estado == "Abatido") {
+                AbatidosDB abatidosDB = AbatidosDB();
+                Abatido abatido;
+                _editedCachaco.estado = "Abatido";
+                abatido = Abatido.fromMap(_editedCachaco.toMap());
+                abatidosDB.insert(abatido);
+                Navigator.pop(context, _editedCachaco);
+              }
             }
           },
           child: Icon(Icons.save),
@@ -297,6 +469,8 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                           setState(() {
                             _radioValue = value;
                             _editedCachaco.identificacao = "Morto";
+                            if (_editedCachaco.identificacao == "Morto")
+                              _showMortoDialog();
                           });
                         }),
                     Text("Morto"),
@@ -312,6 +486,8 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                           setState(() {
                             _radioValue = value;
                             _editedCachaco.identificacao = "Vendido";
+                            if (_editedCachaco.identificacao == "Vendido")
+                              _showVendidoDialog();
                           });
                         }),
                     Text("Vendido"),
@@ -322,6 +498,7 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                           setState(() {
                             _radioValue = value;
                             _editedCachaco.identificacao = "Abatido";
+                            _showAbatidoDialog();
                           });
                         }),
                     Text("Abatido"),

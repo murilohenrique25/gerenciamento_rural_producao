@@ -317,12 +317,12 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                 ),
                 TextField(
                   keyboardType: TextInputType.text,
-                  controller: _pesoVendidoController,
+                  controller: _valorVendidoController,
                   decoration: InputDecoration(labelText: "Preço"),
                   onChanged: (text) {
                     _jmEdited = true;
                     setState(() {
-                      _editedJM.pesoFinal = double.parse(text);
+                      _editedJM.valorVendido = double.parse(text);
                     });
                   },
                 ),
@@ -570,6 +570,7 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                     _jmEdited = true;
                     setState(() {
                       _editedJM.idLote = value.id;
+                      _editedJM.lote = value.nome;
                       nomeLote = value.nome;
                     });
                   },
@@ -642,17 +643,6 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                     _jmEdited = true;
                     setState(() {
                       _editedJM.origem = text;
-                    });
-                  },
-                ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _loteController,
-                  decoration: InputDecoration(labelText: "Lote"),
-                  onChanged: (text) {
-                    _jmEdited = true;
-                    setState(() {
-                      _editedJM.lote = text;
                     });
                   },
                 ),

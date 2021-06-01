@@ -104,7 +104,7 @@ class _CadastroNutricaoSuplementoEquinoState
                   onChanged: (text) {
                     _nutricaoEdited = true;
                     setState(() {
-                      _editedNutricao.ingredientes = text;
+                      _editedNutricao.nomeLote = text;
                     });
                   },
                 ),

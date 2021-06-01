@@ -191,6 +191,8 @@ class _ListaJovensFemeaState extends State<ListaJovensFemea> {
         await helper.insert(recJF);
         TodosCaprino todosCaprino = TodosCaprino();
         todosCaprino.nome = recJF.nomeAnimal;
+        todosCaprino.lote = recJF.lote;
+        todosCaprino.tipo = "Jovem Fêmea";
         await todosCaprinosDB.insert(todosCaprino);
       }
       _getAllJovensFemeas();

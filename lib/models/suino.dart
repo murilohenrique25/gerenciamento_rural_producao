@@ -19,4 +19,8 @@ abstract class Suinos {
   String pesoDesmama;
   String dataDesmama;
   String observacao;
+  String descricao;
+  String dataAcontecido;
+  double precoFinal;
+  double peso;
 }

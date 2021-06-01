@@ -192,7 +192,9 @@ class _ListaReprodutoresState extends State<ListaReprodutores> {
         await helper.insert(recReprodutor);
         TodosCaprino todosCaprino = TodosCaprino();
         todosCaprino.nome = recReprodutor.nomeAnimal;
-        // todosCaprino.nome = recReprodutor.pesoFinal;
+        todosCaprino.lote = recReprodutor.lote;
+        print(recReprodutor.lote);
+        todosCaprino.tipo = "Reprodutor";
         await todosCaprinosDB.insert(todosCaprino);
       }
       _getAllAnimais();
@@ -230,7 +232,6 @@ class _ListaReprodutoresState extends State<ListaReprodutores> {
                   'Mãe',
                   'Data Abatido',
                   'Peso Abatido',
-                  'Idade 1º Parto',
                   'Observação'
                 ],
                 ...reprodutores.map((item) => [

@@ -94,6 +94,14 @@ class _CadastroInseminacaoMontaEquinoState
               if (_radioValue == 0) {
                 inventarioSemen.quantidade = inventarioSemen.quantidade - 1;
                 _inventarioSemenDB.updateItem(inventarioSemen);
+                egua.diasPrenha = 0;
+                String num = _editedInseminacao.data.split('-').reversed.join();
+                DateTime dates = DateTime.parse(num);
+                DateTime dateParto = dates.add(new Duration(days: 335));
+                var format = new DateFormat("dd-MM-yyyy");
+                String dataParto = format.format(dateParto);
+                egua.partoPrevisto = dataParto;
+                eguaDB.updateItem(egua);
               }
               Navigator.pop(context, _editedInseminacao);
             }
@@ -164,6 +172,8 @@ class _CadastroInseminacaoMontaEquinoState
                       nomeEgua = value.nome;
                       _editedInseminacao.idEgua = value.id;
                       _editedInseminacao.nomeEgua = value.nome;
+                      nomeEgua = value.nome;
+                      egua = value;
                     });
                   },
                   doneButton: "Pronto",
@@ -215,6 +225,7 @@ class _CadastroInseminacaoMontaEquinoState
                     setState(() {
                       _editedInseminacao.idSemen = value.idCavalo;
                       _editedInseminacao.nomeCavalo = value.nomeCavalo;
+                      nomeCavalo = value.nomeCavalo;
                     });
                   },
                   doneButton: "Pronto",

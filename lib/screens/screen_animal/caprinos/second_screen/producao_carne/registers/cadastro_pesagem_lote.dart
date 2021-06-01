@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:gerenciamento_rural/helpers/lote_caprino_db.dart';
 import 'package:gerenciamento_rural/helpers/pesagem_lote_caprino_db.dart';
 import 'package:gerenciamento_rural/helpers/todos_caprinos_db.dart';
+import 'package:gerenciamento_rural/models/lote.dart';
 import 'package:gerenciamento_rural/models/pesagem_lote_caprina.dart';
 import 'package:gerenciamento_rural/models/todoscaprino.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
@@ -17,8 +19,11 @@ class CadastroPesagemLoteCaprino extends StatefulWidget {
 class _CadastroPesagemLoteCaprinoState
     extends State<CadastroPesagemLoteCaprino> {
   PesagemLoteCaprinaDB _pesagemLoteCaprinaDB = PesagemLoteCaprinaDB();
+  LoteCaprinoDB _loteCaprinoDB = LoteCaprinoDB();
   TodosCaprinosDB _todosAnimaisDB = TodosCaprinosDB();
+  List<Lote> lotes = [];
   List<TodosCaprino> animais = [];
+  Lote lote;
   TodosCaprino animal;
   List<PesagemLoteCaprina> pesagens = [];
   PesagemLoteCaprina pesagemLoteCaprina;
@@ -27,6 +32,7 @@ class _CadastroPesagemLoteCaprinoState
   final pesoController = TextEditingController();
   final obsController = TextEditingController();
   String nomeAnimal = "";
+  String nomeLote = "";
   bool _producaoCarneEdited = false;
   PesagemLoteCaprina _editedPesagem;
   var data = MaskedTextController(mask: '00-00-0000');
@@ -80,17 +86,54 @@ class _CadastroPesagemLoteCaprinoState
                 SizedBox(
                   height: 20,
                 ),
-                TextField(
-                  controller: loteController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(labelText: "Lote"),
-                  onChanged: (text) {
+                SearchableDropdown.single(
+                  items: lotes.map((lote) {
+                    return DropdownMenuItem(
+                      value: lote,
+                      child: Row(
+                        children: [
+                          Text(lote.nome),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  value: lote,
+                  hint: "Selecione um lote",
+                  searchHint: "Selecione um lote",
+                  onChanged: (value) {
                     _producaoCarneEdited = true;
                     setState(() {
-                      _editedPesagem.lote = text;
+                      _editedPesagem.lote = value.nome;
+                      nomeLote = value.nome;
                     });
                   },
+                  doneButton: "Pronto",
+                  displayItem: (item, selected) {
+                    return (Row(children: [
+                      selected
+                          ? Icon(
+                              Icons.radio_button_checked,
+                              color: Colors.grey,
+                            )
+                          : Icon(
+                              Icons.radio_button_unchecked,
+                              color: Colors.grey,
+                            ),
+                      SizedBox(width: 7),
+                      Expanded(
+                        child: item,
+                      ),
+                    ]));
+                  },
+                  isExpanded: true,
                 ),
+                SizedBox(
+                  height: 5.0,
+                ),
+                Text("Animal:  $nomeLote",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
                 TextField(
                   controller: data,
                   keyboardType: TextInputType.number,
@@ -196,7 +239,14 @@ class _CadastroPesagemLoteCaprinoState
       });
     });
     _todosAnimaisDB.getAllItems().then((value) {
-      animais = value;
+      setState(() {
+        animais = value;
+      });
+    });
+    _loteCaprinoDB.getAllItems().then((value) {
+      setState(() {
+        lotes = value;
+      });
     });
   }
 

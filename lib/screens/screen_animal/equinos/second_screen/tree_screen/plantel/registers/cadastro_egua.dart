@@ -16,6 +16,7 @@ class _CadastroEguaState extends State<CadastroEgua> {
   String idadeFinal = "";
   String numeroData = "";
   String nomeEstado = "";
+  String partoPrevisto = "";
   int _radioValue = 0;
   String nomeD = "";
   String diagnostic = "";
@@ -26,6 +27,8 @@ class _CadastroEguaState extends State<CadastroEgua> {
   final _maeController = TextEditingController();
   final _obsController = TextEditingController();
   final _ciosController = TextEditingController();
+  final _valorVendidoController = TextEditingController();
+  final _descricaoController = TextEditingController();
   final _origemController = TextEditingController();
   final _estadoController = TextEditingController();
   final _diasprenhaController = TextEditingController();
@@ -35,6 +38,7 @@ class _CadastroEguaState extends State<CadastroEgua> {
   final _pesoController = TextEditingController();
   final _pelagemController = TextEditingController();
   var _dataNasc = MaskedTextController(mask: '00-00-0000');
+  var _dataAcontecidoController = MaskedTextController(mask: '00-00-0000');
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -51,6 +55,113 @@ class _CadastroEguaState extends State<CadastroEgua> {
     setState(() {
       _formKey = GlobalKey();
     });
+  }
+
+  Future<void> _showMortoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Causa Morte'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _descricaoController,
+                  decoration: InputDecoration(labelText: "Causa"),
+                  onChanged: (text) {
+                    _eguaEdited = true;
+                    setState(() {
+                      _editedEgua.descricao = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _eguaEdited = true;
+                    setState(() {
+                      _editedEgua.dataAcontecido = text;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showVendidoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Vendido'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _paiController,
+                  decoration: InputDecoration(labelText: "Comprador"),
+                  onChanged: (text) {
+                    _eguaEdited = true;
+                    setState(() {
+                      _editedEgua.descricao = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _eguaEdited = true;
+                    setState(() {
+                      _editedEgua.dataAcontecido = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _valorVendidoController,
+                  decoration: InputDecoration(labelText: "Preço"),
+                  onChanged: (text) {
+                    _eguaEdited = true;
+                    setState(() {
+                      _editedEgua.valorVendido = double.parse(text);
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _showMyDialog() async {
@@ -115,6 +226,7 @@ class _CadastroEguaState extends State<CadastroEgua> {
       _tdPartosController.text = _editedEgua.totalPartos;
       nomeD = _editedEgua.diagnosticoGestacao;
       _diasprenhaController.text = _editedEgua.diasPrenha.toString();
+      partoPrevisto = dataPrevistaPartoString(_editedEgua.diasPrenha);
       numeroData = _editedEgua.dataNascimento;
       _dataNasc.text = numeroData;
       idadeFinal = differenceDate();
@@ -324,7 +436,7 @@ class _CadastroEguaState extends State<CadastroEgua> {
                   height: 10.0,
                 ),
                 Text(
-                  "Parto previsto :  ",
+                  "Parto previsto :  $partoPrevisto",
                   style: TextStyle(
                     fontSize: 16.0,
                     color: Color.fromARGB(255, 4, 125, 141),
@@ -354,6 +466,7 @@ class _CadastroEguaState extends State<CadastroEgua> {
                     _eguaEdited = true;
                     setState(() {
                       _editedEgua.diasPrenha = int.parse(text);
+                      partoPrevisto = dataPrevistaPartoString(int.parse(text));
                     });
                   },
                 ),
@@ -419,9 +532,22 @@ class _CadastroEguaState extends State<CadastroEgua> {
                           setState(() {
                             _radioValue = value;
                             _editedEgua.vm = "Morto";
+                            if (_editedEgua.vm == "Morto") _showMortoDialog();
                           });
                         }),
                     Text("Morto"),
+                    Radio(
+                        value: 1,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            _editedEgua.vm = "Vendido";
+                            if (_editedEgua.vm == "Vendido")
+                              _showVendidoDialog();
+                          });
+                        }),
+                    Text("Vendido"),
                   ],
                 ),
               ],
@@ -430,6 +556,21 @@ class _CadastroEguaState extends State<CadastroEgua> {
         ),
       ),
     );
+  }
+
+  String dataPrevistaPartoString(int dias) {
+    if (_editedEgua.partoPrevisto == null) {
+      return null;
+    } else {
+      String num = _editedEgua.partoPrevisto.split('-').reversed.join();
+      DateTime dates = DateTime.parse(num);
+      DateTime dateParto = dates.add(new Duration(days: -dias));
+      var format = new DateFormat("dd-MM-yyyy");
+      String dataParto = format.format(dateParto);
+      _editedEgua.partoPrevisto = dataParto;
+    }
+
+    return _editedEgua.partoPrevisto;
   }
 
   Future<bool> _requestPop() {

@@ -8,7 +8,7 @@ class Terminacao extends Suinos {
   String nome;
   Terminacao();
   Terminacao.fromMap(Map map) {
-    // id = map["id"];
+    id = map["id"];
     idAnimal = map["id_animal"];
     nome = map["nome"];
     dataNascimento = map["data_nascimento"];

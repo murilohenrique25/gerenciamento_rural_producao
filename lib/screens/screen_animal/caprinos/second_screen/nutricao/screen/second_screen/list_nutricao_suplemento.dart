@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/nutricao_suplementar_equino_db.dart';
+import 'package:gerenciamento_rural/helpers/nutricao_suplementar_caprino_db.dart';
 import 'package:gerenciamento_rural/models/nutricao_suplementar.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/nutricao/screen/second_screen/registers/cadastro_nutricao_suplemento.dart';
@@ -21,7 +21,7 @@ class ListNutricaoSuplementoCaprino extends StatefulWidget {
 class _ListNutricaoSuplementoCaprinoState
     extends State<ListNutricaoSuplementoCaprino> {
   TextEditingController editingController = TextEditingController();
-  NutricaoSuplementarEquinoDB helper = NutricaoSuplementarEquinoDB();
+  NutricaoSuplementarCaprinoDB helper = NutricaoSuplementarCaprinoDB();
   List<NutricaoSuplementar> totalNT = [];
   List<NutricaoSuplementar> items = [];
   List<NutricaoSuplementar> nutricoes = [];

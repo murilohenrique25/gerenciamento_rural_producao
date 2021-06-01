@@ -488,6 +488,7 @@ class _CadastroReprodutorState extends State<CadastroReprodutor> {
                     _reprodutorEdited = true;
                     setState(() {
                       _editedReprodutor.idLote = value.id;
+                      _editedReprodutor.lote = value.nome;
                       nomeLote = value.nome;
                     });
                   },
@@ -552,17 +553,6 @@ class _CadastroReprodutorState extends State<CadastroReprodutor> {
                     _reprodutorEdited = true;
                     setState(() {
                       _editedReprodutor.raca = text;
-                    });
-                  },
-                ),
-                TextField(
-                  keyboardType: TextInputType.number,
-                  controller: _loteController,
-                  decoration: InputDecoration(labelText: "Lote"),
-                  onChanged: (text) {
-                    _reprodutorEdited = true;
-                    setState(() {
-                      _editedReprodutor.lote = text;
                     });
                   },
                 ),

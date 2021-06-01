@@ -112,7 +112,7 @@ class _CadastroNutricaoVolumosoEquinoState
                   onChanged: (text) {
                     _nutricaoEdited = true;
                     setState(() {
-                      _editedNutricao.tipo = text;
+                      _editedNutricao.nomeLote = text;
                     });
                   },
                 ),

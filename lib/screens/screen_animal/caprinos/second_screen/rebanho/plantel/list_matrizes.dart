@@ -192,6 +192,8 @@ class _ListaMatrizesCaprinoState extends State<ListaMatrizesCaprino> {
         await helper.insert(recMatriz);
         TodosCaprino todosCaprino = TodosCaprino();
         todosCaprino.nome = recMatriz.nomeAnimal;
+        todosCaprino.lote = recMatriz.lote;
+        todosCaprino.tipo = "Matriz";
         await todosCaprinosDB.insert(todosCaprino);
       }
       _getAllMatrizes();

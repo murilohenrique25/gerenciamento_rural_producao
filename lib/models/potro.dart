@@ -17,6 +17,9 @@ class Potro {
   int virouAdulto;
   String vm;
   String pelagem;
+  String descricao;
+  String dataAcontecido;
+  double valorVendido;
   Potro();
   Potro.fromMap(Map map) {
     id = map["id"]; //
@@ -37,6 +40,9 @@ class Potro {
     virouAdulto = map["virou_adulto"];
     vm = map["vm"];
     pelagem = map["pelagem"];
+    descricao = map["descricao"];
+    dataAcontecido = map["data_acontecido"];
+    valorVendido = map["valor_vendido"];
   }
 
   Map toMap() {
@@ -58,6 +64,9 @@ class Potro {
       "virou_adulto": virouAdulto,
       "vm": vm,
       "pelagem": pelagem,
+      "descricao": pelagem,
+      "data_acontecido": dataAcontecido,
+      "valor_vendido": valorVendido,
     };
     if (id != null) {
       map["id"] = id;

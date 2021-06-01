@@ -197,6 +197,7 @@ class _CadastroCrecheState extends State<CadastroCreche> {
                     _crecheEdited = true;
                     setState(() {
                       _editedCreche.mae = value.nomeAnimal;
+                      nomeMatriz = value.nomeAnimal;
                     });
                   },
                   doneButton: "Pronto",
@@ -246,7 +247,8 @@ class _CadastroCrecheState extends State<CadastroCreche> {
                   onChanged: (value) {
                     _crecheEdited = true;
                     setState(() {
-                      _editedCreche.pai = value;
+                      _editedCreche.pai = value.nomeAnimal;
+                      nomeCachaco = value.nomeAnimal;
                     });
                   },
                   doneButton: "Pronto",

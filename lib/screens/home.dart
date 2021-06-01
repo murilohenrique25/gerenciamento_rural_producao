@@ -1,9 +1,9 @@
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/manejo_geral.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/bovino_corte.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/caprinos/caprinos.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/equinos/equinos.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/touros/touro_e_inseminacao.dart';
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/bovino_corte.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/suino/suinos.dart';
 import 'package:gerenciamento_rural/widgets/custom_drawer.dart';
 

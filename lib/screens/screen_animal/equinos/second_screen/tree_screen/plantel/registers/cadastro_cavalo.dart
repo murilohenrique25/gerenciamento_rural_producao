@@ -18,6 +18,7 @@ class _CadastroCavaloState extends State<CadastroCavalo> {
   String estado;
   final _nomeController = TextEditingController();
   var _dataNasc = MaskedTextController(mask: '00-00-0000');
+  var _dataAcontecidoController = MaskedTextController(mask: '00-00-0000');
   final _racaController = TextEditingController();
   final _paiController = TextEditingController();
   final _maeController = TextEditingController();
@@ -28,6 +29,8 @@ class _CadastroCavaloState extends State<CadastroCavalo> {
   final _baiaController = TextEditingController();
   final _pesoController = TextEditingController();
   final _pelagemController = TextEditingController();
+  final _valorVendidoController = TextEditingController();
+  final _descricaoController = TextEditingController();
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -74,6 +77,113 @@ class _CadastroCavaloState extends State<CadastroCavalo> {
       _dataNasc.text = numeroData;
       idadeFinal = differenceDate();
     }
+  }
+
+  Future<void> _showMortoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Causa Morte'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _descricaoController,
+                  decoration: InputDecoration(labelText: "Causa"),
+                  onChanged: (text) {
+                    _cavaloEdited = true;
+                    setState(() {
+                      _editedCavalo.descricao = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _cavaloEdited = true;
+                    setState(() {
+                      _editedCavalo.dataAcontecido = text;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showVendidoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Vendido'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _paiController,
+                  decoration: InputDecoration(labelText: "Comprador"),
+                  onChanged: (text) {
+                    _cavaloEdited = true;
+                    setState(() {
+                      _editedCavalo.descricao = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataAcontecidoController,
+                  decoration: InputDecoration(labelText: "Data"),
+                  onChanged: (text) {
+                    _cavaloEdited = true;
+                    setState(() {
+                      _editedCavalo.dataAcontecido = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _valorVendidoController,
+                  decoration: InputDecoration(labelText: "Preço"),
+                  onChanged: (text) {
+                    _cavaloEdited = true;
+                    setState(() {
+                      _editedCavalo.valorVendido = double.parse(text);
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Feito'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _showMyDialog() async {
@@ -320,9 +430,22 @@ class _CadastroCavaloState extends State<CadastroCavalo> {
                           setState(() {
                             _radioValue = value;
                             _editedCavalo.vm = "Morto";
+                            if (_editedCavalo.vm == "Morto") _showMortoDialog();
                           });
                         }),
                     Text("Morto"),
+                    Radio(
+                        value: 2,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            _editedCavalo.vm = "Vendido";
+                            if (_editedCavalo.vm == "Vendido")
+                              _showVendidoDialog();
+                          });
+                        }),
+                    Text("Vendido"),
                   ],
                 ),
                 SizedBox(

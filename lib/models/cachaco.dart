@@ -2,7 +2,7 @@ import 'package:gerenciamento_rural/models/suino.dart';
 
 class Cachaco extends Suinos {
   String origem;
-  double peso;
+
   Cachaco();
   Cachaco.fromMap(Map map) {
     idAnimal = map["id_animal"]; //
@@ -18,6 +18,9 @@ class Cachaco extends Suinos {
     origem = map["origem"]; //
     peso = map["peso"]; //
     observacao = map["observacao"]; //
+    descricao = map["descricao"]; //
+    precoFinal = map["preco_final"]; //
+    dataAcontecido = map["data_acontecido"]; //
   }
 
   Map toMap() {
@@ -34,6 +37,9 @@ class Cachaco extends Suinos {
       "origem": origem,
       "peso": peso,
       "observacao": observacao,
+      "descricao": descricao,
+      "preco_final": precoFinal,
+      "data_acontecido": dataAcontecido,
     };
     if (idAnimal != null) {
       map["id_animal"] = idAnimal;

@@ -160,6 +160,7 @@ class _CadastroEstoqueSemenSuinoState extends State<CadastroEstoqueSemenSuino> {
                     setState(() {
                       _editedInventario.idCachaco = value.idAnimal;
                       _editedInventario.nomeCachaco = value.nomeAnimal;
+                      nomeCachaco = value.nomeAnimal;
                     });
                   },
                   doneButton: "Pronto",
