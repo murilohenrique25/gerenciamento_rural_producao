@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/abatidos_db.dart';
 import 'package:gerenciamento_rural/models/abatidos.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
-
+import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/tree_screen/for_screen/registers/cadastro_abatidos.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+
+import 'package:toast/toast.dart';
 
 enum OrderOptions { orderaz, orderza }
 
@@ -24,7 +26,7 @@ class _ListaAbatidosState extends State<ListaAbatidos> {
   @override
   void initState() {
     super.initState();
-    _getAllTerminacao();
+    _getAllAbatidos();
     items = [];
     tAbatidos = [];
   }
@@ -52,6 +54,11 @@ class _ListaAbatidosState extends State<ListaAbatidos> {
               onPressed: () {
                 _creatPdf(context);
               }),
+          IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {
+                _showTotalPage();
+              }),
         ],
         centerTitle: true,
         title: Text("Abatidos"),
@@ -78,7 +85,7 @@ class _ListaAbatidosState extends State<ListaAbatidos> {
                 child: ListView.builder(
                     itemCount: abatidos.length,
                     itemBuilder: (context, index) {
-                      return _totalTerminacaoCard(context, index);
+                      return _totalCard(context, index);
                     }))
           ],
         ),
@@ -86,7 +93,7 @@ class _ListaAbatidosState extends State<ListaAbatidos> {
     );
   }
 
-  Widget _totalTerminacaoCard(BuildContext context, int index) {
+  Widget _totalCard(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
         child: Padding(
@@ -104,10 +111,87 @@ class _ListaAbatidosState extends State<ListaAbatidos> {
           ),
         ),
       ),
+      onTap: () {
+        _showOptions(context, index);
+      },
     );
   }
 
-  void _getAllTerminacao() {
+  void _showOptions(BuildContext context, int index) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return BottomSheet(
+            onClosing: () {},
+            builder: (context) {
+              return Container(
+                padding: EdgeInsets.all(10.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: ElevatedButton(
+                        child: Text(
+                          "Editar",
+                          style: TextStyle(color: Colors.red, fontSize: 20.0),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _showTotalPage(abatido: abatidos[index]);
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: ElevatedButton(
+                        child: Text(
+                          "Excluir",
+                          style: TextStyle(color: Colors.red, fontSize: 20.0),
+                        ),
+                        onPressed: () {
+                          try {
+                            helper.delete(abatidos[index].id);
+                          } catch (e) {
+                            Toast.show("$Exception($e)", context,
+                                duration: Toast.LENGTH_SHORT,
+                                gravity: Toast.CENTER);
+                          }
+
+                          setState(() {
+                            abatidos.removeAt(index);
+                            Navigator.pop(context);
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        });
+  }
+
+  void _showTotalPage({Abatido abatido}) async {
+    final recAnimal = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CadastroAbatido(
+            abatido: abatido,
+          ),
+        ));
+    if (recAnimal != null) {
+      if (abatido != null) {
+        await helper.updateItem(recAnimal);
+      } else {
+        await helper.insert(recAnimal);
+      }
+      _getAllAbatidos();
+    }
+  }
+
+  void _getAllAbatidos() {
     items = [];
     helper.getAllItems().then((list) {
       setState(() {
@@ -126,24 +210,50 @@ class _ListaAbatidosState extends State<ListaAbatidos> {
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
                 <String>[
                   'Ninhada',
-                  'Quantidade Vivos',
-                  'Quantidade Mortos',
+                  'Data Nascimento',
+                  'Quantiade',
+                  'Estado',
+                  'Lote',
+                  'Identificação',
+                  'Vivos',
+                  'Mortos',
+                  'Raça',
+                  'Pai',
+                  'Mãe',
                   'Machos',
-                  'Fêmeas'
+                  'Fêmeas',
+                  'Baia',
+                  'Peso Nascimento',
+                  'Peso Desmama',
+                  'Data Desmama',
+                  'Observação'
                 ],
                 ...abatidos.map((item) => [
                       item.nome,
+                      item.dataNascimento,
+                      item.quantidade.toString(),
+                      item.estado,
+                      item.lote,
+                      item.identificacao,
                       item.vivos,
                       item.mortos,
+                      item.raca,
+                      item.pai,
+                      item.mae,
                       item.sexoM,
-                      item.sexoF
+                      item.sexoF,
+                      item.baia,
+                      item.pesoNascimento,
+                      item.pesoDesmama,
+                      item.dataDesmama,
+                      item.observacao
                     ])
               ])
             ]));
 
     final String dir = (await getApplicationDocumentsDirectory()).path;
 
-    final String path = '$dir/pdfAbt.pdf';
+    final String path = '$dir/pdfCachacos.pdf';
     final File file = File(path);
     file.writeAsBytesSync(await pdf.save());
     Navigator.of(context)

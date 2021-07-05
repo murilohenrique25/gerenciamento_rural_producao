@@ -96,7 +96,8 @@ class _CadastroCrecheState extends State<CadastroCreche> {
       _estadoController.text = _editedCreche.estado;
       _loteController.text = _editedCreche.lote;
       _baiaController.text = _editedCreche.baia;
-      matriz.nomeAnimal = _editedCreche.mae;
+      nomeMatriz = _editedCreche.mae;
+      nomeCachaco = _editedCreche.pai;
       cachaco = _editedCreche.pai;
       numeroData = _editedCreche.dataNascimento;
       _dataNasc.text = numeroData;
@@ -144,7 +145,9 @@ class _CadastroCrecheState extends State<CadastroCreche> {
                 crecheDB.updateItem(_editedCreche);
                 terminacao = Terminacao.fromMap(_editedCreche.toMap());
                 terminacaoDB.insert(terminacao);
-                Navigator.pushNamed(context, 'plantel');
+                Navigator.pop(context, _editedCreche);
+              } else {
+                Navigator.pop(context, _editedCreche);
               }
             }
           },

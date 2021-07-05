@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/dados_rebanho/info_rebanho_bc.dart';
 
 class DadosRebanhoScreen extends StatefulWidget {
   @override
@@ -13,11 +14,10 @@ class _DadosRebanhoScreenState extends State<DadosRebanhoScreen> {
       children: [
         GestureDetector(
           onTap: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //       builder: (context) => DescriptionPlantelCaprinos()),
-            // );
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => InfoRebanhoBovinoCorte()),
+            );
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),

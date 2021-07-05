@@ -8,6 +8,7 @@ class NovilhaCorte extends AnimalCorte {
   String dataParto;
   int diasPrenha;
   String dataDiagnosticoGestacao;
+  String dataInseminacao;
   String idadeDesmama;
   double pesoDesmama;
   String idadePrimeiraCobertura;
@@ -15,6 +16,8 @@ class NovilhaCorte extends AnimalCorte {
   String idadePrimeiroParto;
   double pesoPrimeiroParto;
   int virouAdulto;
+  String tipoDiagnosticoGestacao;
+  String tipoParto;
 
   NovilhaCorte();
   NovilhaCorte.fromMap(Map map) {
@@ -50,6 +53,10 @@ class NovilhaCorte extends AnimalCorte {
     pesoPrimeiroParto = map["peso_primeiro_parto"];
     virouAdulto = map["virou_adulto"];
     descricao = map["descricao"];
+    dataInseminacao = map["data_inseminacao"];
+    tipoDiagnosticoGestacao = map["tipo_diagnostico_gestacao"];
+    tipoParto = map["tipo_parto"];
+    animalAbatido = map["animal_abatido"];
   }
   Map toMap() {
     Map<String, dynamic> map = {
@@ -84,6 +91,10 @@ class NovilhaCorte extends AnimalCorte {
       "peso_primeiro_parto": pesoPrimeiroParto,
       "virou_adulto": virouAdulto,
       "descricao": descricao,
+      "data_inseminacao": dataInseminacao,
+      "tipo_diagnostico_gestacao": tipoDiagnosticoGestacao,
+      "tipo_parto": tipoParto,
+      "animal_abatido": animalAbatido,
     };
     if (id != null) {
       map["id"] = id;

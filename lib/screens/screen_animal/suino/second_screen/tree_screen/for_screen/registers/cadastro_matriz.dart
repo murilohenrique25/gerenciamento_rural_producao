@@ -61,7 +61,8 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
     super.initState();
     if (widget.matriz == null) {
       _editedMatriz = Matriz();
-      _editedMatriz.estado = "Vivo";
+      _editedMatriz.estado = "Viva";
+      _editedMatriz.diagnosticoGestacao = "Vazia";
     } else {
       _editedMatriz = Matriz.fromMap(widget.matriz.toMap());
       _nomeController.text = _editedMatriz.nomeAnimal;
@@ -79,6 +80,7 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
       } else {
         _radioValue = 3;
       }
+
       partoPrevisto = dataPrevistaPartoString(_editedMatriz.diasPrenha);
       _diasprenhaController.text = _editedMatriz.diasPrenha.toString();
       nomeD = _editedMatriz.diagnosticoGestacao;
@@ -332,8 +334,9 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                 abatido = Abatido.fromMap(_editedMatriz.toMap());
                 abatidosDB.insert(abatido);
                 Navigator.pop(context, _editedMatriz);
+              } else {
+                Navigator.pop(context, _editedMatriz);
               }
-              Navigator.pop(context, _editedMatriz);
             }
           },
           child: Icon(Icons.save),

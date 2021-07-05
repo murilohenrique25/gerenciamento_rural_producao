@@ -336,6 +336,7 @@ class _CadastroTratamentoCaprinoState extends State<CadastroTratamentoCaprino> {
                           _editedTratamento.idMedicamento = value.id;
                           _editedTratamento.nomeMedicamento =
                               value.nomeMedicamento;
+                          nomeMedicamento = value.nomeMedicamento;
                         });
                       },
                       doneButton: "Pronto",
@@ -358,6 +359,10 @@ class _CadastroTratamentoCaprinoState extends State<CadastroTratamentoCaprino> {
                       },
                       isExpanded: true,
                     ),
+                    Text("Medicamento:  $nomeMedicamento",
+                        style: TextStyle(
+                            fontSize: 16.0,
+                            color: Color.fromARGB(255, 4, 125, 141))),
                     TextField(
                       controller: _quantidadeController,
                       decoration: InputDecoration(labelText: "Dose"),

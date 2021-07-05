@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/gasto_suino_db.dart';
 import 'package:gerenciamento_rural/models/gasto.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/screen/economia/registers/cadastrar_economia_gastos.dart';
+import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPage.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
@@ -283,6 +284,7 @@ class _EconomiaSuinaState extends State<EconomiaSuina> {
   }
 
   _creatPdf(context) async {
+    print(items);
     final pdfLib.Document pdf = pdfLib.Document(deflate: zlib.encode);
     pdf.addPage(pdfLib.MultiPage(
         header: _buildHeade,
@@ -295,7 +297,7 @@ class _EconomiaSuinaState extends State<EconomiaSuina> {
                   'Quantidade',
                   'Valor Total'
                 ],
-                ...gastos.map((item) => [
+                ...items.map((item) => [
                       item.nome,
                       item.data,
                       item.valorUnitario.toString(),
@@ -307,11 +309,11 @@ class _EconomiaSuinaState extends State<EconomiaSuina> {
 
     final String dir = (await getApplicationDocumentsDirectory()).path;
 
-    final String path = '$dir/pdfTouros.pdf';
+    final String path = '$dir/pdf.pdf';
     final File file = File(path);
     file.writeAsBytesSync(await pdf.save());
-    // Navigator.of(context)
-    //     .push(MaterialPageRoute(builder: (_) => PdfViwerPageTouro(path: path)));
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => PdfViwerPage(path: path)));
   }
 
   pdfLib.Widget _buildHeade(pdfLib.Context context) {

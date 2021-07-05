@@ -1,13 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/rebanho/description_rebanho.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/rebanho/plantel/second_screen/list_garrotes_corte%20copy.dart';
 
-class TouroScreen extends StatefulWidget {
+class TouroCorteScreen extends StatefulWidget {
   @override
   _TouroScreenState createState() => _TouroScreenState();
 }
 
-class _TouroScreenState extends State<TouroScreen> {
+class _TouroScreenState extends State<TouroCorteScreen> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -16,8 +16,7 @@ class _TouroScreenState extends State<TouroScreen> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => DescriptionRebanhoCorte()),
+              MaterialPageRoute(builder: (context) => ListaTourosCorte()),
             );
           },
           child: ClipRRect(

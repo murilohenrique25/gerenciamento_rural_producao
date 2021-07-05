@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/nutricao_concentrado_caprino_db.dart';
+import 'package:gerenciamento_rural/helpers/nutricao_concentrado_bovino_corte_db.dart';
+
 import 'package:gerenciamento_rural/models/nutricao_concentrado.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/nutricao/screen/second_screen/registers/cadastro_nutricao_concentrado.dart';
@@ -21,7 +22,7 @@ class ListNutricaoConcentradoBovinoCorte extends StatefulWidget {
 class _ListNutricaoConcentradoBovinoCorteState
     extends State<ListNutricaoConcentradoBovinoCorte> {
   TextEditingController editingController = TextEditingController();
-  NutricaoConcentradoCaprinoDB helper = NutricaoConcentradoCaprinoDB();
+  NutricaoConcentradoBovinoCorteDB helper = NutricaoConcentradoBovinoCorteDB();
   List<NutricaoConcentrado> totalNT = [];
   List<NutricaoConcentrado> items = [];
   List<NutricaoConcentrado> nutricoes = [];

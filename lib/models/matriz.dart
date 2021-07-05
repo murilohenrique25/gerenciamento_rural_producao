@@ -61,6 +61,6 @@ class Matriz extends Suinos {
 
   @override
   String toString() {
-    return "Matriz(id:$idAnimal, nome: $nomeAnimal, codigoExterno : $quantidade)";
+    return "Matriz(id:$idAnimal, nome: $nomeAnimal, parto previsto : $partoPrevisto)";
   }
 }

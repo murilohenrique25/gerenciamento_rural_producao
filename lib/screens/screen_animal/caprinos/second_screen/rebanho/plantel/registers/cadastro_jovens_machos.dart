@@ -127,6 +127,7 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                     _jmEdited = true;
                     setState(() {
                       _editedJM.pai = text;
+                      nomePai = text;
                     });
                   },
                 ),
@@ -138,6 +139,7 @@ class _CadastroJovemMachoState extends State<CadastroJovemMacho> {
                     _jmEdited = true;
                     setState(() {
                       _editedJM.mae = text;
+                      nomeMae = text;
                     });
                   },
                 ),

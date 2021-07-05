@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/reproducao/inseminacao_caprino_list.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/reproducao/inseminacao_bovino_corte_list.dart';
 
 class InseminacaoBovinoCorteScreen extends StatefulWidget {
   @override
@@ -17,10 +17,8 @@ class _InseminacaoBovinoCorteScreenState
       children: [
         GestureDetector(
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ListaInseminacaoCaprina()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ListaInseminacaoBC()));
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),

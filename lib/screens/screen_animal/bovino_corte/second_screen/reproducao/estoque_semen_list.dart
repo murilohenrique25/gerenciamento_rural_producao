@@ -1,34 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/inventario_semen_caprino_db.dart';
-import 'package:gerenciamento_rural/models/inventario_semen_caprino.dart';
+import 'package:gerenciamento_rural/helpers/inventario_semen_db.dart';
+import 'package:gerenciamento_rural/models/inventario_semen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/reproducao/registers/cadastro_estoque_semen.dart';
-import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPage.dart';
 import 'package:pdf/pdf.dart';
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pdfLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/touros/second_screen/pdf/pdfViwerPageInventario.dart';
 
 enum OrderOptions { orderaz, orderza }
 
-class ListaEstoqueSemenCaprina extends StatefulWidget {
+class ListInventarioSemenBC extends StatefulWidget {
   @override
-  _ListaEstoqueSemenCaprinaState createState() =>
-      _ListaEstoqueSemenCaprinaState();
+  _ListInventarioSemenBCState createState() => _ListInventarioSemenBCState();
 }
 
-class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
+class _ListInventarioSemenBCState extends State<ListInventarioSemenBC> {
   TextEditingController editingController = TextEditingController();
-  InventarioSemenCaprinoDB helper = InventarioSemenCaprinoDB();
-  List<InventarioSemenCaprino> items = [];
-  List<InventarioSemenCaprino> inventarioSemens = [];
-  List<InventarioSemenCaprino> tInventarioSemens = [];
+  InventarioSemenDB helper = InventarioSemenDB();
+  List<InventarioSemen> items = [];
+  List<InventarioSemen> semens = [];
+  List<InventarioSemen> tSemens = [];
 
   @override
   void initState() {
     super.initState();
-    _getAllInventario();
+    _getAllInventarioSemen();
     items = [];
-    tInventarioSemens = [];
+    tSemens = [];
   }
 
   @override
@@ -39,11 +38,11 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
           PopupMenuButton<OrderOptions>(
             itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
               const PopupMenuItem<OrderOptions>(
-                child: Text("Ordenar de A-Z"),
+                child: Text("Ordenar por A-Z"),
                 value: OrderOptions.orderaz,
               ),
               const PopupMenuItem<OrderOptions>(
-                child: Text("Ordenar de Z-A"),
+                child: Text("Ordenar por Z-A"),
                 value: OrderOptions.orderza,
               ),
             ],
@@ -57,11 +56,11 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
           IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                _showPage();
+                _showInvetarioSemen();
               }),
         ],
         centerTitle: true,
-        title: Text("Lista Inventário Sêmen Caprino"),
+        title: Text("Inventário"),
       ),
       body: Container(
         child: Column(
@@ -74,8 +73,8 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
                 },
                 controller: editingController,
                 decoration: InputDecoration(
-                    labelText: "Buscar Sêmen por Reprodutor",
-                    hintText: "Buscar Sêmen por Reprodutor",
+                    labelText: "Buscar Por Animal",
+                    hintText: "Buscar Por Animal",
                     prefixIcon: Icon(Icons.search),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(25.0)))),
@@ -85,7 +84,7 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
               child: ListView.builder(
                   shrinkWrap: true,
                   padding: EdgeInsets.all(10.0),
-                  itemCount: inventarioSemens.length,
+                  itemCount: semens.length,
                   itemBuilder: (context, index) {
                     return _inventarioCard(context, index);
                   }),
@@ -101,26 +100,62 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
       child: Card(
         child: Padding(
           padding: EdgeInsets.all(10.0),
-          child: Row(
-            children: [
-              Text(
-                "Cachaço: " + inventarioSemens[index].nomeReprodutor ?? "",
-                style: TextStyle(fontSize: 14.0),
-              ),
-              SizedBox(
-                width: 15,
-              ),
-              Text(" - "),
-              SizedBox(
-                width: 15,
-              ),
-              Text(
-                "Quantidade: " +
-                        inventarioSemens[index].quantidade.toString() ??
-                    "",
-                style: TextStyle(fontSize: 14.0),
-              )
-            ],
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                Text(
+                  "IA: " + semens[index].codigoIA,
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(" - "),
+                Text(
+                  "Touro: " + semens[index].nomeTouro ?? "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(" - "),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(
+                  "Estoque: " + semens[index].quantidade.toString() ?? "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(" - "),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(
+                  "Tamanho Palheta: " + semens[index].tamanho ?? "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(" - "),
+                Text(
+                  "Cor Palheta: " + semens[index].cor ?? "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(" - "),
+                Text(
+                  "Data Coleta: " + semens[index].dataCadastro ?? "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -128,33 +163,6 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
         _showOptions(context, index);
       },
     );
-  }
-
-  void _getAllInventario() {
-    items = [];
-    helper.getAllItems().then((value) {
-      setState(() {
-        inventarioSemens = value;
-        items.addAll(inventarioSemens);
-      });
-    });
-  }
-
-  void _showPage({InventarioSemenCaprino inventario}) async {
-    final recInventario = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => CadastroEstoqueSemenBovinoCorte(
-                  inventarioSemenCaprino: inventario,
-                )));
-    if (recInventario != null) {
-      if (inventario != null) {
-        await helper.updateItem(recInventario);
-      } else {
-        await helper.insert(recInventario);
-      }
-      _getAllInventario();
-    }
   }
 
   void _showOptions(BuildContext context, int index) {
@@ -178,7 +186,7 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                          _showPage(inventario: inventarioSemens[index]);
+                          _showInvetarioSemen(invet: semens[index]);
                         },
                       ),
                     ),
@@ -190,9 +198,9 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
                         ),
                         onPressed: () {
-                          helper.delete(inventarioSemens[index].id);
+                          helper.delete(semens[index].id);
                           setState(() {
-                            inventarioSemens.removeAt(index);
+                            semens.removeAt(index);
                             Navigator.pop(context);
                           });
                         },
@@ -206,75 +214,78 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
         });
   }
 
+  void _showInvetarioSemen({InventarioSemen invet}) async {
+    final recInvet = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => CadastroEstoqueSemenBovinoCorte(
+                  invet: invet,
+                )));
+    if (recInvet != null) {
+      if (invet != null) {
+        await helper.updateItem(recInvet);
+      } else {
+        await helper.insert(recInvet);
+      }
+      _getAllInventarioSemen();
+    }
+  }
+
+  void _getAllInventarioSemen() {
+    items = [];
+    helper.getAllItems().then((list) {
+      setState(() {
+        semens = list;
+        items.addAll(semens);
+      });
+    });
+  }
+
   _creatPdf(context) async {
-    tInventarioSemens = inventarioSemens;
+    tSemens = semens;
     final pdfLib.Document pdf = pdfLib.Document(deflate: zlib.encode);
     pdf.addPage(pdfLib.MultiPage(
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
                 <String>[
-                  'Reprodutor',
-                  'Identificação',
-                  'Quantidade',
-                  'Cor',
-                  'Data Cadastro',
-                  'Data Validade',
-                  'Vigor',
-                  'Motilidade',
-                  'Turbilhamento',
-                  'Concentração',
-                  'Volume',
-                  'Aspecto',
-                  'Células Normais',
-                  'Defeitos Maiores',
-                  'Defeitos Menores',
-                  'Observação'
+                  'Código IA',
+                  'Touro',
+                  'Estoque',
+                  'Tamanho Palheta',
+                  'Cor da Palheta',
+                  'Data Coleta'
                 ],
-                ...tInventarioSemens.map((item) => [
-                      item.nomeReprodutor,
-                      item.identificacao,
+                ...tSemens.map((item) => [
+                      item.codigoIA,
+                      item.nomeTouro,
                       item.quantidade.toString(),
+                      item.tamanho,
                       item.cor,
-                      item.dataCadastro,
-                      item.dataValidade,
-                      item.vigor,
-                      item.mortalidade,
-                      item.turbilhamento,
-                      item.concentracao,
-                      item.volume.toString(),
-                      item.aspecto,
-                      item.celulasNormais.toString(),
-                      item.defeitoMaiores,
-                      item.defeitoMenores,
-                      item.observacao
+                      item.dataCadastro
                     ])
               ])
             ]));
 
     final String dir = (await getApplicationDocumentsDirectory()).path;
 
-    final String path = '$dir/pdf.pdf';
+    final String path = '$dir/pdfInventarioSemens.pdf';
     final File file = File(path);
     file.writeAsBytesSync(await pdf.save());
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (_) => PdfViwerPage(path: path)));
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => PdfViwerPageInventario(path: path)));
   }
 
   void _orderList(OrderOptions result) {
     switch (result) {
       case OrderOptions.orderaz:
-        inventarioSemens.sort((a, b) {
-          return a.nomeReprodutor
-              .toLowerCase()
-              .compareTo(b.nomeReprodutor.toLowerCase());
+        semens.sort((a, b) {
+          return a.codigoIA.toLowerCase().compareTo(b.codigoIA.toLowerCase());
         });
         break;
       case OrderOptions.orderza:
-        inventarioSemens.sort((a, b) {
-          return b.nomeReprodutor
-              .toLowerCase()
-              .compareTo(a.nomeReprodutor.toLowerCase());
+        semens.sort((a, b) {
+          return b.codigoIA.toLowerCase().compareTo(a.codigoIA.toLowerCase());
         });
         break;
     }
@@ -282,24 +293,24 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
   }
 
   void filterSearchResults(String query) {
-    List<InventarioSemenCaprino> dummySearchList = [];
+    List<InventarioSemen> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<InventarioSemenCaprino> dummyListData = [];
+      List<InventarioSemen> dummyListData = [];
       dummySearchList.forEach((item) {
-        if (item.nomeReprodutor.toLowerCase().contains(query.toLowerCase())) {
+        if (item.nomeTouro.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
         }
       });
       setState(() {
-        inventarioSemens.clear();
-        inventarioSemens.addAll(dummyListData);
+        semens.clear();
+        semens.addAll(dummyListData);
       });
       return;
     } else {
       setState(() {
-        inventarioSemens.clear();
-        inventarioSemens.addAll(items);
+        semens.clear();
+        semens.addAll(items);
       });
     }
   }
@@ -326,7 +337,7 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
-                      pdfLib.Text('Inventário Sêmen Caprino',
+                      pdfLib.Text('Inventário',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white))
                     ],

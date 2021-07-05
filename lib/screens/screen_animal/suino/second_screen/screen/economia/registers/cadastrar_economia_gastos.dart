@@ -40,6 +40,7 @@ class _CadastroEconomiaGastoState extends State<CadastroEconomiaGasto> {
       _nomeLoteController.text = _editedGasto.nome;
       _valorController.text = _editedGasto.valorUnitario.toString();
       _quantidadeController.text = _editedGasto.quantidade.toString();
+      _unidadeController.text = _editedGasto.unidade;
       _obsController.text = _editedGasto.observacao;
       quantidadeTotal = _editedGasto.valorUnitario;
       quantidadeInd = _editedGasto.quantidade;
@@ -155,7 +156,6 @@ class _CadastroEconomiaGastoState extends State<CadastroEconomiaGasto> {
                         _editedGasto.unidade = text;
                       });
                     },
-                    keyboardType: TextInputType.number,
                   ),
                   TextField(
                     controller: _obsController,

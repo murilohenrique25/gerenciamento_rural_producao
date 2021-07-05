@@ -57,6 +57,8 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
       _editedInseminacao = InseminacaoSuino();
     } else {
       _editedInseminacao = InseminacaoSuino.fromMap(widget.inseminacao.toMap());
+      nomeCachaco = _editedInseminacao.nomeCachaco;
+      nomeMatriz = _editedInseminacao.nomeMatriz;
       _inseminadorController.text = _editedInseminacao.inseminador;
       _obsController.text = _editedInseminacao.observacao;
       _palhetaController.text = _editedInseminacao.observacao;
@@ -99,7 +101,9 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
                 var format = new DateFormat("dd-MM-yyyy");
                 String dataParto = format.format(dateParto);
                 matriz.partoPrevisto = dataParto;
+                matriz.numeroPartos += 1;
                 matrizDB.updateItem(matriz);
+                Navigator.pop(context, _editedInseminacao);
               }
               Navigator.pop(context, _editedInseminacao);
             }
@@ -167,6 +171,7 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
                   onChanged: (value) {
                     _inseminacaoEdited = true;
                     setState(() {
+                      matriz = value;
                       nomeMatriz = value.nomeAnimal;
                       _editedInseminacao.idMatriz = value.idAnimal;
                       _editedInseminacao.nomeMatriz = value.nomeAnimal;
@@ -219,6 +224,7 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
                   onChanged: (value) {
                     _inseminacaoEdited = true;
                     setState(() {
+                      inventarioSemen = value;
                       _editedInseminacao.idSemen = value.idCachaco;
                       _editedInseminacao.nomeCachaco = value.nomeCachaco;
                       nomeCachaco = value.nomeCachaco;

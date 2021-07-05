@@ -43,12 +43,22 @@ class InventarioSemenSuina {
   Map toMap() {
     Map<String, dynamic> map = {
       "id_cachaco": idCachaco,
-      "nomeCachaco": nomeCachaco,
+      "nome_cachaco": nomeCachaco,
       "identificacao": identificacao,
       "quantidade": quantidade,
       "cor": cor,
-      "dataCadastro": dataCadastro,
-      "dataValidade": dataValidade,
+      "data_cadastro": dataCadastro,
+      "data_validade": dataValidade,
+      "observacao": observacao,
+      "vigor": vigor,
+      "mortalidade": mortalidade,
+      "turbilhamento": turbilhamento,
+      "concentracao": concentracao,
+      "volume": volume,
+      "aspecto": aspecto,
+      "celulas_normais": celulasNormais,
+      "defeito_maiores": defeitoMaiores,
+      "defeito_menores": defeitoMenores,
     };
     if (id != null) {
       map["id"] = id;

@@ -147,7 +147,9 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                 terminacaoDB.updateItem(_editedTerminacao);
                 abatido = Abatido.fromMap(_editedTerminacao.toMap());
                 abatidosDB.insert(abatido);
-                Navigator.pushNamed(context, 'plantel');
+                Navigator.pop(context, _editedTerminacao);
+              } else {
+                Navigator.pop(context, _editedTerminacao);
               }
             }
           },

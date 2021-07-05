@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/rebanho/plantel/screen/abatidos_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/rebanho/plantel/screen/animais_lote_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/rebanho/plantel/screen/jovem_femea_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/rebanho/plantel/screen/jovem_macho_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/rebanho/plantel/screen/matriz_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/rebanho/plantel/screen/reprodutor_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/rebanho/plantel/bezerra_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/rebanho/plantel/bezerro_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/rebanho/plantel/garrote_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/rebanho/plantel/novilha_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/rebanho/plantel/touro_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/rebanho/plantel/vaca_screen.dart';
 
 class DescriptionRebanhoCorte extends StatefulWidget {
   @override
@@ -46,7 +46,7 @@ class _DescriptionRebanhoCorteState extends State<DescriptionRebanhoCorte> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: ReprodutorCaprinoScreen(),
+                          child: VacaCorteScreen(),
                         ),
                       ],
                     ),
@@ -60,40 +60,7 @@ class _DescriptionRebanhoCorteState extends State<DescriptionRebanhoCorte> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: MatrizCaprinoScreen(),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          width: _width,
-                          height: _height,
-                          color: Colors.grey[50],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: JovemMachoCaprinoScreen(),
-                        ),
-                      ],
-                    ),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          width: _width,
-                          height: _height,
-                          color: Colors.grey[50],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: JovemFemeaCaprinoScreen(),
+                          child: TouroCorteScreen(),
                         ),
                       ],
                     ),
@@ -112,7 +79,7 @@ class _DescriptionRebanhoCorteState extends State<DescriptionRebanhoCorte> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: CaprinoAbatidosScreen(),
+                          child: BezerroScreen(),
                         ),
                       ],
                     ),
@@ -126,7 +93,40 @@ class _DescriptionRebanhoCorteState extends State<DescriptionRebanhoCorte> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: AnimaisLoteScreen(),
+                          child: BezerraScreen(),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: _width,
+                          height: _height,
+                          color: Colors.grey[50],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: GarroteScreen(),
+                        ),
+                      ],
+                    ),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: _width,
+                          height: _height,
+                          color: Colors.grey[50],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: NovilhaScreen(),
                         ),
                       ],
                     ),

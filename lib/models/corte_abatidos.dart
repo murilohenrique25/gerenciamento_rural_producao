@@ -7,6 +7,7 @@ class CortesAbatidos {
   double precoKgArroba;
   String data;
   String comprador;
+  int quantidade;
   String observacao;
 
   CortesAbatidos();
@@ -19,6 +20,7 @@ class CortesAbatidos {
     precoKgArroba = map["preco_kg_arroba"];
     data = map["data"];
     comprador = map["comprador"];
+    quantidade = map["quantidade"];
     observacao = map["observacao"];
   }
 
@@ -30,6 +32,7 @@ class CortesAbatidos {
       "peso_arroba": pesoArroba,
       "preco_kg_arroba": precoKgArroba,
       "data": data,
+      "quantidade": quantidade,
       "comprador": comprador,
       "observacao": observacao
     };
@@ -38,5 +41,10 @@ class CortesAbatidos {
     }
 
     return map;
+  }
+
+  @override
+  String toString() {
+    return "Abatidos(categoria:$categoria\npeso arroba:$pesoArroba\npreco arroba:$precoKgArroba\nquantidade: $quantidade)";
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/inseminacao_caprina_db.dart';
-import 'package:gerenciamento_rural/models/inseminacao_caprino.dart';
+import 'package:gerenciamento_rural/helpers/inseminacao_bovino_corte_db.dart';
+import 'package:gerenciamento_rural/models/inseminacao.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/reproducao/registers/cadastro_inseminacao.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPage.dart';
 import 'package:pdf/pdf.dart';
@@ -10,18 +10,17 @@ import 'package:path_provider/path_provider.dart';
 
 enum OrderOptions { orderaz, orderza }
 
-class ListaInseminacaoCaprina extends StatefulWidget {
+class ListaInseminacaoBC extends StatefulWidget {
   @override
-  _ListaInseminacaoCaprinaState createState() =>
-      _ListaInseminacaoCaprinaState();
+  _ListaInseminacaoBCState createState() => _ListaInseminacaoBCState();
 }
 
-class _ListaInseminacaoCaprinaState extends State<ListaInseminacaoCaprina> {
+class _ListaInseminacaoBCState extends State<ListaInseminacaoBC> {
   TextEditingController editingController = TextEditingController();
-  InseminacaoCaprinaDB helper = InseminacaoCaprinaDB();
-  List<InseminacaoCaprino> items = [];
-  List<InseminacaoCaprino> inseminacoes = [];
-  List<InseminacaoCaprino> tInseminacoes = [];
+  InseminacaoBovinoCorteDB helper = InseminacaoBovinoCorteDB();
+  List<Inseminacao> items = [];
+  List<Inseminacao> inseminacoes = [];
+  List<Inseminacao> tInseminacoes = [];
 
   @override
   void initState() {
@@ -104,7 +103,7 @@ class _ListaInseminacaoCaprinaState extends State<ListaInseminacaoCaprina> {
           child: Row(
             children: [
               Text(
-                "Reprodutor: " + inseminacoes[index].nomeReprodutor ?? "",
+                "Touro: " + inseminacoes[index].nomeTouro ?? "",
                 style: TextStyle(fontSize: 14.0),
               ),
               SizedBox(
@@ -115,7 +114,7 @@ class _ListaInseminacaoCaprinaState extends State<ListaInseminacaoCaprina> {
                 width: 15,
               ),
               Text(
-                "Matriz: " + inseminacoes[index].nomeMatriz ?? "",
+                "Vaca: " + inseminacoes[index].nomeVaca ?? "",
                 style: TextStyle(fontSize: 14.0),
               )
             ],
@@ -138,7 +137,7 @@ class _ListaInseminacaoCaprinaState extends State<ListaInseminacaoCaprina> {
     });
   }
 
-  void _showPage({InseminacaoCaprino inseminacao}) async {
+  void _showPage({Inseminacao inseminacao}) async {
     final recInventario = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -211,22 +210,12 @@ class _ListaInseminacaoCaprinaState extends State<ListaInseminacaoCaprina> {
         header: _buildHeade,
         build: (context) => [
               pdfLib.Table.fromTextArray(context: context, data: <List<String>>[
-                <String>[
-                  'Reprodutor',
-                  'Matriz',
-                  'Data',
-                  'Inseminador',
-                  'Tipo Reprodução',
-                  'Palheta',
-                  'Observação'
-                ],
+                <String>['Touro', 'Vaca', 'Data', 'Inseminador', 'Observação'],
                 ...tInseminacoes.map((item) => [
-                      item.nomeReprodutor,
-                      item.nomeMatriz,
+                      item.nomeTouro,
+                      item.nomeVaca,
                       item.data,
                       item.inseminador,
-                      item.tipoReproducao,
-                      item.palheta,
                       item.observacao
                     ])
               ])
@@ -245,16 +234,12 @@ class _ListaInseminacaoCaprinaState extends State<ListaInseminacaoCaprina> {
     switch (result) {
       case OrderOptions.orderaz:
         inseminacoes.sort((a, b) {
-          return a.nomeReprodutor
-              .toLowerCase()
-              .compareTo(b.nomeReprodutor.toLowerCase());
+          return a.nomeTouro.toLowerCase().compareTo(b.nomeTouro.toLowerCase());
         });
         break;
       case OrderOptions.orderza:
         inseminacoes.sort((a, b) {
-          return b.nomeReprodutor
-              .toLowerCase()
-              .compareTo(a.nomeReprodutor.toLowerCase());
+          return b.nomeTouro.toLowerCase().compareTo(a.nomeTouro.toLowerCase());
         });
         break;
     }
@@ -262,12 +247,12 @@ class _ListaInseminacaoCaprinaState extends State<ListaInseminacaoCaprina> {
   }
 
   void filterSearchResults(String query) {
-    List<InseminacaoCaprino> dummySearchList = [];
+    List<Inseminacao> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<InseminacaoCaprino> dummyListData = [];
+      List<Inseminacao> dummyListData = [];
       dummySearchList.forEach((item) {
-        if (item.nomeReprodutor.toLowerCase().contains(query.toLowerCase())) {
+        if (item.nomeTouro.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
         }
       });

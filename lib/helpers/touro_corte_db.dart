@@ -75,7 +75,8 @@ class TouroCorteDB extends HelperDB {
 
   Future<List> getAllItems() async {
     Database db = await this.getDb();
-    List listMap = await db.rawQuery("SELECT * FROM touroCorte");
+    List listMap =
+        await db.rawQuery("SELECT * FROM touroCorte WHERE animal_abatido == 0");
     List<TouroCorte> list = [];
     for (Map m in listMap) {
       list.add(TouroCorte.fromMap(m));

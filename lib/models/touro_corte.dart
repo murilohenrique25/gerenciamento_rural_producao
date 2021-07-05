@@ -77,6 +77,7 @@ class TouroCorte extends AnimalCorte {
     cor = map["cor"];
     dataExame = map["data_exame"];
     descricao = map["descricao"];
+    animalAbatido = map["animal_abatido"];
   }
   Map toMap() {
     Map<String, dynamic> map = {
@@ -125,6 +126,7 @@ class TouroCorte extends AnimalCorte {
       "cor": cor,
       "data_exame": dataExame,
       "descricao": descricao,
+      "animal_abatido": animalAbatido,
     };
     if (id != null) {
       map["id"] = id;

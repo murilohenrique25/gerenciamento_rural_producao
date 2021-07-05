@@ -76,8 +76,8 @@ class GarroteCorteDB extends HelperDB {
 
   Future<List> getAllItems() async {
     Database db = await this.getDb();
-    List listMap =
-        await db.rawQuery("SELECT * FROM garroteCorte WHERE virouAdulto == 0");
+    List listMap = await db.rawQuery(
+        "SELECT * FROM garroteCorte WHERE virou_adulto == 0 AND animal_abatido == 0");
     List<GarroteCorte> list = [];
     for (Map m in listMap) {
       list.add(GarroteCorte.fromMap(m));

@@ -110,15 +110,6 @@ class _MedicamentosCaprinoListState extends State<MedicamentosCaprinoList> {
               SizedBox(
                 width: 15,
               ),
-              Text(" - "),
-              SizedBox(
-                width: 15,
-              ),
-              Text(
-                "Quantidade: " + medicamentos[index].quantidade.toString() ??
-                    "",
-                style: TextStyle(fontSize: 14.0),
-              )
             ],
           ),
         ),

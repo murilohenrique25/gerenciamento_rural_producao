@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/nutricao_volumoso_caprino_db.dart';
+import 'package:gerenciamento_rural/helpers/nutricao_volumoso_bovino_corte_db.dart';
 import 'package:gerenciamento_rural/models/nutricao_volumoso.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/nutricao/screen/second_screen/registers/cadastro_nutricao_volumoso.dart';
@@ -21,7 +21,7 @@ class ListNutricaoVolumosoBovinoCorte extends StatefulWidget {
 class _ListNutricaoVolumosoBovinoCorteState
     extends State<ListNutricaoVolumosoBovinoCorte> {
   TextEditingController editingController = TextEditingController();
-  NutricaoVolumosoCaprinoDB helper = NutricaoVolumosoCaprinoDB();
+  NutricaoVolumosoBovinoCorteDB helper = NutricaoVolumosoBovinoCorteDB();
   List<NutricaoVolumoso> totalNT = [];
   List<NutricaoVolumoso> items = [];
   List<NutricaoVolumoso> nutricoes = [];

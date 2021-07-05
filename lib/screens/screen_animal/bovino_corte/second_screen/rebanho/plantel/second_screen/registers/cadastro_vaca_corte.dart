@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:gerenciamento_rural/helpers/corte_abatidos_db.dart';
 import 'package:gerenciamento_rural/helpers/lote_db.dart';
+import 'package:gerenciamento_rural/helpers/vaca_corte_db.dart';
+import 'package:gerenciamento_rural/models/corte_abatidos.dart';
 import 'package:gerenciamento_rural/models/lote.dart';
 import 'package:gerenciamento_rural/models/vaca_corte.dart';
 import 'package:intl/intl.dart';
@@ -22,7 +25,7 @@ class _CadastroVacaCorteState extends State<CadastroVacaCorte> {
   final _nameFocus = FocusNode();
   Lote lote = Lote();
   bool _vacasEdited = false;
-  List<String> diagnosticos = ["Vazia", "Prenha", "Aborto"];
+  List<String> diagnosticos = ["Gestante", "Vazia", "Aborto", "Inseminada"];
   VacaCorte _editedVaca;
 
   var dataUltInsemiController = MaskedTextController(mask: '00-00-0000');
@@ -38,25 +41,32 @@ class _CadastroVacaCorteState extends State<CadastroVacaCorte> {
   final _origemController = TextEditingController();
   final _pesoController = TextEditingController();
   final _quantidadeDiasController = TextEditingController();
+  final _pesoFinalController = TextEditingController();
+  final _compradorController = TextEditingController();
+  final _precoVivoController = TextEditingController();
+  final _cecController = TextEditingController();
+
   var _dataNasc = MaskedTextController(mask: '00-00-0000');
   var _dataAcontecidoController = MaskedTextController(mask: '00-00-0000');
   var _dataDiagnosticoController = MaskedTextController(mask: '00-00-0000');
+  var _dataPartoController = MaskedTextController(mask: '00-00-0000');
 
   final df = new DateFormat("dd-MM-yyyy");
 
   final GlobalKey<ScaffoldState> _scaffoldstate =
       new GlobalKey<ScaffoldState>();
   int _radioValue = 0;
+  int _radioValueParto = 0;
   int groupValueTipo = 0;
   String numeroData;
   String idadeFinal = "";
   String _idadeAnimal = "";
   String nomeD = "";
-  String diagnostico;
+  String diagnostico = "";
   String dataInseminacao = "Não inseminada";
   String dataSecagem = "Não inseminada";
-  String dataParto = "Não inseminada";
-  String loteSelecionado;
+  String partoPrevisto = "Não inseminada";
+  String loteSelecionado = "";
 
   void _reset() {
     setState(() {});
@@ -70,6 +80,7 @@ class _CadastroVacaCorteState extends State<CadastroVacaCorte> {
       _editedVaca = VacaCorte();
       _editedVaca.diagnosticoGestacao = "Vazia";
       _editedVaca.situacao = "Viva";
+      _editedVaca.animalAbatido = 0;
     } else {
       _editedVaca = VacaCorte.fromMap(widget.vaca.toMap());
       _nomeController.text = _editedVaca.nome;
@@ -77,6 +88,11 @@ class _CadastroVacaCorteState extends State<CadastroVacaCorte> {
       _paiController.text = _editedVaca.pai;
       _maeController.text = _editedVaca.mae;
       _pesoController.text = _editedVaca.peso.toString();
+      _origemController.text = _editedVaca.origem;
+      _dataPartoController.text = _editedVaca.dataParto;
+      _dataDiagnosticoController.text = _editedVaca.dataDiagnosticoGestacao;
+      loteSelecionado = _editedVaca.nomeLote;
+      _cecController.text = _editedVaca.cec;
       numeroData = _editedVaca.dataNascimento;
       _dataNasc.text = numeroData;
       if (_editedVaca.situacao == "Viva") {
@@ -93,15 +109,22 @@ class _CadastroVacaCorteState extends State<CadastroVacaCorte> {
       } else {
         groupValueTipo = 2;
       }
+
       if (_editedVaca?.ultimaInseminacao?.isNotEmpty ?? false) {
         dataInseminacao = _editedVaca.ultimaInseminacao;
       }
       if (_editedVaca?.partoPrevisto?.isNotEmpty ?? false) {
-        dataParto = _editedVaca.partoPrevisto;
+        partoPrevisto = _editedVaca.partoPrevisto;
       }
       if (_editedVaca?.secagemPrevista?.isNotEmpty ?? false) {
         dataSecagem = _editedVaca.secagemPrevista;
       }
+      if (_editedVaca.tipoParto == "Parto Natural") {
+        groupValueTipo = 0;
+      } else {
+        groupValueTipo = 1;
+      }
+
       dataUltInsemiController.text = _editedVaca.ultimaInseminacao;
       dataPrePartoController.text = _editedVaca.partoPrevisto;
       dataPrevSecageController.text = _editedVaca.secagemPrevista;
@@ -226,6 +249,39 @@ class _CadastroVacaCorteState extends State<CadastroVacaCorte> {
                     });
                   },
                 ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _pesoFinalController,
+                  decoration: InputDecoration(labelText: "Peso"),
+                  onChanged: (text) {
+                    _vacasEdited = true;
+                    setState(() {
+                      _editedVaca.pesoFinal = double.parse(text);
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _compradorController,
+                  decoration: InputDecoration(labelText: "Comprador"),
+                  onChanged: (text) {
+                    _vacasEdited = true;
+                    setState(() {
+                      _editedVaca.comprador = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _precoVivoController,
+                  decoration: InputDecoration(labelText: "Preço Vivo/@"),
+                  onChanged: (text) {
+                    _vacasEdited = true;
+                    setState(() {
+                      _editedVaca.precoVivo = double.parse(text);
+                    });
+                  },
+                ),
               ],
             ),
           ),
@@ -270,6 +326,21 @@ class _CadastroVacaCorteState extends State<CadastroVacaCorte> {
               Toast.show("Data nascimento inválida.", context,
                   duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
             } else {
+              if (_editedVaca.situacao == "Abate") {
+                VacaCorteDB bezerraCorteDB = VacaCorteDB();
+                CorteAbatidosDB corteAbatidosDB = CorteAbatidosDB();
+                CortesAbatidos cortesAbatidos = CortesAbatidos();
+                cortesAbatidos.categoria = "Vaca";
+                cortesAbatidos.comprador = _editedVaca.comprador;
+                cortesAbatidos.data = _editedVaca.dataAcontecido;
+                cortesAbatidos.nomeAnimal = _editedVaca.nome;
+                cortesAbatidos.idade = idadeFinal;
+                cortesAbatidos.pesoArroba = _editedVaca.pesoFinal;
+                cortesAbatidos.precoKgArroba = _editedVaca.precoVivo;
+                corteAbatidosDB.insert(cortesAbatidos);
+                _editedVaca.animalAbatido = 1;
+                bezerraCorteDB.updateItem(_editedVaca);
+              }
               Navigator.pop(context, _editedVaca);
             }
           },
@@ -419,7 +490,7 @@ class _CadastroVacaCorteState extends State<CadastroVacaCorte> {
                   },
                   isExpanded: true,
                 ),
-                Text("Lote:  $nomeD",
+                Text("Diagnóstico:  $nomeD",
                     style: TextStyle(
                         fontSize: 16.0,
                         color: Color.fromARGB(255, 4, 125, 141))),
@@ -472,11 +543,11 @@ class _CadastroVacaCorteState extends State<CadastroVacaCorte> {
                       Text("IA"),
                     ],
                   ),
-                if (nomeD == "Gestante")
+                if (nomeD == "Gestante" || nomeD == "Aborto")
                   TextField(
                     keyboardType: TextInputType.text,
                     controller: _quantidadeDiasController,
-                    decoration: InputDecoration(labelText: "Raça"),
+                    decoration: InputDecoration(labelText: "Quantos dias?"),
                     onChanged: (text) {
                       _vacasEdited = true;
                       setState(() {
@@ -495,6 +566,55 @@ class _CadastroVacaCorteState extends State<CadastroVacaCorte> {
                     });
                   },
                 ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _cecController,
+                  decoration: InputDecoration(
+                      labelText: "Condição de Escore Corporal (CEC)"),
+                  onChanged: (text) {
+                    _vacasEdited = true;
+                    setState(() {
+                      _editedVaca.cec = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataPartoController,
+                  decoration: InputDecoration(labelText: "Data Parto"),
+                  onChanged: (text) {
+                    _vacasEdited = true;
+                    setState(() {
+                      _editedVaca.dataParto = text;
+                    });
+                  },
+                ),
+                if (_editedVaca.dataParto != null)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Radio(
+                          value: 0,
+                          groupValue: _radioValueParto,
+                          onChanged: (int value) {
+                            setState(() {
+                              _radioValueParto = value;
+                              _editedVaca.tipoParto = "Parto Normal";
+                            });
+                          }),
+                      Text("Parto Normal"),
+                      Radio(
+                          value: 1,
+                          groupValue: _radioValueParto,
+                          onChanged: (int value) {
+                            setState(() {
+                              _radioValueParto = value;
+                              _editedVaca.tipoParto = "Parto Distócico";
+                            });
+                          }),
+                      Text("Parto Distócico"),
+                    ],
+                  ),
                 TextField(
                   keyboardType: TextInputType.text,
                   controller: _origemController,
@@ -538,7 +658,7 @@ class _CadastroVacaCorteState extends State<CadastroVacaCorte> {
                 Padding(
                   padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
                   child: Text(
-                    "Parto previsto: " + dataParto,
+                    "Parto previsto: " + partoPrevisto,
                     style: TextStyle(
                         fontSize: 16.0,
                         color: Color.fromARGB(255, 4, 125, 141)),

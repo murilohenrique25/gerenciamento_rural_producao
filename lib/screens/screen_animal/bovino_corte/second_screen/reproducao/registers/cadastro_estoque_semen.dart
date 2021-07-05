@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:gerenciamento_rural/helpers/reprodutor_db.dart';
-import 'package:gerenciamento_rural/models/inventario_semen_caprino.dart';
-import 'package:gerenciamento_rural/models/reprodutor.dart';
+import 'package:gerenciamento_rural/models/inventario_semen.dart';
+import 'package:gerenciamento_rural/models/touro_corte.dart';
+import 'package:gerenciamento_rural/helpers/touro_corte_db.dart';
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
-import 'package:toast/toast.dart';
 
+// ignore: must_be_immutable
 class CadastroEstoqueSemenBovinoCorte extends StatefulWidget {
-  final InventarioSemenCaprino inventarioSemenCaprino;
-  CadastroEstoqueSemenBovinoCorte({this.inventarioSemenCaprino});
+  InventarioSemen invet;
+
+  CadastroEstoqueSemenBovinoCorte({this.invet});
   @override
   _CadastroEstoqueSemenBovinoCorteState createState() =>
       _CadastroEstoqueSemenBovinoCorteState();
@@ -17,33 +17,22 @@ class CadastroEstoqueSemenBovinoCorte extends StatefulWidget {
 
 class _CadastroEstoqueSemenBovinoCorteState
     extends State<CadastroEstoqueSemenBovinoCorte> {
-  String tipo;
-  ReprodutorDB helper = ReprodutorDB();
-  List<Reprodutor> reprodutores = [];
-  bool _inventarioEdited = false;
-  InventarioSemenCaprino _editedInventario;
-  Reprodutor reprodutor = Reprodutor();
-  String idadeFinal = "";
-  String nomeMacho = "";
-  final _vigorController = TextEditingController();
-  final _obsController = TextEditingController();
-  final _palhetaController = TextEditingController();
+  TouroCorteDB touroDB = TouroCorteDB();
+  List<TouroCorte> touros = [];
+
+  int _radioValue = 0;
+  int _radioValueTamanho = 0;
+  int idTouro = 0;
   final _quantidadeController = TextEditingController();
-  final _mortilidadeController = TextEditingController();
-  final _turbilhamentoController = TextEditingController();
-  final _concentracaoController = TextEditingController();
-  final _volumeController = TextEditingController();
-  final _aspectoController = TextEditingController();
-  final _defeitosMaioresController = TextEditingController();
-  final _celulasNormaisController = TextEditingController();
-  final _defeitosMenoresController = TextEditingController();
-  final _corController = TextEditingController();
-  var _dataColeta = MaskedTextController(mask: '00-00-0000');
-  var _dataValidade = MaskedTextController(mask: '00-00-0000');
+  final _corPalhetaController = TextEditingController();
+
+  TouroCorte selectedTouro = TouroCorte();
+  TouroCorte touro = TouroCorte();
+  bool _inventarioEdited = false;
+
+  InventarioSemen _editedInventario;
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  final df = new DateFormat("dd-MM-yyyy");
 
   final GlobalKey<ScaffoldState> _scaffoldstate =
       new GlobalKey<ScaffoldState>();
@@ -57,29 +46,27 @@ class _CadastroEstoqueSemenBovinoCorteState
   @override
   void initState() {
     super.initState();
-    _getAllReprodutores();
-    if (widget.inventarioSemenCaprino == null) {
-      _editedInventario = InventarioSemenCaprino();
+    _getAllTouros();
+    if (widget.invet == null) {
+      _editedInventario = InventarioSemen();
+      _editedInventario.codigoIA = "Sexuado";
+      _editedInventario.tamanho = "Pequena";
     } else {
-      _editedInventario =
-          InventarioSemenCaprino.fromMap(widget.inventarioSemenCaprino.toMap());
-      _palhetaController.text = _editedInventario.identificacao;
+      _editedInventario = InventarioSemen.fromMap(widget.invet.toMap());
+      if (_editedInventario.codigoIA == "Sexuado") {
+        _radioValue = 0;
+      } else {
+        _radioValue = 1;
+      }
       _quantidadeController.text = _editedInventario.quantidade.toString();
-      _corController.text = _editedInventario.cor;
-      _dataColeta.text = _editedInventario.dataCadastro;
-      _dataValidade.text = _editedInventario.dataValidade;
-      _obsController.text = _editedInventario.observacao;
-      _vigorController.text = _editedInventario.vigor;
-      _aspectoController.text = _editedInventario.aspecto;
-      _mortilidadeController.text = _editedInventario.mortalidade;
-      _turbilhamentoController.text = _editedInventario.turbilhamento;
-      _concentracaoController.text = _editedInventario.concentracao;
-      _volumeController.text = _editedInventario.volume.toString();
-      _celulasNormaisController.text =
-          _editedInventario.celulasNormais.toString();
-      _defeitosMaioresController.text = _editedInventario.defeitoMaiores;
-      _defeitosMenoresController.text = _editedInventario.defeitoMenores;
-      nomeMacho = _editedInventario.nomeReprodutor;
+      _corPalhetaController.text = _editedInventario.cor;
+      if (_editedInventario.tamanho == "Pequena") {
+        _radioValueTamanho = 0;
+      } else if (_editedInventario.tamanho == "Media") {
+        _radioValueTamanho = 1;
+      } else {
+        _radioValueTamanho = 2;
+      }
     }
   }
 
@@ -91,7 +78,7 @@ class _CadastroEstoqueSemenBovinoCorteState
         key: _scaffoldstate,
         appBar: AppBar(
           title: Text(
-            "Cadastrar Estoque",
+            "Cadastrar Inventário de Sêmen",
             style: TextStyle(fontSize: 15.0),
           ),
           centerTitle: true,
@@ -104,12 +91,11 @@ class _CadastroEstoqueSemenBovinoCorteState
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            if (_dataColeta.text.isEmpty) {
-              Toast.show("Data inválida.", context,
-                  duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
-            } else {
-              Navigator.pop(context, _editedInventario);
-            }
+            DateTime dataAgora = DateTime.now();
+            var format = new DateFormat("dd-MM-yyyy");
+            String dataCadastro = format.format(dataAgora);
+            _editedInventario.dataCadastro = dataCadastro;
+            Navigator.pop(context, _editedInventario);
           },
           child: Icon(Icons.save),
           backgroundColor: Colors.green[700],
@@ -126,43 +112,55 @@ class _CadastroEstoqueSemenBovinoCorteState
                   size: 80.0,
                   color: Color.fromARGB(255, 4, 125, 141),
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                TextField(
-                  controller: _dataColeta,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: "Data Coleta"),
-                  onChanged: (text) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      _editedInventario.dataCadastro = text;
-                    });
-                  },
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Código IA:"),
+                    Radio(
+                        value: 0,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                            _editedInventario.codigoIA = "Sexado";
+                          });
+                        }),
+                    Text("Sexado"),
+                    Radio(
+                        value: 1,
+                        groupValue: _radioValue,
+                        onChanged: (int value) {
+                          setState(() {
+                            _radioValue = value;
+                          });
+                          _editedInventario.codigoIA = "Não Sexado";
+                        }),
+                    Text("Não Sexado"),
+                  ],
                 ),
                 SizedBox(
                   height: 20.0,
                 ),
                 SearchableDropdown.single(
-                  items: reprodutores.map((reprodutor) {
+                  items: touros.map((t) {
                     return DropdownMenuItem(
-                      value: reprodutor,
+                      value: t,
                       child: Row(
                         children: [
-                          Text(reprodutor.nomeAnimal),
+                          Text(t.nome),
                         ],
                       ),
                     );
                   }).toList(),
-                  value: reprodutor,
-                  hint: "Selecione um reprodutor",
-                  searchHint: "Selecione um reprodutor",
+                  value: selectedTouro,
+                  hint: "Selecione um Touro",
+                  searchHint: "Selecione um Touro",
                   onChanged: (value) {
                     _inventarioEdited = true;
                     setState(() {
-                      _editedInventario.idReprodutor = value.id;
-                      _editedInventario.nomeReprodutor = value.nomeAnimal;
-                      nomeMacho = value.nomeAnimal;
+                      idTouro = value.idTouro;
+                      _editedInventario.idTouro = value.idTouro;
+                      _editedInventario.nomeTouro = value.nome;
                     });
                   },
                   doneButton: "Pronto",
@@ -185,173 +183,85 @@ class _CadastroEstoqueSemenBovinoCorteState
                   },
                   isExpanded: true,
                 ),
-                SizedBox(
-                  height: 10.0,
-                ),
-                Text("Macho:  $nomeMacho",
-                    style: TextStyle(
-                        fontSize: 16.0,
-                        color: Color.fromARGB(255, 4, 125, 141))),
-                SizedBox(
-                  height: 10.0,
-                ),
                 TextField(
-                  keyboardType: TextInputType.number,
                   controller: _quantidadeController,
-                  decoration: InputDecoration(labelText: "Quantidade"),
-                  onChanged: (text) {
+                  decoration: InputDecoration(labelText: "Estoque de Palheta"),
+                  onChanged: (value) {
                     _inventarioEdited = true;
                     setState(() {
-                      _editedInventario.quantidade = int.parse(text);
+                      _editedInventario.quantidade = int.parse(value);
                     });
                   },
-                ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _palhetaController,
-                  decoration:
-                      InputDecoration(labelText: "Identificação da Palheta"),
-                  onChanged: (text) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      _editedInventario.identificacao = text;
-                    });
-                  },
-                ),
-                TextField(
                   keyboardType: TextInputType.number,
-                  controller: _dataValidade,
-                  decoration: InputDecoration(labelText: "Data Validade"),
-                  onChanged: (text) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      _editedInventario.dataCadastro = text;
-                    });
-                  },
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Text("Tamanho Palheta:"),
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Radio(
+                              value: 0,
+                              groupValue: _radioValueTamanho,
+                              onChanged: (int value) {
+                                _inventarioEdited = true;
+                                setState(() {
+                                  _radioValueTamanho = value;
+                                  _editedInventario.tamanho = "Pequena";
+                                });
+                              }),
+                          Text("Pequena"),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Radio(
+                              value: 1,
+                              groupValue: _radioValueTamanho,
+                              onChanged: (int value) {
+                                _inventarioEdited = true;
+                                setState(() {
+                                  _radioValueTamanho = value;
+                                  _editedInventario.tamanho = "Media";
+                                });
+                              }),
+                          Text("Média"),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Radio(
+                              value: 2,
+                              groupValue: _radioValueTamanho,
+                              onChanged: (int value) {
+                                _inventarioEdited = true;
+                                setState(() {
+                                  _radioValueTamanho = value;
+                                  _editedInventario.tamanho = "Grande";
+                                });
+                              }),
+                          Text("Grande"),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
                 TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _obsController,
-                  decoration: InputDecoration(labelText: "Observação"),
-                  onChanged: (text) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      _editedInventario.observacao = text;
-                    });
-                  },
-                ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _vigorController,
-                  decoration: InputDecoration(labelText: "Vigor"),
-                  onChanged: (text) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      _editedInventario.vigor = text;
-                    });
-                  },
-                ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _mortilidadeController,
-                  decoration: InputDecoration(labelText: "Motilidade"),
-                  onChanged: (text) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      _editedInventario.mortalidade = text;
-                    });
-                  },
-                ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _turbilhamentoController,
-                  decoration: InputDecoration(labelText: "Turbilhamento"),
-                  onChanged: (text) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      _editedInventario.turbilhamento = text;
-                    });
-                  },
-                ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _concentracaoController,
-                  decoration: InputDecoration(labelText: "Concentração"),
-                  onChanged: (text) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      _editedInventario.concentracao = text;
-                    });
-                  },
-                ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _volumeController,
-                  decoration: InputDecoration(labelText: "Volume"),
-                  onChanged: (text) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      _editedInventario.volume = double.parse(text);
-                    });
-                  },
-                ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _aspectoController,
-                  decoration: InputDecoration(labelText: "Aspecto"),
-                  onChanged: (text) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      _editedInventario.aspecto = text;
-                    });
-                  },
-                ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _celulasNormaisController,
-                  decoration: InputDecoration(labelText: "Células normais %"),
-                  onChanged: (text) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      _editedInventario.celulasNormais = double.parse(text);
-                    });
-                  },
-                ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _defeitosMaioresController,
-                  decoration: InputDecoration(labelText: "Defeitos Maiores"),
-                  onChanged: (text) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      _editedInventario.defeitoMaiores = text;
-                    });
-                  },
-                ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _defeitosMenoresController,
-                  decoration: InputDecoration(labelText: "Defeitos Menores"),
-                  onChanged: (text) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      _editedInventario.defeitoMenores = text;
-                    });
-                  },
-                ),
-                TextField(
-                  keyboardType: TextInputType.text,
-                  controller: _corController,
-                  decoration: InputDecoration(labelText: "Cor"),
+                  controller: _corPalhetaController,
+                  decoration: InputDecoration(labelText: "Cor da Palheta"),
                   onChanged: (text) {
                     _inventarioEdited = true;
                     setState(() {
                       _editedInventario.cor = text;
                     });
                   },
-                ),
-                SizedBox(
-                  height: 20.0,
                 ),
               ],
             ),
@@ -393,10 +303,10 @@ class _CadastroEstoqueSemenBovinoCorteState
     }
   }
 
-  void _getAllReprodutores() {
-    helper.getAllItemsVivos().then((list) {
+  void _getAllTouros() {
+    touroDB.getAllItems().then((value) {
       setState(() {
-        reprodutores = list;
+        touros = value;
       });
     });
   }

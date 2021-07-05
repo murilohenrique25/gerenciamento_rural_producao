@@ -323,6 +323,8 @@ class _CadastroCachacoState extends State<CadastroCachaco> {
                 abatido = Abatido.fromMap(_editedCachaco.toMap());
                 abatidosDB.insert(abatido);
                 Navigator.pop(context, _editedCachaco);
+              } else {
+                Navigator.pop(context, _editedCachaco);
               }
             }
           },

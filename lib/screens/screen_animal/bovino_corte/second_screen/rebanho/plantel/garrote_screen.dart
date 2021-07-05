@@ -1,13 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/rebanho/description_rebanho.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/rebanho/plantel/second_screen/list_garrotes_corte.dart';
 
-class RebanhoScreen extends StatefulWidget {
+class GarroteScreen extends StatefulWidget {
   @override
-  _RebanhoScreenState createState() => _RebanhoScreenState();
+  _GarroteScreenState createState() => _GarroteScreenState();
 }
 
-class _RebanhoScreenState extends State<RebanhoScreen> {
+class _GarroteScreenState extends State<GarroteScreen> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -16,8 +16,7 @@ class _RebanhoScreenState extends State<RebanhoScreen> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => DescriptionRebanhoCorte()),
+              MaterialPageRoute(builder: (context) => ListaGarrotesCorte()),
             );
           },
           child: ClipRRect(
@@ -38,7 +37,7 @@ class _RebanhoScreenState extends State<RebanhoScreen> {
                   child: Row(
                     children: [
                       Text(
-                        "Rebanho",
+                        "Garrote",
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 16.5,

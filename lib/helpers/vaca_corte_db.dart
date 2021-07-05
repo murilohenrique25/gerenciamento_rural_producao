@@ -71,7 +71,8 @@ class VacaCorteDB extends HelperDB {
 
   Future<List> getAllItems() async {
     Database db = await this.getDb();
-    List listMap = await db.rawQuery("SELECT * FROM vacaCorte");
+    List listMap =
+        await db.rawQuery("SELECT * FROM vacaCorte WHERE animal_abatido == 0");
     List<VacaCorte> list = [];
     for (Map m in listMap) {
       list.add(VacaCorte.fromMap(m));

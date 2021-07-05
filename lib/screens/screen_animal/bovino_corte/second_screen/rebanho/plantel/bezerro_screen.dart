@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/rebanho/description_rebanho.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/rebanho/plantel/second_screen/list_bezerro_corte.dart';
 
 class BezerroScreen extends StatefulWidget {
   @override
@@ -16,8 +16,7 @@ class _BezerroScreenState extends State<BezerroScreen> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => DescriptionRebanhoCorte()),
+              MaterialPageRoute(builder: (context) => ListaBezerroCorte()),
             );
           },
           child: ClipRRect(

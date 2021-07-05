@@ -27,6 +27,7 @@ class BezerraCorte extends AnimalCorte {
     pesoDesmama = map["peso_desmama"];
     virouAdulto = map["virou_adulto"];
     descricao = map["descricao"];
+    animalAbatido = map["animal_abatido"];
   }
   Map toMap() {
     Map<String, dynamic> map = {
@@ -49,6 +50,7 @@ class BezerraCorte extends AnimalCorte {
       "peso_desmama": pesoDesmama,
       "virou_adulto": virouAdulto,
       "descricao": descricao,
+      "animal_abatido": descricao,
     };
     if (id != null) {
       map["id"] = id;

@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/rebanho/description_rebanho.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/rebanho/plantel/second_screen/list_novilhas_corte.dart';
 
 class NovilhaScreen extends StatefulWidget {
   @override
@@ -16,8 +16,7 @@ class _NovilhaScreenState extends State<NovilhaScreen> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => DescriptionRebanhoCorte()),
+              MaterialPageRoute(builder: (context) => ListaNovilhaCorte()),
             );
           },
           child: ClipRRect(

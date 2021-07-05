@@ -31,6 +31,7 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
   String nomeD = "";
   String diagnostic = "";
   String ultimainseminacao = "";
+  String partoPrevisto = "";
   final _nomeController = TextEditingController();
   final _racaController = TextEditingController();
   final _paiController = TextEditingController();
@@ -331,7 +332,7 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
     getAllLotes();
     if (widget.matrizCaprino == null) {
       _editedMatriz = MatrizCaprino();
-      _editedMatriz.situacao = "Vivo";
+      _editedMatriz.situacao = "Viva";
       _radioValue = 0;
       _editedMatriz.setor = "Caprino";
       _radioValueSetor = 0;
@@ -355,6 +356,10 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
       numeroData = _editedMatriz.dataNascimento;
       _dataNasc.text = numeroData;
       idadeFinal = differenceDate();
+
+      if (_editedMatriz.diasPrenha != null) {
+        partoPrevisto = (270 - _editedMatriz.diasPrenha).toString();
+      }
 
       if (_editedMatriz.situacao == "Viva") {
         _radioValue = 0;
@@ -651,18 +656,11 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                 SizedBox(
                   height: 10.0,
                 ),
-                Text(
-                  "Idade 1º parto:  ",
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: Color.fromARGB(255, 4, 125, 141),
-                  ),
-                ),
                 SizedBox(
                   height: 10.0,
                 ),
                 Text(
-                  "Parto previsto:  ",
+                  "Parto previsto: $partoPrevisto",
                   style: TextStyle(
                     fontSize: 16.0,
                     color: Color.fromARGB(255, 4, 125, 141),

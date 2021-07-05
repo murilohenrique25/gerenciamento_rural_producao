@@ -79,4 +79,29 @@ class CorteAbatidosDB extends HelperDB {
     }
     return list;
   }
+
+  Future<List> getAllItemsAbates() async {
+    Database db = await this.getDb();
+
+    List<CortesAbatidos> list = [];
+    List listMap = await db.rawQuery(
+        "SELECT categoria , SUM(peso_arroba), AVG(preco_kg_arroba), data, COUNT(id) FROM cortesAbatidos GROUP BY categoria");
+
+    // for (Map m in listMap) {
+    //   list.add(CortesAbatidos.fromMap(m));
+    // }
+    listMap.forEach((element) {
+      CortesAbatidos cortes = CortesAbatidos();
+      var prod = element;
+      cortes.categoria = prod['categoria'];
+      cortes.pesoArroba = prod['SUM(peso_arroba)'];
+      cortes.precoKgArroba = prod['AVG(preco_kg_arroba)'];
+      cortes.quantidade = prod['COUNT(id)'];
+      cortes.data = prod['data'];
+      print(cortes);
+      list.add(cortes);
+    });
+
+    return list;
+  }
 }

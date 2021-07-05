@@ -9,6 +9,7 @@ class VacaCorte extends AnimalCorte {
   int diasPrenha;
   String dataDiagnosticoGestacao;
   String tipoDiagnosticoGestacao;
+  String tipoParto;
   VacaCorte();
   VacaCorte.fromMap(Map map) {
     id = map["id"];
@@ -37,6 +38,8 @@ class VacaCorte extends AnimalCorte {
     precoVivo = map["preco_vivo"];
     descricao = map["descricao"];
     tipoDiagnosticoGestacao = map["tipo_diagnostico_gestacao"];
+    tipoParto = map["tipo_parto"];
+    animalAbatido = map["animal_abatido"];
   }
   Map toMap() {
     Map<String, dynamic> map = {
@@ -65,6 +68,8 @@ class VacaCorte extends AnimalCorte {
       "preco_vivo": precoVivo,
       "descricao": descricao,
       "tipo_diagnostico_gestacao": tipoDiagnosticoGestacao,
+      "tipo_parto": tipoParto,
+      "animal_abatido": animalAbatido,
     };
     if (id != null) {
       map["id"] = id;

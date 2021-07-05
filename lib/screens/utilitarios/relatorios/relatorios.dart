@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/relatorio_gasto_data.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/relatorio_pl_ql.dart';
+import 'package:gerenciamento_rural/screens/utilitarios/relatorio_producao_carne_bc.dart';
 
 class Relatorios extends StatefulWidget {
   @override
@@ -54,6 +55,28 @@ class _RelatoriosState extends State<Relatorios> {
                         },
                         child: Text(
                           "Relatório Quant. leite x Preço leite",
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      RelatorioProducaoCarneBC()));
+                        },
+                        child: Text(
+                          "Relatório Produção Carne BC",
                           style: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                         ),

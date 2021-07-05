@@ -76,8 +76,8 @@ class BezerroCorteDB extends HelperDB {
 
   Future<List> getAllItems() async {
     Database db = await this.getDb();
-    List listMap =
-        await db.rawQuery("SELECT * FROM bezerraCorte WHERE virouAdulto == 0");
+    List listMap = await db.rawQuery(
+        "SELECT * FROM bezerraCorte WHERE virou_adulto == 0 AND animal_abatido == 0");
     List<BezerroCorte> list = [];
     for (Map m in listMap) {
       list.add(BezerroCorte.fromMap(m));

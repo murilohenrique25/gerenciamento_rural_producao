@@ -1,13 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/rebanho/description_rebanho.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/rebanho/plantel/second_screen/list_vacas_corte.dart';
 
-class VacaScreen extends StatefulWidget {
+class VacaCorteScreen extends StatefulWidget {
   @override
-  _VacaScreenState createState() => _VacaScreenState();
+  _VacaCorteScreenState createState() => _VacaCorteScreenState();
 }
 
-class _VacaScreenState extends State<VacaScreen> {
+class _VacaCorteScreenState extends State<VacaCorteScreen> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -16,8 +16,7 @@ class _VacaScreenState extends State<VacaScreen> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => DescriptionRebanhoCorte()),
+              MaterialPageRoute(builder: (context) => ListaVacasCorte()),
             );
           },
           child: ClipRRect(

@@ -17,4 +17,5 @@ abstract class AnimalCorte {
   double pesoFinal;
   String comprador;
   double precoVivo;
+  int animalAbatido;
 }

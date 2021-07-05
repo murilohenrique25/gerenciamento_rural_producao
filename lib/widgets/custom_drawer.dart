@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/list_preco_leite.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/economia/economias_gastos.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/economia/economias_gastos.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/producao_carne/list_preco_carne.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/suino/second_screen/tree_screen/list_preco_carne.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/economias_gastos.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/lotes.dart';
+import 'package:gerenciamento_rural/screens/utilitarios/lotes_bovino_corte.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/lotes_caprinos.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/relatorios/relatorios.dart';
 import 'package:gerenciamento_rural/tiles/drawer_tile.dart';
@@ -41,11 +43,15 @@ class CustomDrawer extends StatelessWidget {
                 ),
               ),
               DrawerTile(Icons.arrow_right, "Lotes Bovinos", Lotes()),
+              DrawerTile(Icons.arrow_right, "Lotes Bovinos de Corte",
+                  LotesBovinoCorte()),
               DrawerTile(Icons.arrow_right, "Lotes Caprinos", LotesCaprinos()),
-              DrawerTile(Icons.arrow_right, "Gastos", Economia()),
+              DrawerTile(Icons.arrow_right, "Gastos Bovino", Economia()),
               DrawerTile(
                   Icons.arrow_right, "Gastos Caprinos", EconomiaCaprino()),
-              DrawerTile(Icons.arrow_right, "Relatorios", Relatorios()),
+              DrawerTile(Icons.arrow_right, "Gastos Bovinos de Corte",
+                  EconomiaBovinoCorte()),
+              DrawerTile(Icons.arrow_right, "Relatórios", Relatorios()),
               DrawerTile(Icons.arrow_right, "Preço do Leite", PrecoLeiteList()),
               DrawerTile(Icons.arrow_right, "Preço da Carne Suína",
                   PrecoCarneSuinaList()),

@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:gerenciamento_rural/helpers/jovem_femea_caprino_db.dart';
-import 'package:gerenciamento_rural/helpers/jovem_macho_caprino_db.dart';
-import 'package:gerenciamento_rural/helpers/matriz_caprino_db.dart';
-import 'package:gerenciamento_rural/helpers/medicamento_caprino_db.dart';
-import 'package:gerenciamento_rural/helpers/reprodutor_db.dart';
-import 'package:gerenciamento_rural/models/jovem_femea_caprino.dart';
-import 'package:gerenciamento_rural/models/jovem_macho_caprino.dart';
-import 'package:gerenciamento_rural/models/matriz_caprino.dart';
+import 'package:gerenciamento_rural/helpers/bezerra_corte_db.dart';
+import 'package:gerenciamento_rural/helpers/bezerro_corte_db.dart';
+import 'package:gerenciamento_rural/helpers/garrote_corte_db.dart';
+import 'package:gerenciamento_rural/helpers/medicamento_db.dart';
+import 'package:gerenciamento_rural/helpers/novilha_corte_db.dart';
+import 'package:gerenciamento_rural/helpers/touro_corte_db.dart';
+import 'package:gerenciamento_rural/helpers/vaca_corte_db.dart';
+import 'package:gerenciamento_rural/models/bezerra_corte.dart';
+import 'package:gerenciamento_rural/models/bezerro_corte.dart';
+import 'package:gerenciamento_rural/models/garrote_corte.dart';
 import 'package:gerenciamento_rural/models/medicamento.dart';
-import 'package:gerenciamento_rural/models/reprodutor.dart';
+import 'package:gerenciamento_rural/models/novilha_corte.dart';
+import 'package:gerenciamento_rural/models/touro_corte.dart';
 import 'package:gerenciamento_rural/models/tratamento.dart';
+import 'package:gerenciamento_rural/models/vaca_corte.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class CadastroTratamentoBovinoCorte extends StatefulWidget {
@@ -23,17 +27,21 @@ class CadastroTratamentoBovinoCorte extends StatefulWidget {
 
 class _CadastroTratamentoBovinoCorteState
     extends State<CadastroTratamentoBovinoCorte> {
-  ReprodutorDB _reprodutorDB = ReprodutorDB();
-  MatrizCaprinoDB _matrizDB = MatrizCaprinoDB();
-  JovemFemeaCaprinoDB _jovemFDB = JovemFemeaCaprinoDB();
-  JovemMachoCaprinoDB _jovemMDB = JovemMachoCaprinoDB();
-  MedicamentoCaprinoDB _medicamentoCaprinoDB = MedicamentoCaprinoDB();
+  TouroCorteDB _touroDB = TouroCorteDB();
+  VacaCorteDB _vacaDB = VacaCorteDB();
+  BezerraCorteDB _bezerraDB = BezerraCorteDB();
+  BezerroCorteDB _bezerroDB = BezerroCorteDB();
+  GarroteCorteDB _garroteDB = GarroteCorteDB();
+  NovilhaCorteDB _novilhaDB = NovilhaCorteDB();
+  MedicamentoDB _medicamentoDB = MedicamentoDB();
 
   List<Medicamento> _medicamentos = [];
-  List<Reprodutor> _reprodutores = [];
-  List<MatrizCaprino> _matrizes = [];
-  List<JovemFemeaCaprino> _jovensF = [];
-  List<JovemMachoCaprino> _jovensM = [];
+  List<TouroCorte> _touros = [];
+  List<VacaCorte> _vacas = [];
+  List<BezerraCorte> _bezerras = [];
+  List<BezerroCorte> _bezerros = [];
+  List<GarroteCorte> _garrotes = [];
+  List<NovilhaCorte> _novilhas = [];
 
   String nomeAnimal = "";
   String nomeMedicamento = "";
@@ -53,18 +61,22 @@ class _CadastroTratamentoBovinoCorteState
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _tratamentoEdited = false;
   Tratamento _editedTratamento;
-  Reprodutor reprodutor;
-  MatrizCaprino matrizCaprino;
-  JovemFemeaCaprino jovemFemeaCaprino;
-  JovemMachoCaprino jovemMachoCaprino;
+  TouroCorte touro;
+  VacaCorte vaca;
+  BezerraCorte bezerra;
+  BezerroCorte bezerro;
+  NovilhaCorte novilha;
+  GarroteCorte garrote;
 
   @override
   void initState() {
     super.initState();
-    _reprodutores = [];
-    _matrizes = [];
-    _jovensF = [];
-    _jovensM = [];
+    _touros = [];
+    _vacas = [];
+    _bezerras = [];
+    _bezerros = [];
+    _novilhas = [];
+    _garrotes = [];
     if (widget.tratamento == null) {
       _editedTratamento = Tratamento();
     } else {
@@ -115,24 +127,24 @@ class _CadastroTratamentoBovinoCorteState
                       color: Color.fromARGB(255, 4, 125, 141),
                     ),
                     SearchableDropdown.single(
-                      items: _reprodutores.map((reprodutor) {
+                      items: _touros.map((touro) {
                         return DropdownMenuItem(
-                          value: reprodutor,
+                          value: touro,
                           child: Row(
                             children: [
-                              Text(reprodutor.nomeAnimal),
+                              Text(touro.nome),
                             ],
                           ),
                         );
                       }).toList(),
-                      value: reprodutor,
-                      hint: "Selecione reprodutor",
-                      searchHint: "Selecione reprodutor",
+                      value: touro,
+                      hint: "Selecione touro",
+                      searchHint: "Selecione touro",
                       onChanged: (value) {
                         setState(() {
                           _editedTratamento.idAnimal = value.id;
-                          _editedTratamento.nomeAnimal = value.nomeAnimal;
-                          nomeAnimal = value.nomeAnimal;
+                          _editedTratamento.nomeAnimal = value.nome;
+                          nomeAnimal = value.nomel;
                         });
                       },
                       doneButton: "Pronto",
@@ -160,24 +172,24 @@ class _CadastroTratamentoBovinoCorteState
                     ),
                     Text("OU"),
                     SearchableDropdown.single(
-                      items: _matrizes.map((matrizCaprino) {
+                      items: _vacas.map((vaca) {
                         return DropdownMenuItem(
-                          value: matrizCaprino,
+                          value: vaca,
                           child: Row(
                             children: [
-                              Text(matrizCaprino.nomeAnimal),
+                              Text(vaca.nome),
                             ],
                           ),
                         );
                       }).toList(),
-                      value: matrizCaprino,
-                      hint: "Selecione matriz",
-                      searchHint: "Selecione matriz",
+                      value: vaca,
+                      hint: "Selecione vaca",
+                      searchHint: "Selecione vaca",
                       onChanged: (value) {
                         setState(() {
                           _editedTratamento.idAnimal = value.id;
-                          _editedTratamento.nomeAnimal = value.nomeAnimal;
-                          nomeAnimal = value.nomeAnimal;
+                          _editedTratamento.nomeAnimal = value.nome;
+                          nomeAnimal = value.nome;
                         });
                       },
                       doneButton: "Pronto",
@@ -205,24 +217,24 @@ class _CadastroTratamentoBovinoCorteState
                     ),
                     Text("OU"),
                     SearchableDropdown.single(
-                      items: _jovensF.map((jovemFemeaCaprino) {
+                      items: _bezerras.map((bezerra) {
                         return DropdownMenuItem(
-                          value: jovemFemeaCaprino,
+                          value: bezerra,
                           child: Row(
                             children: [
-                              Text(jovemFemeaCaprino.nomeAnimal),
+                              Text(bezerra.nome),
                             ],
                           ),
                         );
                       }).toList(),
-                      value: jovemFemeaCaprino,
-                      hint: "Selecione jovem fêmea",
-                      searchHint: "Selecione jovem fêmea",
+                      value: bezerra,
+                      hint: "Selecione bezerra",
+                      searchHint: "Selecione bezerra",
                       onChanged: (value) {
                         setState(() {
                           _editedTratamento.idAnimal = value.id;
-                          _editedTratamento.nomeAnimal = value.nomeAnimal;
-                          nomeAnimal = value.nomeAnimal;
+                          _editedTratamento.nomeAnimal = value.nome;
+                          nomeAnimal = value.nome;
                         });
                       },
                       doneButton: "Pronto",
@@ -250,24 +262,111 @@ class _CadastroTratamentoBovinoCorteState
                     ),
                     Text("OU"),
                     SearchableDropdown.single(
-                      items: _jovensM.map((jovemMachoCaprino) {
+                      items: _bezerros.map((bezerro) {
                         return DropdownMenuItem(
-                          value: jovemMachoCaprino,
+                          value: bezerro,
                           child: Row(
                             children: [
-                              Text(jovemMachoCaprino.nomeAnimal),
+                              Text(bezerro.nome),
                             ],
                           ),
                         );
                       }).toList(),
-                      value: jovemMachoCaprino,
-                      hint: "Selecione jovem macho",
-                      searchHint: "Selecione jovem macho",
+                      value: bezerro,
+                      hint: "Selecione bezerro",
+                      searchHint: "Selecione bezerro",
                       onChanged: (value) {
                         setState(() {
                           _editedTratamento.idAnimal = value.id;
-                          _editedTratamento.nomeAnimal = value.nomeAnimal;
-                          nomeAnimal = value.nomeAnimal;
+                          _editedTratamento.nomeAnimal = value.nome;
+                          nomeAnimal = value.nome;
+                        });
+                      },
+                      doneButton: "Pronto",
+                      displayItem: (item, selected) {
+                        return (Row(children: [
+                          selected
+                              ? Icon(
+                                  Icons.radio_button_checked,
+                                  color: Colors.grey,
+                                )
+                              : Icon(
+                                  Icons.radio_button_unchecked,
+                                  color: Colors.grey,
+                                ),
+                          SizedBox(width: 7),
+                          Expanded(
+                            child: item,
+                          ),
+                        ]));
+                      },
+                      isExpanded: true,
+                    ),
+                    Text("OU"),
+                    SearchableDropdown.single(
+                      items: _garrotes.map((garrote) {
+                        return DropdownMenuItem(
+                          value: garrote,
+                          child: Row(
+                            children: [
+                              Text(garrote.nome),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                      value: garrote,
+                      hint: "Selecione garrote",
+                      searchHint: "Selecione garrote",
+                      onChanged: (value) {
+                        setState(() {
+                          _editedTratamento.idAnimal = value.id;
+                          _editedTratamento.nomeAnimal = value.nome;
+                          nomeAnimal = value.nome;
+                        });
+                      },
+                      doneButton: "Pronto",
+                      displayItem: (item, selected) {
+                        return (Row(children: [
+                          selected
+                              ? Icon(
+                                  Icons.radio_button_checked,
+                                  color: Colors.grey,
+                                )
+                              : Icon(
+                                  Icons.radio_button_unchecked,
+                                  color: Colors.grey,
+                                ),
+                          SizedBox(width: 7),
+                          Expanded(
+                            child: item,
+                          ),
+                        ]));
+                      },
+                      isExpanded: true,
+                    ),
+                    SizedBox(
+                      height: 5.0,
+                    ),
+                    Text("OU"),
+                    SearchableDropdown.single(
+                      items: _novilhas.map((novilha) {
+                        return DropdownMenuItem(
+                          value: novilha,
+                          child: Row(
+                            children: [
+                              Text(novilha.nome),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                      value: bezerro,
+                      hint: "Selecione novilha",
+                      searchHint: "Selecione novilha",
+                      onChanged: (value) {
+                        setState(() {
+                          _editedTratamento.idAnimal = value.id;
+                          _editedTratamento.nomeAnimal = value.nome;
+                          nomeAnimal = value.nome;
                         });
                       },
                       doneButton: "Pronto",
@@ -473,27 +572,37 @@ class _CadastroTratamentoBovinoCorteState
   }
 
   void _carregaDados() {
-    _reprodutorDB.getAllItems().then((value) {
+    _touroDB.getAllItems().then((value) {
       setState(() {
-        _reprodutores = value;
+        _touros = value;
       });
     });
-    _matrizDB.getAllItems().then((value) {
+    _vacaDB.getAllItems().then((value) {
       setState(() {
-        _matrizes = value;
+        _vacas = value;
       });
     });
-    _jovemFDB.getAllItems().then((value) {
+    _bezerraDB.getAllItems().then((value) {
       setState(() {
-        _jovensF = value;
+        _bezerras = value;
       });
     });
-    _jovemMDB.getAllItems().then((value) {
+    _bezerroDB.getAllItems().then((value) {
       setState(() {
-        _jovensM = value;
+        _bezerros = value;
       });
     });
-    _medicamentoCaprinoDB.getAllItems().then((value) {
+    _novilhaDB.getAllItems().then((value) {
+      setState(() {
+        _novilhas = value;
+      });
+    });
+    _garroteDB.getAllItems().then((value) {
+      setState(() {
+        _garrotes = value;
+      });
+    });
+    _medicamentoDB.getAllItems().then((value) {
       setState(() {
         _medicamentos = value;
       });

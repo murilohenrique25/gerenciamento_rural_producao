@@ -253,7 +253,7 @@ class _CadastroEstoqueSemenSuinoState extends State<CadastroEstoqueSemenSuino> {
                 TextField(
                   keyboardType: TextInputType.text,
                   controller: _mortilidadeController,
-                  decoration: InputDecoration(labelText: "Mortilidade"),
+                  decoration: InputDecoration(labelText: "Motilidade"),
                   onChanged: (text) {
                     _inventarioEdited = true;
                     setState(() {

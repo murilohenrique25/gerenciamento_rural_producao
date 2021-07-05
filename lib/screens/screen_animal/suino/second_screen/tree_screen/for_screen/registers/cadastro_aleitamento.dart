@@ -133,10 +133,10 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
             } else if (_dataNasc.text.isEmpty) {
               Toast.show("Data nascimento inválida.", context,
                   duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
-            } else if (_paiController.text.isEmpty) {
+            } else if (nomeCachaco.isEmpty) {
               Toast.show("Cachaço inválido.", context,
                   duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
-            } else if (_maeController.text.isEmpty) {
+            } else if (nomeMatriz.isEmpty) {
               Toast.show("Matriz inválida.", context,
                   duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
             } else if (_quantidadeController.text.isEmpty) {
@@ -188,6 +188,8 @@ class _CadastroAleitamentoState extends State<CadastroAleitamento> {
                 creche = Creche.fromMap(_editedAleitamento.toMap());
                 creche.mudarPlantel = 0;
                 crecheDB.insert(creche);
+                Navigator.pop(context, _editedAleitamento);
+              } else {
                 Navigator.pop(context, _editedAleitamento);
               }
             }

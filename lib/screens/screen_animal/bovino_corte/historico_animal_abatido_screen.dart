@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/historico_animal_abatido/list_abatidos_historico_corte.dart';
 
 class HistoricoAnimalAbatidoScreen extends StatefulWidget {
   @override
@@ -15,11 +16,11 @@ class _HistoricoAnimalAbatidoScreenState
       children: [
         GestureDetector(
           onTap: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //       builder: (context) => DescriptionPlantelCaprinos()),
-            // );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ListaAnimalAbatidoCorte()),
+            );
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),

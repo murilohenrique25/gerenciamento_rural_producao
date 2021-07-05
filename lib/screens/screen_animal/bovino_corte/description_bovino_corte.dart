@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/dados_rebanho_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/historico_animal_abatido_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/nutricao_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/producao_carne_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/rebanho_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/reproducao_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/saude_tratamento_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/economia_screen.dart';
 
 class DescriptionBovinoCorte extends StatefulWidget {
   @override
@@ -83,7 +81,7 @@ class _DescriptionBovinoCorteState extends State<DescriptionBovinoCorte> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: ProducaoCarneScreen(),
+                          child: SaudeTratamentoScreen(),
                         ),
                       ],
                     ),
@@ -138,39 +136,39 @@ class _DescriptionBovinoCorteState extends State<DescriptionBovinoCorte> {
                   ],
                 ),
                 //Quarta linha
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          width: _width,
-                          height: _height,
-                          color: Colors.grey[50],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: SaudeTratamentoScreen(),
-                        ),
-                      ],
-                    ),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          width: _width,
-                          height: _height,
-                          color: Colors.grey[50],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: EconomiaScreen(),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                //   Row(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       // Stack(
+                //       //   alignment: Alignment.center,
+                //       //   children: [
+                //       //     Container(
+                //       //       width: _width,
+                //       //       height: _height,
+                //       //       color: Colors.grey[50],
+                //       //     ),
+                //       //     Padding(
+                //       //       padding: EdgeInsets.all(10.0),
+                //       //       child: SaudeTratamentoScreen(),
+                //       //     ),
+                //       //   ],
+                //       // ),
+                //       Stack(
+                //         alignment: Alignment.center,
+                //         children: [
+                //           Container(
+                //             width: _width,
+                //             height: _height,
+                //             color: Colors.grey[50],
+                //           ),
+                //           Padding(
+                //             padding: EdgeInsets.all(10.0),
+                //             child: EconomiaScreen(),
+                //           ),
+                //         ],
+                //       ),
+                //     ],
+                //   ),
               ],
             )
           ],
