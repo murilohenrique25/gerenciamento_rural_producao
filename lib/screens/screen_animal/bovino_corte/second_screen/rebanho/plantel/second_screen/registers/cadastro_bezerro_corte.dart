@@ -1,13 +1,13 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/bezerro_corte_db.dart';
 import 'package:gerenciamento_rural/helpers/corte_abatidos_db.dart';
-import 'package:gerenciamento_rural/helpers/lote_db.dart';
+import 'package:gerenciamento_rural/helpers/lote_bovino_corte_db.dart';
 import 'package:gerenciamento_rural/models/bezerro_corte.dart';
 import 'package:gerenciamento_rural/models/corte_abatidos.dart';
 import 'package:gerenciamento_rural/models/lote.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:toast/toast.dart';
 
 class CadastroBezerroCorte extends StatefulWidget {
@@ -19,7 +19,7 @@ class CadastroBezerroCorte extends StatefulWidget {
 }
 
 class _CadastroBezerroCorteState extends State<CadastroBezerroCorte> {
-  LoteDB helperLote = LoteDB();
+  LoteBovinoCorteDB helperLote = LoteBovinoCorteDB();
   List<Lote> lotes = [];
   final _nameFocus = FocusNode();
   Lote lote = Lote();
@@ -38,7 +38,8 @@ class _CadastroBezerroCorteState extends State<CadastroBezerroCorte> {
   final _compradorController = TextEditingController();
   final _precoVivoController = TextEditingController();
   final _cecController = TextEditingController();
-
+  final _pesoDesmamaController = TextEditingController();
+  var _dataDesmama = MaskedTextController(mask: '00-00-0000');
   var _dataNasc = MaskedTextController(mask: '00-00-0000');
   var _dataAcontecidoController = MaskedTextController(mask: '00-00-0000');
 
@@ -50,7 +51,6 @@ class _CadastroBezerroCorteState extends State<CadastroBezerroCorte> {
   int groupValueTipo = 0;
   String numeroData;
   String idadeFinal = "";
-  String _idadeAnimal = "";
 
   String loteSelecionado = "";
 
@@ -65,7 +65,8 @@ class _CadastroBezerroCorteState extends State<CadastroBezerroCorte> {
     if (widget.bezerro == null) {
       _editedBez = BezerroCorte();
       _editedBez.situacao = "Vivo";
-      _editedBez..animalAbatido = 0;
+      _editedBez.animalAbatido = 0;
+      _editedBez.virouAdulto = 0;
     } else {
       _editedBez = BezerroCorte.fromMap(widget.bezerro.toMap());
       _nomeController.text = _editedBez.nome;
@@ -76,6 +77,8 @@ class _CadastroBezerroCorteState extends State<CadastroBezerroCorte> {
       _origemController.text = _editedBez.origem;
       loteSelecionado = _editedBez.nomeLote;
       _cecController.text = _editedBez.cec;
+      _pesoDesmamaController.text = _editedBez.pesoDesmama.toString();
+      _dataDesmama.text = _editedBez.idadeDesmama;
       numeroData = _editedBez.dataNascimento;
       _dataNasc.text = numeroData;
       if (_editedBez.situacao == "Viva") {
@@ -86,7 +89,7 @@ class _CadastroBezerroCorteState extends State<CadastroBezerroCorte> {
         _radioValue = 2;
       }
 
-      idadeFinal = differenceDate();
+      idadeFinal = calculaIdadeAnimal(numeroData);
     }
   }
 
@@ -340,7 +343,7 @@ class _CadastroBezerroCorteState extends State<CadastroBezerroCorte> {
                     setState(() {
                       numeroData = _dataNasc.text;
                       _editedBez.dataNascimento = _dataNasc.text;
-                      idadeFinal = differenceDate();
+                      idadeFinal = calculaIdadeAnimal(numeroData);
                     });
                   },
                 ),
@@ -354,48 +357,27 @@ class _CadastroBezerroCorteState extends State<CadastroBezerroCorte> {
                 SizedBox(
                   height: 20.0,
                 ),
-                SearchableDropdown.single(
-                  items: lotes.map((lote) {
-                    return DropdownMenuItem(
-                      value: lote,
-                      child: Row(
-                        children: [
-                          Text(lote.nome),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: lote,
-                  hint: "Selecione um Lote",
-                  searchHint: "Selecione um Lote",
+                CustomSearchableDropDown(
+                  items: lotes,
+                  label: 'Selecione uma lote',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: lotes?.map((item) {
+                        return item.nome;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _bezEdited = true;
-                    setState(() {
+                    if (value != null) {
                       _editedBez.idLote = value.id;
                       _editedBez.nomeLote = value.nome;
                       lote = value;
-                      loteSelecionado = lote.nome;
-                    });
+                      loteSelecionado = value.nome;
+                    }
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 15.0,
@@ -449,6 +431,28 @@ class _CadastroBezerroCorteState extends State<CadastroBezerroCorte> {
                     _bezEdited = true;
                     setState(() {
                       _editedBez.peso = double.parse(text);
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _pesoDesmamaController,
+                  decoration: InputDecoration(labelText: "Peso Desmama"),
+                  onChanged: (text) {
+                    _bezEdited = true;
+                    setState(() {
+                      _editedBez.pesoDesmama = double.parse(text);
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _dataDesmama,
+                  decoration: InputDecoration(labelText: "Data Desmama"),
+                  onChanged: (text) {
+                    _bezEdited = true;
+                    setState(() {
+                      _editedBez.idadeDesmama = text;
                     });
                   },
                 ),
@@ -543,41 +547,31 @@ class _CadastroBezerroCorteState extends State<CadastroBezerroCorte> {
     }
   }
 
-  String differenceDate() {
-    String num = "";
-    DateTime dt = DateTime.now();
-    if (numeroData.isNotEmpty) {
-      num = numeroData.split('-').reversed.join();
+  String calculaIdadeAnimal(String dateString) {
+    String dataFinal = "";
+    if (dateString.length == 10) {
+      DateTime data = DateTime.parse(dateString.split('-').reversed.join());
+      //data = dateString as DateTime;
+      DateTime dataAgora = DateTime.now();
+      int ano = (dataAgora.year - data.year);
+      int mes = (dataAgora.month - data.month);
+      int dia = (dataAgora.day - data.day);
+      if (dia < 0) {
+        dia = dia + 30;
+        mes = mes - 1;
+      }
+      if (mes < 0) {
+        mes = mes + 12;
+        ano = ano - 1;
+      }
+      dataFinal = ano.toString() +
+          " anos " +
+          mes.toString() +
+          " meses " +
+          dia.toString() +
+          " dias";
     }
-
-    DateTime date = DateTime.parse(num);
-    int quant = dt.difference(date).inDays;
-    if (quant < 0) {
-      _idadeAnimal = "Data incorreta";
-    } else if (quant < 365) {
-      _idadeAnimal = "$quant dias";
-    } else if (quant == 365) {
-      _idadeAnimal = "1 ano";
-    } else if (quant > 365 && quant < 731) {
-      int dias = quant - 365;
-      _idadeAnimal = "1 ano e $dias dias";
-    } else if (quant > 731 && quant < 1096) {
-      int dias = quant - 731;
-      _idadeAnimal = "2 ano e $dias dias";
-    } else if (quant > 1095 && quant < 1461) {
-      int dias = quant - 1095;
-      _idadeAnimal = "3 ano e $dias dias";
-    } else if (quant > 1460 && quant < 1826) {
-      int dias = quant - 1460;
-      _idadeAnimal = "4 ano e $dias dias";
-    } else if (quant > 1825 && quant < 2191) {
-      int dias = quant - 1825;
-      _idadeAnimal = "5 ano e $dias dias";
-    } else if (quant > 2190 && quant < 2.556) {
-      int dias = quant - 2190;
-      _idadeAnimal = "6 ano e $dias dias";
-    }
-    return _idadeAnimal;
+    return dataFinal;
   }
 
   void _getAllLotes() {

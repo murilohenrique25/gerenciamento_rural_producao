@@ -1,3 +1,4 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/cachaco_db.dart';
@@ -7,7 +8,7 @@ import 'package:gerenciamento_rural/models/cachaco.dart';
 import 'package:gerenciamento_rural/models/matriz.dart';
 import 'package:gerenciamento_rural/models/medicamento.dart';
 import 'package:gerenciamento_rural/models/tratamento.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+
 import 'package:toast/toast.dart';
 
 class CadastroTratamentoSuino extends StatefulWidget {
@@ -58,6 +59,7 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
     } else {
       _editedTratamento = Tratamento.fromMap(widget.tratamento.toMap());
       _nomeAnimalController.text = _editedTratamento.nomeAnimal;
+      nomeAnimal = _editedTratamento.nomeAnimal;
       _idVacaController.text = _editedTratamento.idAnimal.toString();
       _numeroLoteController.text = _editedTratamento.lote;
       _enfermidadeController.text = _editedTratamento.enfermidade;
@@ -68,6 +70,7 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
       finalTratamento.text = _editedTratamento.fimTratamento;
       _carenciaController.text = _editedTratamento.carencia;
       _obsController.text = _editedTratamento.observacao;
+      nomeMedicamento = _editedTratamento.nomeMedicamento;
     }
     _carregaDados();
   }
@@ -110,91 +113,44 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
                       size: 80.0,
                       color: Color.fromARGB(255, 4, 125, 141),
                     ),
-                    SearchableDropdown.single(
-                      items: _cachacos.map((cachaco) {
-                        return DropdownMenuItem(
-                          value: cachaco,
-                          child: Row(
-                            children: [
-                              Text(cachaco.nomeAnimal),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: cachaco,
-                      hint: "Selecione cachaço",
-                      searchHint: "Selecione cachaço",
+                    CustomSearchableDropDown(
+                      items: _cachacos,
+                      label: 'Selecione um cachaço',
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.blue)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.search),
+                      ),
+                      dropDownMenuItems: _cachacos?.map((item) {
+                            return item.nomeAnimal;
+                          })?.toList() ??
+                          [],
                       onChanged: (value) {
-                        setState(() {
-                          _editedTratamento.idAnimal = value.idAnimal;
-                          _editedTratamento.nomeAnimal = value.nomeAnimal;
-                          nomeAnimal = value.nomeAnimal;
-                        });
+                        _editedTratamento.idAnimal = value.idAnimal;
+                        _editedTratamento.nomeAnimal = value.nomeAnimal;
+                        nomeAnimal = value.nomeAnimal;
                       },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
-                    ),
-                    SizedBox(
-                      height: 5.0,
                     ),
                     Text("OU"),
-                    SearchableDropdown.single(
-                      items: _matrizes.map((matriz) {
-                        return DropdownMenuItem(
-                          value: matriz,
-                          child: Row(
-                            children: [
-                              Text(matriz.nomeAnimal),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: matriz,
-                      hint: "Selecione matriz",
-                      searchHint: "Selecione matriz",
+                    CustomSearchableDropDown(
+                      items: _matrizes,
+                      label: 'Selecione uma matriz',
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.blue)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.search),
+                      ),
+                      dropDownMenuItems: _matrizes?.map((item) {
+                            return item.nomeAnimal;
+                          })?.toList() ??
+                          [],
                       onChanged: (value) {
-                        setState(() {
-                          _editedTratamento.idAnimal = value.idAnimal;
-                          _editedTratamento.nomeAnimal = value.nomeAnimal;
-                          nomeAnimal = value.nomeAnimal;
-                        });
+                        _editedTratamento.idAnimal = value.idAnimal;
+                        _editedTratamento.nomeAnimal = value.nomeAnimal;
+                        nomeAnimal = value.nomeAnimal;
                       },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
                     ),
                     SizedBox(
                       height: 10.0,
@@ -220,52 +176,37 @@ class _CadastroTratamentoSuinoState extends State<CadastroTratamentoSuino> {
                     TextField(
                       controller: _enfermidadeController,
                       decoration: InputDecoration(labelText: "Enfermidade"),
-                      onChanged: (text) {},
+                      onChanged: (text) {
+                        _tratamentoEdited = true;
+                        setState(() {
+                          _editedTratamento.enfermidade = text;
+                        });
+                      },
                       keyboardType: TextInputType.text,
                     ),
                     SizedBox(height: 5.0),
-                    SearchableDropdown.single(
-                      items: _medicamentos.map((medicamento) {
-                        return DropdownMenuItem(
-                          value: medicamento,
-                          child: Row(
-                            children: [
-                              Text(medicamento.nomeMedicamento),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: med,
-                      hint: "Selecione um medicamento",
-                      searchHint: "Selecione um medicamento",
+                    CustomSearchableDropDown(
+                      items: _medicamentos,
+                      label: 'Selecione um medicamento',
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.blue)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.search),
+                      ),
+                      dropDownMenuItems: _medicamentos?.map((item) {
+                            return item.nomeMedicamento;
+                          })?.toList() ??
+                          [],
                       onChanged: (value) {
-                        setState(() {
+                        if (value != null) {
                           med = value;
                           _editedTratamento.idMedicamento = value.id;
                           _editedTratamento.nomeMedicamento =
                               value.nomeMedicamento;
                           nomeMedicamento = value.nomeMedicamento;
-                        });
+                        }
                       },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
                     ),
                     SizedBox(
                       height: 10.0,

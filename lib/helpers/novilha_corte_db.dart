@@ -77,7 +77,7 @@ class NovilhaCorteDB extends HelperDB {
   Future<List> getAllItems() async {
     Database db = await this.getDb();
     List listMap = await db.rawQuery(
-        "SELECT * FROM novilhaCorte WHERE virou_adulto == 0 AND animal_abatido == 0");
+        "SELECT * FROM novilhaCorte WHERE virou_adulto == 0 AND animal_abatido == 0 AND situacao == 'Viva'");
     List<NovilhaCorte> list = [];
     for (Map m in listMap) {
       list.add(NovilhaCorte.fromMap(m));

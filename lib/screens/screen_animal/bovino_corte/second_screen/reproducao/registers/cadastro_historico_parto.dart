@@ -1,18 +1,18 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:gerenciamento_rural/helpers/matriz_caprino_db.dart';
-import 'package:gerenciamento_rural/helpers/registro_parto_caprino_db.dart';
-import 'package:gerenciamento_rural/helpers/reprodutor_db.dart';
-import 'package:gerenciamento_rural/models/matriz_caprino.dart';
-import 'package:gerenciamento_rural/models/registro_partos_caprinos.dart';
-import 'package:gerenciamento_rural/models/reprodutor.dart';
+import 'package:gerenciamento_rural/helpers/registro_parto_bovino_corte_db.dart';
+import 'package:gerenciamento_rural/helpers/touro_corte_db.dart';
+import 'package:gerenciamento_rural/helpers/vaca_corte_db.dart';
+import 'package:gerenciamento_rural/models/registro_partos_bovino_corte.dart';
+import 'package:gerenciamento_rural/models/touro_corte.dart';
+import 'package:gerenciamento_rural/models/vaca_corte.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:toast/toast.dart';
 
 class CadastroHistoricoPartoBovinoCorte extends StatefulWidget {
-  final RegistroPartoCaprino registroPartoCaprino;
-  CadastroHistoricoPartoBovinoCorte({this.registroPartoCaprino});
+  final RegistroPartoBC registroPartoBC;
+  CadastroHistoricoPartoBovinoCorte({this.registroPartoBC});
   @override
   _CadastroHistoricoPartoBovinoCorteState createState() =>
       _CadastroHistoricoPartoBovinoCorteState();
@@ -21,17 +21,17 @@ class CadastroHistoricoPartoBovinoCorte extends StatefulWidget {
 class _CadastroHistoricoPartoBovinoCorteState
     extends State<CadastroHistoricoPartoBovinoCorte> {
   String tipo;
-  RegistroPartoCaprinoDB helper = RegistroPartoCaprinoDB();
-  MatrizCaprinoDB matrizDB = MatrizCaprinoDB();
-  ReprodutorDB reprodutorDB = ReprodutorDB();
-  List<MatrizCaprino> matrizes = [];
-  List<Reprodutor> reprodutores = [];
+  RegistroPartoBCDB helper = RegistroPartoBCDB();
+  VacaCorteDB matrizDB = VacaCorteDB();
+  TouroCorteDB reprodutorDB = TouroCorteDB();
+  List<VacaCorte> matrizes = [];
+  List<TouroCorte> reprodutores = [];
   int _radioValueSetor = 0;
-  List<RegistroPartoCaprino> registros = [];
+  List<RegistroPartoBC> registros = [];
   bool _inventarioEdited = false;
-  RegistroPartoCaprino _editedRegistros;
-  MatrizCaprino matriz;
-  Reprodutor reprodutor;
+  RegistroPartoBC _editedRegistros;
+  VacaCorte matriz;
+  TouroCorte reprodutor;
 
   String idadeFinal = "";
   String nomeMacho = "";
@@ -60,27 +60,23 @@ class _CadastroHistoricoPartoBovinoCorteState
   void initState() {
     super.initState();
     _getAllRegistros();
-    if (widget.registroPartoCaprino == null) {
-      _editedRegistros = RegistroPartoCaprino();
+    if (widget.registroPartoBC == null) {
+      _editedRegistros = RegistroPartoBC();
     } else {
-      // _editedRegistros =
-      //     RegistroPartoCaprino.fromMap(widget.registroPartoCaprino.toMap());
-      // _palhetaController.text = _editedRegistros.identificacao;
-      // _quantidadeController.text = _editedRegistros.quantidade.toString();
-      // _corController.text = _editedRegistros.cor;
-      // _dataColeta.text = _editedRegistros.dataCadastro;
-      // _dataValidade.text = _editedRegistros.dataValidade;
-      // _obsController.text = _editedRegistros.observacao;
-      // _vigorController.text = _editedRegistros.vigor;
-      // _aspectoController.text = _editedRegistros.aspecto;
-      // _mortilidadeController.text = _editedRegistros.mortalidade;
-      // _turbilhamentoController.text = _editedRegistros.turbilhamento;
-      // _concentracaoController.text = _editedRegistros.concentracao;
-      // _volumeController.text = _editedRegistros.volume.toString();
-      // _celulasNormaisController.text =
-      //     _editedRegistros.celulasNormais.toString();
-      // _defeitosMaioresController.text = _editedRegistros.defeitoMaiores;
-      // _defeitosMenoresController.text = _editedRegistros.defeitoMenores;
+      _editedRegistros =
+          RegistroPartoBC.fromMap(widget.registroPartoBC.toMap());
+      _quantidadeController.text = _editedRegistros.quantidade.toString();
+      nomeMacho = _editedRegistros.nomeTouro;
+      nomeMatriz = _editedRegistros.nomeVaca;
+      _data.text = _editedRegistros.data;
+      _quantidadeFController.text = _editedRegistros.quantFemeas.toString();
+      _quantidadeMController.text = _editedRegistros.quantMachos.toString();
+      _problemaController.text = _editedRegistros.problema;
+      if (_editedRegistros.tipoInseminacao == "Inseminação") {
+        _radioValueSetor = 0;
+      } else {
+        _radioValueSetor = 1;
+      }
     }
   }
 
@@ -127,46 +123,25 @@ class _CadastroHistoricoPartoBovinoCorteState
                   size: 80.0,
                   color: Color.fromARGB(255, 4, 125, 141),
                 ),
-                SearchableDropdown.single(
-                  items: matrizes.map((matriz) {
-                    return DropdownMenuItem(
-                      value: matriz,
-                      child: Row(
-                        children: [
-                          Text(matriz.nomeAnimal),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: matriz,
-                  hint: "Selecione uma matriz",
-                  searchHint: "Selecione uma matriz",
+                CustomSearchableDropDown(
+                  items: matrizes,
+                  label: 'Selecione uma vaca',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: matrizes?.map((item) {
+                        return item.nome;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      _editedRegistros.nomeMatriz = value.nomeAnimal;
-                      nomeMatriz = value.nomeAnimal;
-                    });
+                    if (value != null) {
+                      _editedRegistros.nomeVaca = value.nome;
+                      nomeMatriz = value.nome;
+                    }
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 10.0,
@@ -178,46 +153,25 @@ class _CadastroHistoricoPartoBovinoCorteState
                 SizedBox(
                   height: 10.0,
                 ),
-                SearchableDropdown.single(
-                  items: reprodutores.map((reprodutor) {
-                    return DropdownMenuItem(
-                      value: reprodutor,
-                      child: Row(
-                        children: [
-                          Text(reprodutor.nomeAnimal),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: reprodutor,
-                  hint: "Selecione um reprodutor",
-                  searchHint: "Selecione um reprodutor",
+                CustomSearchableDropDown(
+                  items: reprodutores,
+                  label: 'Selecione um touro',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: reprodutores?.map((item) {
+                        return item.nome;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      _editedRegistros.nomeReprodutor = value.nomeAnimal;
-                      nomeMacho = value.nomeAnimal;
-                    });
+                    if (value != null) {
+                      _editedRegistros.nomeTouro = value.nome;
+                      nomeMacho = value.nome;
+                    }
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 10.0,
@@ -363,7 +317,7 @@ class _CadastroHistoricoPartoBovinoCorteState
         matrizes = value;
       });
     });
-    reprodutorDB.getAllItemsVivos().then((value) {
+    reprodutorDB.getAllItems().then((value) {
       setState(() {
         reprodutores = value;
       });

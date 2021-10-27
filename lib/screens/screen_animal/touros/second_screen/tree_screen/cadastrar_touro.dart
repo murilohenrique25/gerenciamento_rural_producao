@@ -24,8 +24,6 @@ class _CadastroTouroState extends State<CadastroTouro> {
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  String _idadeAnimal = "1 ano";
-
   String idadeFinal = "";
 
   bool _touroEdited = false;
@@ -72,7 +70,7 @@ class _CadastroTouroState extends State<CadastroTouro> {
       _avoFMaternoController.text = _editedTouro.avoFMaterno;
       _avoFPaternoController.text = _editedTouro.avoFPaterno;
       _avoMPaternoController.text = _editedTouro.avoMPaterno;
-      idadeFinal = differenceDate();
+      idadeFinal = calculaIdadeAnimal(_editedTouro.dataNascimento);
     }
   }
 
@@ -236,34 +234,10 @@ class _CadastroTouroState extends State<CadastroTouro> {
                     setState(() {
                       numeroData = _dataNasc.text;
                       _editedTouro.dataNascimento = _dataNasc.text;
-                      idadeFinal = differenceDate();
+                      idadeFinal = calculaIdadeAnimal(numeroData);
                     });
                   },
                 ),
-                // TextFormField(
-                //   onChanged: (text) {
-                //     numeroData = text;
-                //     setState(() {
-                //       idadeFinal = differenceDate();
-                //       print(idadeFinal);
-                //     });
-                //   },
-                //   keyboardType: TextInputType.number,
-                //   decoration: InputDecoration(
-                //       labelText: "Data de Nascimento",
-                //       labelStyle:
-                //           TextStyle(color: Color.fromARGB(255, 4, 125, 141))),
-                //   textAlign: TextAlign.left,
-                //   style: TextStyle(
-                //       color: Color.fromARGB(255, 4, 125, 141), fontSize: 15.0),
-                //   controller: _dataNasc,
-                //   // ignore: missing_return
-                //   validator: (value) {
-                //     if (value.isEmpty) {
-                //       return "Informe o data denascimento do animal";
-                //     }
-                //   },
-                // ),
                 SizedBox(
                   height: 15.0,
                 ),
@@ -316,37 +290,31 @@ class _CadastroTouroState extends State<CadastroTouro> {
     );
   }
 
-  String differenceDate() {
-    String num = "";
-    DateTime dt = DateTime.now();
-    if (numeroData.isNotEmpty) {
-      num = numeroData.split('-').reversed.join();
+  String calculaIdadeAnimal(String dateString) {
+    String dataFinal = "";
+    if (dateString.length == 10) {
+      DateTime data = DateTime.parse(dateString.split('-').reversed.join());
+      //data = dateString as DateTime;
+      DateTime dataAgora = DateTime.now();
+      int ano = (dataAgora.year - data.year);
+      int mes = (dataAgora.month - data.month);
+      int dia = (dataAgora.day - data.day);
+      if (dia < 0) {
+        dia = dia + 30;
+        mes = mes - 1;
+      }
+      if (mes < 0) {
+        mes = mes + 12;
+        ano = ano - 1;
+      }
+      dataFinal = ano.toString() +
+          " anos " +
+          mes.toString() +
+          " meses " +
+          dia.toString() +
+          " dias";
     }
-
-    DateTime date = DateTime.parse(num);
-    int quant = dt.difference(date).inDays;
-    if (quant < 0) {
-      _idadeAnimal = "Data incorreta";
-    } else if (quant < 365) {
-      _idadeAnimal = "$quant dias";
-    } else if (quant == 365) {
-      _idadeAnimal = "1 ano";
-    } else if (quant > 365 && quant < 731) {
-      _idadeAnimal = "1 ano";
-    } else if (quant > 731 && quant < 1096) {
-      _idadeAnimal = "2 anos";
-    } else if (quant > 1095 && quant < 1461) {
-      _idadeAnimal = "3 anos";
-    } else if (quant > 1460 && quant < 1826) {
-      _idadeAnimal = "4 anos";
-    } else if (quant > 1825 && quant < 2191) {
-      _idadeAnimal = "5 anos";
-    } else if (quant > 2190 && quant < 2556) {
-      _idadeAnimal = "6 anos";
-    } else {
-      _idadeAnimal = "Ohh já está idoso";
-    }
-    return _idadeAnimal;
+    return dataFinal;
   }
 
   Future<bool> _requestPop() {

@@ -1,9 +1,9 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/models/inventario_semen.dart';
 import 'package:gerenciamento_rural/models/touro_corte.dart';
 import 'package:gerenciamento_rural/helpers/touro_corte_db.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 // ignore: must_be_immutable
 class CadastroEstoqueSemenBovinoCorte extends StatefulWidget {
@@ -23,6 +23,7 @@ class _CadastroEstoqueSemenBovinoCorteState
   int _radioValue = 0;
   int _radioValueTamanho = 0;
   int idTouro = 0;
+  String nomeTouro = "";
   final _quantidadeController = TextEditingController();
   final _corPalhetaController = TextEditingController();
 
@@ -67,6 +68,7 @@ class _CadastroEstoqueSemenBovinoCorteState
       } else {
         _radioValueTamanho = 2;
       }
+      nomeTouro = _editedInventario.nomeTouro;
     }
   }
 
@@ -141,47 +143,35 @@ class _CadastroEstoqueSemenBovinoCorteState
                 SizedBox(
                   height: 20.0,
                 ),
-                SearchableDropdown.single(
-                  items: touros.map((t) {
-                    return DropdownMenuItem(
-                      value: t,
-                      child: Row(
-                        children: [
-                          Text(t.nome),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: selectedTouro,
-                  hint: "Selecione um Touro",
-                  searchHint: "Selecione um Touro",
+                CustomSearchableDropDown(
+                  items: touros,
+                  label: 'Selecione um touro',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: touros?.map((item) {
+                        return item.nome;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      idTouro = value.idTouro;
-                      _editedInventario.idTouro = value.idTouro;
-                      _editedInventario.nomeTouro = value.nome;
-                    });
+                    idTouro = value.id;
+                    _editedInventario.idTouro = value.id;
+                    _editedInventario.nomeTouro = value.nome;
+                    nomeTouro = value.nome;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Text("Touro:  $nomeTouro",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                SizedBox(
+                  height: 20.0,
                 ),
                 TextField(
                   controller: _quantidadeController,

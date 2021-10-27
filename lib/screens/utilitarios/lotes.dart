@@ -108,11 +108,6 @@ class _LotesState extends State<Lotes> {
               SizedBox(
                 width: 15,
               ),
-              Text(" - "),
-              SizedBox(
-                width: 15,
-              ),
-          
             ],
           ),
         ),
@@ -273,11 +268,10 @@ class _LotesState extends State<Lotes> {
                     mainAxisAlignment: pdfLib.MainAxisAlignment.center,
                     crossAxisAlignment: pdfLib.CrossAxisAlignment.start,
                     children: [
-                      pdfLib.Text('Instituto Federal Goiano',
+                      pdfLib.Text('Control IF Goiano',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white)),
-                      pdfLib.Text(
-                          'Rodovia Geraldo Silva Nascimento Km 2,5, Rod. Gustavo Capanema,\nUrutaí - GO, 75790-000',
+                      pdfLib.Text('control@institutofederal.com.br',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),

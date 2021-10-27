@@ -4,7 +4,7 @@ class Lote {
 
   Lote();
   Lote.fromMap(Map map) {
-    id = map["id_lote"];
+    id = map["id"];
     nome = map["nome"];
   }
 

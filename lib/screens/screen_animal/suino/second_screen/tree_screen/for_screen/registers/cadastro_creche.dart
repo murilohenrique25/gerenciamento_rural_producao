@@ -1,3 +1,4 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/cachaco_db.dart';
@@ -9,7 +10,7 @@ import 'package:gerenciamento_rural/models/creche.dart';
 import 'package:gerenciamento_rural/models/matriz.dart';
 import 'package:gerenciamento_rural/models/terminacao.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+
 import 'package:toast/toast.dart';
 
 class CadastroCreche extends StatefulWidget {
@@ -54,11 +55,10 @@ class _CadastroCrecheState extends State<CadastroCreche> {
 
   final df = new DateFormat("dd-MM-yyyy");
 
-  String _idadeAnimal = "1ano e 2meses";
   Creche _editedCreche;
   bool _crecheEdited = false;
 
-  String cachaco;
+  Cachaco cachaco = Cachaco();
   Matriz matriz = Matriz();
   final GlobalKey<ScaffoldState> _scaffoldstate =
       new GlobalKey<ScaffoldState>();
@@ -96,12 +96,13 @@ class _CadastroCrecheState extends State<CadastroCreche> {
       _estadoController.text = _editedCreche.estado;
       _loteController.text = _editedCreche.lote;
       _baiaController.text = _editedCreche.baia;
+      nomeEstado = _editedCreche.estado;
+      _dataDesmamaController.text = _editedCreche.dataDesmama;
       nomeMatriz = _editedCreche.mae;
       nomeCachaco = _editedCreche.pai;
-      cachaco = _editedCreche.pai;
       numeroData = _editedCreche.dataNascimento;
       _dataNasc.text = numeroData;
-      idadeFinal = differenceDate();
+      idadeFinal = calculaIdadeAnimal(numeroData);
     }
   }
 
@@ -135,9 +136,8 @@ class _CadastroCrecheState extends State<CadastroCreche> {
             //       duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
             // }
             else {
-              if (_editedCreche.estado == "Creche") {
-                Navigator.pop(context, _editedCreche);
-              } else if (_editedCreche.estado == "Terminação") {
+              _editedCreche.mudarPlantel = 0;
+              if (_editedCreche.estado == "Terminação") {
                 CrecheDB crecheDB = CrecheDB();
                 TerminacaoDB terminacaoDB = TerminacaoDB();
                 Terminacao terminacao;
@@ -145,10 +145,8 @@ class _CadastroCrecheState extends State<CadastroCreche> {
                 crecheDB.updateItem(_editedCreche);
                 terminacao = Terminacao.fromMap(_editedCreche.toMap());
                 terminacaoDB.insert(terminacao);
-                Navigator.pop(context, _editedCreche);
-              } else {
-                Navigator.pop(context, _editedCreche);
               }
+              Navigator.pop(context, _editedCreche);
             }
           },
           child: Icon(Icons.save),
@@ -182,46 +180,23 @@ class _CadastroCrecheState extends State<CadastroCreche> {
                 SizedBox(
                   height: 10.0,
                 ),
-                SearchableDropdown.single(
-                  items: matrizes.map((matriz) {
-                    return DropdownMenuItem(
-                      value: matriz,
-                      child: Row(
-                        children: [
-                          Text(matriz.nomeAnimal),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: matriz,
-                  hint: "Selecione uma matriz",
-                  searchHint: "Selecione uma matriz",
+                CustomSearchableDropDown(
+                  items: matrizes,
+                  label: 'Selecione uma matriz',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: matrizes?.map((item) {
+                        return item.nomeAnimal;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _crecheEdited = true;
-                    setState(() {
-                      _editedCreche.mae = value.nomeAnimal;
-                      nomeMatriz = value.nomeAnimal;
-                    });
+                    _editedCreche.mae = value.nomeAnimal;
+                    nomeMatriz = value.nomeAnimal;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 10.0,
@@ -233,46 +208,23 @@ class _CadastroCrecheState extends State<CadastroCreche> {
                 SizedBox(
                   height: 10.0,
                 ),
-                SearchableDropdown.single(
-                  items: cachacos.map((cachaco) {
-                    return DropdownMenuItem(
-                      value: cachaco.nomeAnimal,
-                      child: Row(
-                        children: [
-                          Text(cachaco.nomeAnimal),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: cachaco,
-                  hint: "Selecione um cachaço",
-                  searchHint: "Selecione um cachaço",
+                CustomSearchableDropDown(
+                  items: cachacos,
+                  label: 'Selecione um cachaço',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: cachacos?.map((item) {
+                        return item.nomeAnimal;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _crecheEdited = true;
-                    setState(() {
-                      _editedCreche.pai = value.nomeAnimal;
-                      nomeCachaco = value.nomeAnimal;
-                    });
+                    _editedCreche.pai = value.nomeAnimal;
+                    nomeCachaco = value.nomeAnimal;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 10.0,
@@ -293,7 +245,7 @@ class _CadastroCrecheState extends State<CadastroCreche> {
                     setState(() {
                       numeroData = _dataNasc.text;
                       _editedCreche.dataNascimento = _dataNasc.text;
-                      idadeFinal = differenceDate();
+                      idadeFinal = calculaIdadeAnimal(numeroData);
                     });
                   },
                 ),
@@ -318,45 +270,23 @@ class _CadastroCrecheState extends State<CadastroCreche> {
                     });
                   },
                 ),
-                SearchableDropdown.single(
-                  items: estado.map((estado) {
-                    return DropdownMenuItem(
-                      value: estado,
-                      child: Row(
-                        children: [
-                          Text(estado),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: estado,
-                  hint: "Selecione um Estado",
-                  searchHint: "Selecione um Estado",
+                CustomSearchableDropDown(
+                  items: estado,
+                  label: 'Selecione um estado',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: estado?.map((item) {
+                        return item;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _crecheEdited = true;
-                    setState(() {
-                      _editedCreche.estado = value;
-                    });
+                    _editedCreche.estado = value;
+                    nomeEstado = value;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 10.0,
@@ -543,41 +473,31 @@ class _CadastroCrecheState extends State<CadastroCreche> {
     }
   }
 
-  String differenceDate() {
-    String num = "";
-    DateTime dt = DateTime.now();
-    if (numeroData.isNotEmpty) {
-      num = numeroData.split('-').reversed.join();
+  String calculaIdadeAnimal(String dateString) {
+    String dataFinal = "";
+    if (dateString.length == 10) {
+      DateTime data = DateTime.parse(dateString.split('-').reversed.join());
+      //data = dateString as DateTime;
+      DateTime dataAgora = DateTime.now();
+      int ano = (dataAgora.year - data.year);
+      int mes = (dataAgora.month - data.month);
+      int dia = (dataAgora.day - data.day);
+      if (dia < 0) {
+        dia = dia + 30;
+        mes = mes - 1;
+      }
+      if (mes < 0) {
+        mes = mes + 12;
+        ano = ano - 1;
+      }
+      dataFinal = ano.toString() +
+          " anos " +
+          mes.toString() +
+          " meses " +
+          dia.toString() +
+          " dias";
     }
-
-    DateTime date = DateTime.parse(num);
-    int quant = dt.difference(date).inDays;
-    if (quant < 0) {
-      _idadeAnimal = "Data incorreta";
-    } else if (quant < 365) {
-      _idadeAnimal = "$quant dias";
-    } else if (quant == 365) {
-      _idadeAnimal = "1 ano";
-    } else if (quant > 365 && quant < 731) {
-      int dias = quant - 365;
-      _idadeAnimal = "1 ano e $dias dias";
-    } else if (quant > 731 && quant < 1096) {
-      int dias = quant - 731;
-      _idadeAnimal = "2 ano e $dias dias";
-    } else if (quant > 1095 && quant < 1461) {
-      int dias = quant - 1095;
-      _idadeAnimal = "3 ano e $dias dias";
-    } else if (quant > 1460 && quant < 1826) {
-      int dias = quant - 1460;
-      _idadeAnimal = "4 ano e $dias dias";
-    } else if (quant > 1825 && quant < 2191) {
-      int dias = quant - 1825;
-      _idadeAnimal = "5 ano e $dias dias";
-    } else if (quant > 2190 && quant < 2.556) {
-      int dias = quant - 2190;
-      _idadeAnimal = "6 ano e $dias dias";
-    }
-    return _idadeAnimal;
+    return dataFinal;
   }
 
   void _getAllLotes() {

@@ -1,8 +1,9 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/preco_carne_suina_db.dart';
 import 'package:gerenciamento_rural/models/preco_carne_suina.dart';
 import 'package:gerenciamento_rural/models/producao_carne_suina.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+
 import 'package:toast/toast.dart';
 
 class CadastroProducaoCarneSuina extends StatefulWidget {
@@ -19,6 +20,7 @@ class _CadastroProducaoCarneSuinaState
   List<PrecoCarneSuina> precoCarne = [];
   PrecoCarneSuina precoCarneSuina;
   final precoController = TextEditingController();
+  final quantidadeController = TextEditingController();
   String nomeMes = "";
   double nomePreco = 0.0;
   bool _producaoCarneEdited = false;
@@ -85,6 +87,7 @@ class _CadastroProducaoCarneSuinaState
                 ),
                 TextField(
                   keyboardType: TextInputType.number,
+                  controller: quantidadeController,
                   decoration: InputDecoration(labelText: "Quantidade Kg"),
                   onChanged: (text) {
                     _producaoCarneEdited = true;
@@ -93,48 +96,25 @@ class _CadastroProducaoCarneSuinaState
                     });
                   },
                 ),
-                SearchableDropdown.single(
-                  items: precoCarne.map((preco) {
-                    return DropdownMenuItem(
-                      value: preco,
-                      child: Row(
-                        children: [
-                          Text(preco.data),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: precoCarneSuina,
-                  hint: "Selecione um mês",
-                  searchHint: "Selecione um mês",
+                CustomSearchableDropDown(
+                  items: precoCarne,
+                  label: 'Selecione uma data',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: precoCarne?.map((item) {
+                        return item.data;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _producaoCarneEdited = true;
-                    setState(() {
-                      _editedProducaoCarne.data = value.data;
-                      nomeMes = value.data;
-                      _editedProducaoCarne.preco = value.preco;
-                      nomePreco = value.preco;
-                    });
+                    _editedProducaoCarne.data = value.data;
+                    nomeMes = value.data;
+                    _editedProducaoCarne.preco = value.preco;
+                    nomePreco = value.preco;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 5.0,

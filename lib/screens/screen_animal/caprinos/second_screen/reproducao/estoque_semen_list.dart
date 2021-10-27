@@ -104,7 +104,7 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
           child: Row(
             children: [
               Text(
-                "Cachaço: " + inventarioSemens[index].nomeReprodutor ?? "",
+                "Reprodutor: " + inventarioSemens[index].nomeReprodutor ?? "",
                 style: TextStyle(fontSize: 14.0),
               ),
               SizedBox(
@@ -318,11 +318,10 @@ class _ListaEstoqueSemenCaprinaState extends State<ListaEstoqueSemenCaprina> {
                     mainAxisAlignment: pdfLib.MainAxisAlignment.center,
                     crossAxisAlignment: pdfLib.CrossAxisAlignment.start,
                     children: [
-                      pdfLib.Text('Instituto Federal Goiano',
+                      pdfLib.Text('Control IF Goiano',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white)),
-                      pdfLib.Text(
-                          'Rodovia Geraldo Silva Nascimento Km 2,5, Rod. Gustavo Capanema,\nUrutaí - GO, 75790-000',
+                      pdfLib.Text('control@institutofederal.com.br',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),

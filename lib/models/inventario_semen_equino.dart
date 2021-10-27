@@ -21,7 +21,7 @@ class InventarioSemenEquino {
   InventarioSemenEquino();
   InventarioSemenEquino.fromMap(Map map) {
     id = map["id"];
-    idCavalo = map["id_cacvalo"];
+    idCavalo = map["id_cavalo"];
     nomeCavalo = map["nome_cavalo"];
     identificacao = map["identificacao"];
     quantidade = map["quantidade"];
@@ -42,13 +42,23 @@ class InventarioSemenEquino {
 
   Map toMap() {
     Map<String, dynamic> map = {
-      "id_cachaco": idCavalo,
-      "nomeCachaco": nomeCavalo,
+      "id_cavalo": idCavalo,
+      "nome_cavalo": nomeCavalo,
       "identificacao": identificacao,
       "quantidade": quantidade,
       "cor": cor,
-      "dataCadastro": dataCadastro,
-      "dataValidade": dataValidade,
+      "data_cadastro": dataCadastro,
+      "data_validade": dataValidade,
+      "observacao": observacao,
+      "vigor": vigor,
+      "mortalidade": mortalidade,
+      "turbilhamento": turbilhamento,
+      "concentracao": concentracao,
+      "volume": volume,
+      "aspecto": aspecto,
+      "celulas_normais": celulasNormais,
+      "defeito_maiores": defeitoMaiores,
+      "defeito_menores": defeitoMenores,
     };
     if (id != null) {
       map["id"] = id;

@@ -120,7 +120,6 @@ class _CadastroNutricaoSuplementoEquinoState
                   },
                 ),
                 TextField(
-                  focusNode: _nameFocus,
                   keyboardType: TextInputType.text,
                   controller: _ingredientesController,
                   decoration: InputDecoration(labelText: "Ingredientes"),

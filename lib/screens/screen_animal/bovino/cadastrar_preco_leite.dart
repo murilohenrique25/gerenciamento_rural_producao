@@ -82,6 +82,7 @@ class _CadastroPrecoLeiteState extends State<CadastroPrecoLeite> {
                   },
                 ),
                 TextField(
+                  controller: precoController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(labelText: "Preço por litro"),
                   onChanged: (text) {

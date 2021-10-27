@@ -50,6 +50,7 @@ class _CadastroNutricaoVolumosoBovinoCorteState
           NutricaoVolumoso.fromMap(widget.nutricaoVolumoso.toMap());
       _quantIndController.text = _editedNutricao.quantidadeInd.toString();
       _quantTotalController.text = _editedNutricao.quantidadeTotal.toString();
+      _loteControlller.text = _editedNutricao.nomeLote;
       _tipoController.text = _editedNutricao.tipo;
       _msController.text = _editedNutricao.ms.toString();
       _umidController.text = _editedNutricao.umidade.toString();
@@ -112,7 +113,7 @@ class _CadastroNutricaoVolumosoBovinoCorteState
                   onChanged: (text) {
                     _nutricaoEdited = true;
                     setState(() {
-                      _editedNutricao.tipo = text;
+                      _editedNutricao.nomeLote = text;
                     });
                   },
                 ),

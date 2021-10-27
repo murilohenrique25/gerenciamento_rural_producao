@@ -85,6 +85,7 @@ class _CadastroPrecoCarneCaprinaState extends State<CadastroPrecoCarneCaprina> {
                 ),
                 TextField(
                   keyboardType: TextInputType.number,
+                  controller: precoController,
                   decoration: InputDecoration(labelText: "Preço por kilo"),
                   onChanged: (text) {
                     setState(() {

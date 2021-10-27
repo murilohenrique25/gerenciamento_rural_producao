@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/dados_rebanho_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/historico_animal_abatido_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/nutricao_screen.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/rebanho_screen.dart';
@@ -61,7 +60,7 @@ class _DescriptionBovinoCorteState extends State<DescriptionBovinoCorte> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: DadosRebanhoScreen(),
+                          child: ReproducaoScreen(),
                         ),
                       ],
                     ),
@@ -119,20 +118,20 @@ class _DescriptionBovinoCorteState extends State<DescriptionBovinoCorte> {
                         ),
                       ],
                     ),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          width: _width,
-                          height: _height,
-                          color: Colors.grey[50],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: ReproducaoScreen(),
-                        ),
-                      ],
-                    ),
+                    // Stack(
+                    //   alignment: Alignment.center,
+                    //   children: [
+                    //     Container(
+                    //       width: _width,
+                    //       height: _height,
+                    //       color: Colors.grey[50],
+                    //     ),
+                    //     Padding(
+                    //       padding: EdgeInsets.all(10.0),
+                    //       child: ReproducaoScreen(),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
                 //Quarta linha

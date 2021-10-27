@@ -80,7 +80,6 @@ class _CadastroMedicamentoCaprinoState
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               setState(() {
-                _quantidadeController.text = '10';
                 double quantidade = double.parse(_quantidadeController.text);
                 double valorUnitario = double.parse(_precoController.text);
                 if (quantidade > 0 && valorUnitario > 0.0) {
@@ -119,24 +118,6 @@ class _CadastroMedicamentoCaprinoState
                     ),
                     Row(
                       children: [
-                        // Expanded(
-                        //   child: TextField(
-                        //     controller: _quantidadeController,
-                        //     decoration:
-                        //         InputDecoration(labelText: "Quantidade"),
-                        //     onChanged: (text) {
-                        //       _medicamentoEdited = true;
-                        //       setState(() {
-                        //         _editedMedicamento.quantidade =
-                        //             double.parse(text);
-                        //       });
-                        //     },
-                        //     keyboardType: TextInputType.number,
-                        //   ),
-                        // ),
-                        // SizedBox(
-                        //   width: 30.0,
-                        // ),
                         Expanded(
                             flex: 1,
                             child: Padding(
@@ -166,6 +147,16 @@ class _CadastroMedicamentoCaprinoState
                           width: 80.0,
                         ),
                       ],
+                    ),
+                    TextField(
+                      controller: _quantidadeController,
+                      decoration: InputDecoration(labelText: "Quantiadade"),
+                      onChanged: (text) {
+                        _medicamentoEdited = true;
+                        setState(() {
+                          _editedMedicamento.quantidade = double.parse(text);
+                        });
+                      },
                     ),
                     TextField(
                       controller: _precoController,

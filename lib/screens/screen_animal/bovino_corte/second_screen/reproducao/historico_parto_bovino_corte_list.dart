@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/registro_parto_caprino_db.dart';
-import 'package:gerenciamento_rural/models/registro_partos_caprinos.dart';
+import 'package:gerenciamento_rural/helpers/registro_parto_bovino_corte_db.dart';
+import 'package:gerenciamento_rural/models/registro_partos_bovino_corte.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/reproducao/registers/cadastro_historico_parto.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPage.dart';
 import 'package:pdf/pdf.dart';
@@ -19,10 +19,10 @@ class ListaHistoricoPartoBovinoCorte extends StatefulWidget {
 class _ListaHistoricoPartoBovinoCorteState
     extends State<ListaHistoricoPartoBovinoCorte> {
   TextEditingController editingController = TextEditingController();
-  RegistroPartoCaprinoDB helper = RegistroPartoCaprinoDB();
-  List<RegistroPartoCaprino> items = [];
-  List<RegistroPartoCaprino> historicos = [];
-  List<RegistroPartoCaprino> tHistoricos = [];
+  RegistroPartoBCDB helper = RegistroPartoBCDB();
+  List<RegistroPartoBC> items = [];
+  List<RegistroPartoBC> historicos = [];
+  List<RegistroPartoBC> tHistoricos = [];
 
   @override
   void initState() {
@@ -75,8 +75,8 @@ class _ListaHistoricoPartoBovinoCorteState
                 },
                 controller: editingController,
                 decoration: InputDecoration(
-                    labelText: "Buscar por Matriz",
-                    hintText: "Buscar por Matriz",
+                    labelText: "Buscar por Vaca",
+                    hintText: "Buscar por Vaca",
                     prefixIcon: Icon(Icons.search),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(25.0)))),
@@ -107,7 +107,7 @@ class _ListaHistoricoPartoBovinoCorteState
             child: Row(
               children: [
                 Text(
-                  "Matriz: " + historicos[index].nomeMatriz ?? "",
+                  "Matriz: " + historicos[index].nomeVaca ?? "",
                   style: TextStyle(fontSize: 14.0),
                 ),
                 SizedBox(
@@ -118,7 +118,7 @@ class _ListaHistoricoPartoBovinoCorteState
                   width: 15,
                 ),
                 Text(
-                  "Pai: " + historicos[index].nomeReprodutor ?? "",
+                  "Pai: " + historicos[index].nomeTouro ?? "",
                   style: TextStyle(fontSize: 14.0),
                 ),
                 SizedBox(
@@ -154,20 +154,6 @@ class _ListaHistoricoPartoBovinoCorteState
                       "",
                   style: TextStyle(fontSize: 14.0),
                 ),
-                SizedBox(
-                  width: 15,
-                ),
-                Text(
-                  "Problemas: " + historicos[index].problema.toString() ?? "",
-                  style: TextStyle(fontSize: 14.0),
-                ),
-                SizedBox(
-                  width: 15,
-                ),
-                Text(
-                  "Tipo: " + historicos[index].tipoInseminacao ?? "",
-                  style: TextStyle(fontSize: 14.0),
-                ),
               ],
             ),
           ),
@@ -189,15 +175,15 @@ class _ListaHistoricoPartoBovinoCorteState
     });
   }
 
-  void _showPage({RegistroPartoCaprino registroPartoCaprino}) async {
+  void _showPage({RegistroPartoBC registroPartoBC}) async {
     final recRegistro = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => CadastroHistoricoPartoBovinoCorte(
-                  registroPartoCaprino: registroPartoCaprino,
+                  registroPartoBC: registroPartoBC,
                 )));
     if (recRegistro != null) {
-      if (registroPartoCaprino != null) {
+      if (registroPartoBC != null) {
         await helper.updateItem(recRegistro);
       } else {
         await helper.insert(recRegistro);
@@ -227,7 +213,7 @@ class _ListaHistoricoPartoBovinoCorteState
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                          _showPage(registroPartoCaprino: historicos[index]);
+                          _showPage(registroPartoBC: historicos[index]);
                         },
                       ),
                     ),
@@ -283,8 +269,8 @@ class _ListaHistoricoPartoBovinoCorteState
                   'Tipo'
                 ],
                 ...tHistoricos.map((item) => [
-                      item.nomeMatriz,
-                      item.nomeReprodutor,
+                      item.nomeVaca,
+                      item.nomeTouro,
                       item.data,
                       item.quantidade.toString(),
                       item.quantMachos.toString(),
@@ -308,16 +294,12 @@ class _ListaHistoricoPartoBovinoCorteState
     switch (result) {
       case OrderOptions.orderaz:
         historicos.sort((a, b) {
-          return a.nomeMatriz
-              .toLowerCase()
-              .compareTo(b.nomeMatriz.toLowerCase());
+          return a.nomeVaca.toLowerCase().compareTo(b.nomeVaca.toLowerCase());
         });
         break;
       case OrderOptions.orderza:
         historicos.sort((a, b) {
-          return b.nomeMatriz
-              .toLowerCase()
-              .compareTo(a.nomeMatriz.toLowerCase());
+          return b.nomeVaca.toLowerCase().compareTo(a.nomeVaca.toLowerCase());
         });
         break;
     }
@@ -325,12 +307,12 @@ class _ListaHistoricoPartoBovinoCorteState
   }
 
   void filterSearchResults(String query) {
-    List<RegistroPartoCaprino> dummySearchList = [];
+    List<RegistroPartoBC> dummySearchList = [];
     dummySearchList.addAll(items);
     if (query.isNotEmpty) {
-      List<RegistroPartoCaprino> dummyListData = [];
+      List<RegistroPartoBC> dummyListData = [];
       dummySearchList.forEach((item) {
-        if (item.nomeMatriz.toLowerCase().contains(query.toLowerCase())) {
+        if (item.nomeVaca.toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
         }
       });
@@ -361,11 +343,10 @@ class _ListaHistoricoPartoBovinoCorteState
                     mainAxisAlignment: pdfLib.MainAxisAlignment.center,
                     crossAxisAlignment: pdfLib.CrossAxisAlignment.start,
                     children: [
-                      pdfLib.Text('Instituto Federal Goiano',
+                      pdfLib.Text('Control IF Goiano',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white)),
-                      pdfLib.Text(
-                          'Rodovia Geraldo Silva Nascimento Km 2,5, Rod. Gustavo Capanema,\nUrutaí - GO, 75790-000',
+                      pdfLib.Text('control@institutofederal.com.br',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),

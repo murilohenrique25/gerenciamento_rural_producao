@@ -1,3 +1,4 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/caprino_abatido_db.dart';
@@ -6,7 +7,7 @@ import 'package:gerenciamento_rural/models/caprino_abatido.dart';
 import 'package:gerenciamento_rural/models/lote.dart';
 import 'package:gerenciamento_rural/models/matriz_caprino.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+
 import 'package:toast/toast.dart';
 
 class CadastroMatrizCaprino extends StatefulWidget {
@@ -44,7 +45,7 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
   final _diasprenhaController = TextEditingController();
   final _pesoPrimeiroPartoController = TextEditingController();
   final _descricaoController = TextEditingController();
-  final _dataAcontecidoController = TextEditingController();
+  var _dataAcontecidoController = MaskedTextController(mask: '00-00-0000');
   final _valorVendidoController = TextEditingController();
   final _pesoVendidoController = TextEditingController();
   var _dataNasc = MaskedTextController(mask: '00-00-0000');
@@ -55,7 +56,6 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
 
   final df = new DateFormat("dd-MM-yyyy");
 
-  String _idadeAnimal = "1ano e 2meses";
   MatrizCaprino _editedMatriz;
   bool _matrizEdited = false;
 
@@ -344,9 +344,12 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
       _maeController.text = _editedMatriz.mae;
       _obsController.text = _editedMatriz.observacao;
       _pesoController.text = _editedMatriz.peso.toString();
+      _pesoPrimeiroPartoController.text =
+          _editedMatriz.pesoPrimeiroParto.toString();
       _baiaController.text = _editedMatriz.baia;
       _origemController.text = _editedMatriz.origem;
       _loteController.text = _editedMatriz.lote;
+      nomeLote = _editedMatriz.lote;
       _idadePrimeiroPartoController.text = _editedMatriz.idadePrimeiroParto;
       nomeD = _editedMatriz.diagnosticoGestacao;
       _diasprenhaController.text = _editedMatriz.diasPrenha.toString();
@@ -355,10 +358,17 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
       _valorVendidoController.text = _editedMatriz.valorVendido.toString();
       numeroData = _editedMatriz.dataNascimento;
       _dataNasc.text = numeroData;
-      idadeFinal = differenceDate();
-
+      idadeFinal = calculaIdadeAnimal(numeroData);
+      nomePai = _editedMatriz.pai;
+      nomeMae = _editedMatriz.mae;
       if (_editedMatriz.diasPrenha != null) {
-        partoPrevisto = (270 - _editedMatriz.diasPrenha).toString();
+        ultimainseminacao = _editedMatriz.ultimaInseminacao;
+        String num = ultimainseminacao.split('-').reversed.join();
+        DateTime dates = DateTime.parse(num);
+        int dias = 160 - _editedMatriz.diasPrenha;
+        DateTime dateParto = dates.add(new Duration(days: dias));
+        var format = new DateFormat("dd-MM-yyyy");
+        partoPrevisto = format.format(dateParto);
       }
 
       if (_editedMatriz.situacao == "Viva") {
@@ -402,7 +412,7 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             if (_nomeController.text.isEmpty) {
-              Toast.show("Ninhada inválido.", context,
+              Toast.show("Nome inválido.", context,
                   duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
             }
             // else if (_dataNasc.text.isEmpty) {
@@ -410,7 +420,7 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
             //       duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
             // }
             else {
-              if (_editedMatriz.situacao == "Abatida") {
+              if (_editedMatriz.situacao != "Viva") {
                 CaprinoAbatido caprinoAbatido = CaprinoAbatido();
                 CaprinoAbatidoDB caprinoAbatidoDB = CaprinoAbatidoDB();
                 caprinoAbatido.idLote = _editedMatriz.idLote;
@@ -419,6 +429,9 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                 caprinoAbatido.data = _editedMatriz.dataAcontecido;
                 caprinoAbatido.tipo = "Matriz";
                 caprinoAbatidoDB.insert(caprinoAbatido);
+              }
+              if (_editedMatriz.peso == null) {
+                _editedMatriz.peso = 0;
               }
               Navigator.pop(context, _editedMatriz);
             }
@@ -476,47 +489,26 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                     });
                   },
                 ),
-                SearchableDropdown.single(
-                  items: lotes.map((lote) {
-                    return DropdownMenuItem(
-                      value: lote,
-                      child: Row(
-                        children: [
-                          Text(lote.nome),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: lote,
-                  hint: "Selecione um lote",
-                  searchHint: "Selecione um lote",
+                CustomSearchableDropDown(
+                  items: lotes,
+                  label: 'Selecione um lote',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: lotes?.map((item) {
+                        return item.nome;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _matrizEdited = true;
-                    setState(() {
+                    if (value != null) {
                       _editedMatriz.idLote = value.id;
                       _editedMatriz.lote = value.nome;
                       nomeLote = value.nome;
-                    });
+                    }
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 Text("Lote:  $nomeLote",
                     style: TextStyle(
@@ -534,7 +526,7 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                     setState(() {
                       numeroData = _dataNasc.text;
                       _editedMatriz.dataNascimento = _dataNasc.text;
-                      idadeFinal = differenceDate();
+                      idadeFinal = calculaIdadeAnimal(numeroData);
                     });
                   },
                 ),
@@ -573,46 +565,23 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                 SizedBox(
                   height: 20.0,
                 ),
-                SearchableDropdown.single(
-                  items: diagnosticos.map((d) {
-                    return DropdownMenuItem(
-                      value: d,
-                      child: Row(
-                        children: [
-                          Text(d),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: d,
-                  hint: "Selecione um diagnostico",
-                  searchHint: "Selecione um diagnostico",
+                CustomSearchableDropDown(
+                  items: diagnosticos,
+                  label: 'Selecione um diagnóstico',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: diagnosticos?.map((item) {
+                        return item;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _matrizEdited = true;
-                    setState(() {
-                      _editedMatriz.diagnosticoGestacao = value;
-                      nomeD = value;
-                    });
+                    _editedMatriz.diagnosticoGestacao = value;
+                    nomeD = value;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 20.0,
@@ -628,7 +597,9 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                   height: 20.0,
                 ),
                 TextField(
-                  enabled: nomeD == "Prenha" ? true : false,
+                  enabled: _editedMatriz.diagnosticoGestacao == "Prenha"
+                      ? true
+                      : false,
                   keyboardType: TextInputType.number,
                   controller: _diasprenhaController,
                   decoration:
@@ -675,7 +646,9 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
                   decoration: InputDecoration(labelText: "Peso ao 1º parto"),
                   onChanged: (text) {
                     _matrizEdited = true;
-                    setState(() {});
+                    setState(() {
+                      _editedMatriz.pesoPrimeiroParto = double.parse(text);
+                    });
                   },
                 ),
                 TextField(
@@ -855,40 +828,30 @@ class _CadastroMatrizCaprinoState extends State<CadastroMatrizCaprino> {
     });
   }
 
-  String differenceDate() {
-    String num = "";
-    DateTime dt = DateTime.now();
-    if (numeroData.isNotEmpty) {
-      num = numeroData.split('-').reversed.join();
+  String calculaIdadeAnimal(String dateString) {
+    String dataFinal = "";
+    if (dateString.length == 10) {
+      DateTime data = DateTime.parse(dateString.split('-').reversed.join());
+      //data = dateString as DateTime;
+      DateTime dataAgora = DateTime.now();
+      int ano = (dataAgora.year - data.year);
+      int mes = (dataAgora.month - data.month);
+      int dia = (dataAgora.day - data.day);
+      if (dia < 0) {
+        dia = dia + 30;
+        mes = mes - 1;
+      }
+      if (mes < 0) {
+        mes = mes + 12;
+        ano = ano - 1;
+      }
+      dataFinal = ano.toString() +
+          " anos " +
+          mes.toString() +
+          " meses " +
+          dia.toString() +
+          " dias";
     }
-
-    DateTime date = DateTime.parse(num);
-    int quant = dt.difference(date).inDays;
-    if (quant < 0) {
-      _idadeAnimal = "Data incorreta";
-    } else if (quant < 365) {
-      _idadeAnimal = "$quant dias";
-    } else if (quant == 365) {
-      _idadeAnimal = "1 ano";
-    } else if (quant > 365 && quant < 731) {
-      int dias = quant - 365;
-      _idadeAnimal = "1 ano e $dias dias";
-    } else if (quant > 731 && quant < 1096) {
-      int dias = quant - 731;
-      _idadeAnimal = "2 ano e $dias dias";
-    } else if (quant > 1095 && quant < 1461) {
-      int dias = quant - 1095;
-      _idadeAnimal = "3 ano e $dias dias";
-    } else if (quant > 1460 && quant < 1826) {
-      int dias = quant - 1460;
-      _idadeAnimal = "4 ano e $dias dias";
-    } else if (quant > 1825 && quant < 2191) {
-      int dias = quant - 1825;
-      _idadeAnimal = "5 ano e $dias dias";
-    } else if (quant > 2190 && quant < 2.556) {
-      int dias = quant - 2190;
-      _idadeAnimal = "6 ano e $dias dias";
-    }
-    return _idadeAnimal;
+    return dataFinal;
   }
 }

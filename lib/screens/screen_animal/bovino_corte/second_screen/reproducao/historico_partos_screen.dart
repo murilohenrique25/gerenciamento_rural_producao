@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/reproducao/historico_parto_caprino_list.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/reproducao/historico_parto_bovino_corte_list.dart';
 
 class HistoricoPartoBovinoCorteScreen extends StatefulWidget {
   @override
@@ -20,7 +20,7 @@ class _HistoricoPartoBovinoCorteScreenState
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ListaHistoricoPartoCaprino()));
+                    builder: (context) => ListaHistoricoPartoBovinoCorte()));
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15.0),

@@ -1,3 +1,4 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/inventario_semen_db.dart';
@@ -8,7 +9,6 @@ import 'package:gerenciamento_rural/models/inventario_semen.dart';
 import 'package:gerenciamento_rural/models/novilha.dart';
 import 'package:gerenciamento_rural/models/vaca.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class CadastroInseminacao extends StatefulWidget {
   final Inseminacao inseminacao;
@@ -22,7 +22,8 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
   //final _semenController = TextEditingController();
   final _inseminadorController = TextEditingController();
   final _obsController = TextEditingController();
-
+  String nomeAnimal = "";
+  String nomeTouro = "";
   var _dataInse = MaskedTextController(mask: '00-00-0000');
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -56,6 +57,11 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
       _editedInseminacao = Inseminacao();
     } else {
       _editedInseminacao = Inseminacao.fromMap(widget.inseminacao.toMap());
+      nomeAnimal = _editedInseminacao.nomeVaca;
+      nomeTouro = _editedInseminacao.nomeTouro;
+      _inseminadorController.text = _editedInseminacao.inseminador;
+      _dataInse.text = _editedInseminacao.data;
+      _obsController.text = _editedInseminacao.observacao;
     }
   }
 
@@ -118,131 +124,77 @@ class _CadastroInseminacaoState extends State<CadastroInseminacao> {
                   size: 80.0,
                   color: Color.fromARGB(255, 4, 125, 141),
                 ),
-                SearchableDropdown.single(
-                  items: totalVacas.map((vaca) {
-                    return DropdownMenuItem(
-                      value: vaca,
-                      child: Row(
-                        children: [
-                          Text(vaca.nome),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: vaca,
-                  hint: "Selecione uma Vaca",
-                  searchHint: "Selecione uma Vaca",
+                CustomSearchableDropDown(
+                  items: totalVacas,
+                  label: 'Selecione uma vaca',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: totalVacas?.map((item) {
+                        return item.nome;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    setState(() {
-                      verificaAnimal = "vaca";
-                      vaca = value;
-                      _editedInseminacao.idVaca = value.idVaca;
-                      _editedInseminacao.nomeVaca = value.nome;
-                    });
+                    verificaAnimal = "vaca";
+                    vaca = value;
+                    _editedInseminacao.idVaca = value.idVaca;
+                    _editedInseminacao.nomeVaca = value.nome;
+                    nomeAnimal = value.nome;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 Text("OU"),
-                SearchableDropdown.single(
-                  items: totalNovilhas.map((novilha) {
-                    return DropdownMenuItem(
-                      value: novilha,
-                      child: Row(
-                        children: [
-                          Text(novilha.nome),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: novilha,
-                  hint: "Selecione uma Novilha",
-                  searchHint: "Selecione uma Novilha",
+                CustomSearchableDropDown(
+                  items: totalNovilhas,
+                  label: 'Selecione uma novilha',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: totalNovilhas?.map((item) {
+                        return item.nome;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    setState(() {
-                      verificaAnimal = "novilha";
-                      novilha = value;
-                      _editedInseminacao.idVaca = value.idNovilha;
-                      _editedInseminacao.nomeVaca = value.nome;
-                    });
+                    verificaAnimal = "novilha";
+                    novilha = value;
+                    _editedInseminacao.idVaca = value.idNovilha;
+                    _editedInseminacao.nomeVaca = value.nome;
+                    nomeAnimal = value.nome;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
-                SearchableDropdown.single(
-                  items: semens.map((semen) {
-                    return DropdownMenuItem(
-                      value: semen,
-                      child: Row(
-                        children: [
-                          Text(semen.nomeTouro),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: selectedInseminacao,
-                  hint: "Selecione um Sêmen",
-                  searchHint: "Selecione um Sêmen",
+                CustomSearchableDropDown(
+                  items: semens,
+                  label: 'Selecione uma sêmen',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: semens?.map((item) {
+                        return item.nomeTouro;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    setState(() {
-                      selectedInseminacao = value;
-                      _editedInseminacao.idSemen = value.id;
-                      _editedInseminacao.nomeTouro = value.nomeTouro;
-                    });
+                    selectedInseminacao = value;
+                    _editedInseminacao.idSemen = value.id;
+                    _editedInseminacao.nomeTouro = value.nomeTouro;
+                    nomeTouro = value.nomeTouro;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 10.0, bottom: 5.0),
+                  child: Text(
+                    "Touro: " + nomeTouro,
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141)),
+                  ),
                 ),
                 TextField(
                   keyboardType: TextInputType.text,

@@ -44,6 +44,7 @@ class _CadastroNutricaoSuplementoBovinoCorteState
     } else {
       _editedNutricao =
           NutricaoSuplementar.fromMap(widget.nutricaoSuplementar.toMap());
+      _loteController.text = _editedNutricao.nomeLote;
       _quantIndController.text = _editedNutricao.quantidadeInd.toString();
       _quantTotalController.text = _editedNutricao.quantidadeTotal.toString();
       _ingredientesController.text = _editedNutricao.ingredientes;
@@ -105,7 +106,7 @@ class _CadastroNutricaoSuplementoBovinoCorteState
                   onChanged: (text) {
                     _nutricaoEdited = true;
                     setState(() {
-                      _editedNutricao.ingredientes = text;
+                      _editedNutricao.nomeLote = text;
                     });
                   },
                 ),
@@ -121,7 +122,6 @@ class _CadastroNutricaoSuplementoBovinoCorteState
                   },
                 ),
                 TextField(
-                  focusNode: _nameFocus,
                   keyboardType: TextInputType.text,
                   controller: _ingredientesController,
                   decoration: InputDecoration(labelText: "Ingredientes"),

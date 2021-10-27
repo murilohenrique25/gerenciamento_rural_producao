@@ -28,7 +28,7 @@ class BezerroCorteDB extends HelperDB {
   @override
   Future<Map> getItem(dynamic where) async {
     Database db = await this.getDb();
-    List<Map> items = await db.query("bezerraCorte",
+    List<Map> items = await db.query("bezerroCorte",
         where: "id = ?", whereArgs: [where], limit: 1);
     Map result = Map();
     if (items.isNotEmpty) {
@@ -37,23 +37,23 @@ class BezerroCorteDB extends HelperDB {
     return result;
   }
 
-  Future<BezerroCorte> insert(BezerroCorte bezerra) async {
+  Future<BezerroCorte> insert(BezerroCorte bezerro) async {
     Database db = await this.getDb();
-    bezerra.id = await db.insert("bezerraCorte", bezerra.toMap());
-    return bezerra;
+    bezerro.id = await db.insert("bezerroCorte", bezerro.toMap());
+    return bezerro;
   }
 
   @override
   Future<List<Map>> list() async {
     Database db = await this.getDb();
-    return db.rawQuery("SELECT * FROM bezerraCorte orderBy id CRESC");
+    return db.rawQuery("SELECT * FROM bezerroCorte orderBy id CRESC");
   }
 
   @override
   Future<bool> delete(dynamic id) async {
     Database db = await this.getDb();
     int rows =
-        await db.delete("bezerraCorte", where: "id = ?", whereArgs: [id]);
+        await db.delete("bezerroCorte", where: "id = ?", whereArgs: [id]);
 
     return (rows != 0);
   }
@@ -61,23 +61,23 @@ class BezerroCorteDB extends HelperDB {
   Future<int> getNumber() async {
     Database db = await this.getDb();
     return Sqflite.firstIntValue(
-        await db.rawQuery("SELECT COUNT(*) FROM bezerraCorte"));
+        await db.rawQuery("SELECT COUNT(*) FROM bezerroCorte"));
   }
 
   ///<sumary>
   ///Método responsavel por atualizar item
   ///</sumary>
   ///<param name="bezerra"> Um tipo de animal.</param>
-  Future<void> updateItem(BezerroCorte bezerra) async {
+  Future<void> updateItem(BezerroCorte bezerro) async {
     Database db = await this.getDb();
-    await db.update("bezerraCorte", bezerra.toMap(),
-        where: "id = ?", whereArgs: [bezerra.id]);
+    await db.update("bezerroCorte", bezerro.toMap(),
+        where: "id = ?", whereArgs: [bezerro.id]);
   }
 
   Future<List> getAllItems() async {
     Database db = await this.getDb();
     List listMap = await db.rawQuery(
-        "SELECT * FROM bezerraCorte WHERE virou_adulto == 0 AND animal_abatido == 0");
+        "SELECT * FROM bezerroCorte WHERE virou_adulto == 0 AND animal_abatido == 0");
     List<BezerroCorte> list = [];
     for (Map m in listMap) {
       list.add(BezerroCorte.fromMap(m));

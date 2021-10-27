@@ -1,3 +1,4 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/abatidos_db.dart';
@@ -9,7 +10,7 @@ import 'package:gerenciamento_rural/models/cachaco.dart';
 import 'package:gerenciamento_rural/models/matriz.dart';
 import 'package:gerenciamento_rural/models/terminacao.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+
 import 'package:toast/toast.dart';
 
 class CadastroTerminacao extends StatefulWidget {
@@ -57,7 +58,6 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
 
   final df = new DateFormat("dd-MM-yyyy");
 
-  String _idadeAnimal = "1ano e 2meses";
   Terminacao _editedTerminacao;
   bool _termiancaoEdited = false;
 
@@ -97,13 +97,18 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
       _mortosController.text = _editedTerminacao.mortos;
       _quantidadeController.text = _editedTerminacao.quantidade.toString();
       _estadoController.text = _editedTerminacao.estado;
+      nomeEstado = _editedTerminacao.estado;
       _loteController.text = _editedTerminacao.lote;
+      _dataDesmamaController.text = _editedTerminacao.dataDesmama;
+      _dataAbate.text = _editedTerminacao.dataAbate;
+      _pesoAbateController.text = _editedTerminacao.pesoAbate.toString();
+      _pesoMedioController.text = _editedTerminacao.pesoMedio.toString();
       _baiaController.text = _editedTerminacao.baia;
-      matriz.nomeAnimal = _editedTerminacao.mae;
-      cachaco.nomeAnimal = _editedTerminacao.pai;
+      nomeMatriz = _editedTerminacao.mae;
+      nomeCachaco = _editedTerminacao.pai;
       numeroData = _editedTerminacao.dataNascimento;
       _dataNasc.text = numeroData;
-      idadeFinal = differenceDate();
+      idadeFinal = calculaIdadeAnimal(numeroData);
     }
   }
 
@@ -137,9 +142,8 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
             //       duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
             // }
             else {
-              if (_editedTerminacao.estado == "Terminação") {
-                Navigator.pop(context, _editedTerminacao);
-              } else if (_editedTerminacao.estado == "Abatidos") {
+              _editedTerminacao.mudarPlantel = 0;
+              if (_editedTerminacao.estado == "Abatidos") {
                 TerminacaoDB terminacaoDB = TerminacaoDB();
                 AbatidosDB abatidosDB = AbatidosDB();
                 Abatido abatido;
@@ -147,10 +151,8 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                 terminacaoDB.updateItem(_editedTerminacao);
                 abatido = Abatido.fromMap(_editedTerminacao.toMap());
                 abatidosDB.insert(abatido);
-                Navigator.pop(context, _editedTerminacao);
-              } else {
-                Navigator.pop(context, _editedTerminacao);
               }
+              Navigator.pop(context, _editedTerminacao);
             }
           },
           child: Icon(Icons.save),
@@ -184,49 +186,23 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                 SizedBox(
                   height: 10.0,
                 ),
-                SearchableDropdown.single(
-                  items: matrizes.map((matriz) {
-                    return DropdownMenuItem(
-                      value: matriz,
-                      child: Row(
-                        children: [
-                          Text(matriz.nomeAnimal),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: matriz,
-                  hint: "Selecione uma matriz",
-                  searchHint: "Selecione uma matriz",
+                CustomSearchableDropDown(
+                  items: matrizes,
+                  label: 'Selecione uma matriz',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: matrizes?.map((item) {
+                        return item.nomeAnimal;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _termiancaoEdited = true;
-                    setState(() {
-                      nomeMatriz = value.nomeAnimal;
-                      _editedTerminacao.mae = value.nomeAnimal;
-                    });
+                    nomeMatriz = value.nomeAnimal;
+                    _editedTerminacao.mae = value.nomeAnimal;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
-                ),
-                SizedBox(
-                  height: 10.0,
                 ),
                 Text("Matriz Mãe:  $nomeMatriz",
                     style: TextStyle(
@@ -235,46 +211,25 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                 SizedBox(
                   height: 10.0,
                 ),
-                SearchableDropdown.single(
-                  items: cachacos.map((cachaco) {
-                    return DropdownMenuItem(
-                      value: cachaco,
-                      child: Row(
-                        children: [
-                          Text(cachaco.nomeAnimal),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: cachaco,
-                  hint: "Selecione um cachaço",
-                  searchHint: "Selecione um cachaço",
+                CustomSearchableDropDown(
+                  items: cachacos,
+                  label: 'Selecione um cachaço',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: cachacos?.map((item) {
+                        return item.nomeAnimal;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _termiancaoEdited = true;
-                    setState(() {
+                    if (value != null) {
                       nomeCachaco = value.nomeAnimal;
                       _editedTerminacao.pai = value.nomeAnimal;
-                    });
+                    }
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 10.0,
@@ -295,7 +250,7 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                     setState(() {
                       numeroData = _dataNasc.text;
                       _editedTerminacao.dataNascimento = _dataNasc.text;
-                      idadeFinal = differenceDate();
+                      idadeFinal = calculaIdadeAnimal(numeroData);
                     });
                   },
                 ),
@@ -320,46 +275,23 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
                     });
                   },
                 ),
-                SearchableDropdown.single(
-                  items: estado.map((estado) {
-                    return DropdownMenuItem(
-                      value: estado,
-                      child: Row(
-                        children: [
-                          Text(estado),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: estado,
-                  hint: "Selecione um Estado",
-                  searchHint: "Selecione um Estado",
+                CustomSearchableDropDown(
+                  items: estado,
+                  label: 'Selecione um estado',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: estado?.map((item) {
+                        return item;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _termiancaoEdited = true;
-                    setState(() {
-                      nomeEstado = value;
-                      _editedTerminacao.estado = value;
-                    });
+                    nomeEstado = value;
+                    _editedTerminacao.estado = value;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 10.0,
@@ -579,41 +511,31 @@ class _CadastroTerminacaoState extends State<CadastroTerminacao> {
     }
   }
 
-  String differenceDate() {
-    String num = "";
-    DateTime dt = DateTime.now();
-    if (numeroData.isNotEmpty) {
-      num = numeroData.split('-').reversed.join();
+  String calculaIdadeAnimal(String dateString) {
+    String dataFinal = "";
+    if (dateString.length == 10) {
+      DateTime data = DateTime.parse(dateString.split('-').reversed.join());
+      //data = dateString as DateTime;
+      DateTime dataAgora = DateTime.now();
+      int ano = (dataAgora.year - data.year);
+      int mes = (dataAgora.month - data.month);
+      int dia = (dataAgora.day - data.day);
+      if (dia < 0) {
+        dia = dia + 30;
+        mes = mes - 1;
+      }
+      if (mes < 0) {
+        mes = mes + 12;
+        ano = ano - 1;
+      }
+      dataFinal = ano.toString() +
+          " anos " +
+          mes.toString() +
+          " meses " +
+          dia.toString() +
+          " dias";
     }
-
-    DateTime date = DateTime.parse(num);
-    int quant = dt.difference(date).inDays;
-    if (quant < 0) {
-      _idadeAnimal = "Data incorreta";
-    } else if (quant < 365) {
-      _idadeAnimal = "$quant dias";
-    } else if (quant == 365) {
-      _idadeAnimal = "1 ano";
-    } else if (quant > 365 && quant < 731) {
-      int dias = quant - 365;
-      _idadeAnimal = "1 ano e $dias dias";
-    } else if (quant > 731 && quant < 1096) {
-      int dias = quant - 731;
-      _idadeAnimal = "2 ano e $dias dias";
-    } else if (quant > 1095 && quant < 1461) {
-      int dias = quant - 1095;
-      _idadeAnimal = "3 ano e $dias dias";
-    } else if (quant > 1460 && quant < 1826) {
-      int dias = quant - 1460;
-      _idadeAnimal = "4 ano e $dias dias";
-    } else if (quant > 1825 && quant < 2191) {
-      int dias = quant - 1825;
-      _idadeAnimal = "5 ano e $dias dias";
-    } else if (quant > 2190 && quant < 2.556) {
-      int dias = quant - 2190;
-      _idadeAnimal = "6 ano e $dias dias";
-    }
-    return _idadeAnimal;
+    return dataFinal;
   }
 
   void _getAllLotes() {

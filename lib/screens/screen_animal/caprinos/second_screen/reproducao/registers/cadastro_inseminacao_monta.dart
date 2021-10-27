@@ -1,3 +1,4 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/inventario_semen_caprino_db.dart';
@@ -8,7 +9,7 @@ import 'package:gerenciamento_rural/models/inventario_semen_caprino.dart';
 import 'package:gerenciamento_rural/models/matriz_caprino.dart';
 import 'package:gerenciamento_rural/models/reprodutor.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+
 import 'package:toast/toast.dart';
 
 class CadastroInseminacaoMonta extends StatefulWidget {
@@ -23,6 +24,7 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
   MatrizCaprinoDB matrizDB = MatrizCaprinoDB();
   ReprodutorDB reprodutorDB = ReprodutorDB();
   InventarioSemenCaprinoDB _inventarioSemenDB = InventarioSemenCaprinoDB();
+  MatrizCaprino matrizCaprino = MatrizCaprino();
   int _radioValue = 0;
   String tipo;
   List<MatrizCaprino> matrizes = [];
@@ -65,6 +67,13 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
       _obsController.text = _editedInseminacao.observacao;
       _palhetaController.text = _editedInseminacao.observacao;
       _data.text = _editedInseminacao.data;
+      nomeMatriz = _editedInseminacao.nomeMatriz;
+      nomeMacho = _editedInseminacao.nomeReprodutor;
+      if (_editedInseminacao.tipoReproducao == "Inseminação") {
+        _radioValue = 0;
+      } else {
+        _radioValue = 1;
+      }
     }
   }
 
@@ -101,6 +110,11 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
                   _inventarioSemenDB.updateItem(inventarioSemen);
                 } else {}
               }
+              matrizCaprino.ultimaInseminacao = _data.text;
+              if (matrizCaprino.diasPrenha == null) {
+                matrizCaprino.diasPrenha = 0;
+              }
+              matrizDB.updateItem(matrizCaprino);
               Navigator.pop(context, _editedInseminacao);
             }
           },
@@ -150,47 +164,25 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
                 SizedBox(
                   height: 20.0,
                 ),
-                SearchableDropdown.single(
-                  items: matrizes.map((matriz) {
-                    return DropdownMenuItem(
-                      value: matriz,
-                      child: Row(
-                        children: [
-                          Text(matriz.nomeAnimal),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: matriz,
-                  hint: "Selecione uma matriz",
-                  searchHint: "Selecione uma matriz",
+                CustomSearchableDropDown(
+                  items: matrizes,
+                  label: 'Selecione uma matriz',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: matrizes?.map((item) {
+                        return item.nomeAnimal;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _inseminacaoEdited = true;
-                    setState(() {
-                      _editedInseminacao.idMatriz = value.id;
-                      _editedInseminacao.nomeMatriz = value.nomeAnimal;
-                      nomeMatriz = value.nomeAnimal;
-                    });
+                    matrizCaprino = value;
+                    _editedInseminacao.idMatriz = value.id;
+                    _editedInseminacao.nomeMatriz = value.nomeAnimal;
+                    nomeMatriz = value.nomeAnimal;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 10.0,
@@ -203,92 +195,50 @@ class _CadastroInseminacaoMontaState extends State<CadastroInseminacaoMonta> {
                   height: 10.0,
                 ),
                 if (_radioValue == 1)
-                  SearchableDropdown.single(
-                    items: reprodutores.map((reprodutor) {
-                      return DropdownMenuItem(
-                        value: reprodutor,
-                        child: Row(
-                          children: [
-                            Text(reprodutor.nomeAnimal),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                    value: reprodutor,
-                    hint: "Selecione um reprodutor",
-                    searchHint: "Selecione um reprodutor",
+                  CustomSearchableDropDown(
+                    items: reprodutores,
+                    label: 'Selecione um reprodutor',
+                    decoration:
+                        BoxDecoration(border: Border.all(color: Colors.blue)),
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: Icon(Icons.search),
+                    ),
+                    dropDownMenuItems: reprodutores?.map((item) {
+                          return item.nomeAnimal;
+                        })?.toList() ??
+                        [],
                     onChanged: (value) {
-                      _inseminacaoEdited = true;
-                      setState(() {
+                      if (value != null) {
                         _editedInseminacao.idSemen = value.id;
                         _editedInseminacao.nomeReprodutor = value.nomeAnimal;
                         nomeMacho = value.nomeAnimal;
-                      });
+                      }
                     },
-                    doneButton: "Pronto",
-                    displayItem: (item, selected) {
-                      return (Row(children: [
-                        selected
-                            ? Icon(
-                                Icons.radio_button_checked,
-                                color: Colors.grey,
-                              )
-                            : Icon(
-                                Icons.radio_button_unchecked,
-                                color: Colors.grey,
-                              ),
-                        SizedBox(width: 7),
-                        Expanded(
-                          child: item,
-                        ),
-                      ]));
-                    },
-                    isExpanded: true,
                   ),
                 if (_radioValue == 0)
-                  SearchableDropdown.single(
-                    items: listaSemens.map((reprodutor) {
-                      return DropdownMenuItem(
-                        value: reprodutor,
-                        child: Row(
-                          children: [
-                            Text(reprodutor.nomeReprodutor),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                    value: reprodutor,
-                    hint: "Selecione um sêmen",
-                    searchHint: "Selecione um sêmen",
+                  CustomSearchableDropDown(
+                    items: listaSemens,
+                    label: 'Selecione um sêmen',
+                    decoration:
+                        BoxDecoration(border: Border.all(color: Colors.blue)),
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: Icon(Icons.search),
+                    ),
+                    dropDownMenuItems: listaSemens?.map((item) {
+                          return item.nomeReprodutor;
+                        })?.toList() ??
+                        [],
                     onChanged: (value) {
-                      _inseminacaoEdited = true;
-                      setState(() {
+                      if (value != null) {
                         inventarioSemen = value;
                         _editedInseminacao.idSemen = value.idReprodutor;
                         _editedInseminacao.nomeReprodutor =
                             value.nomeReprodutor;
                         nomeMacho = value.nomeReprodutor;
-                      });
+                      }
                     },
-                    doneButton: "Pronto",
-                    displayItem: (item, selected) {
-                      return (Row(children: [
-                        selected
-                            ? Icon(
-                                Icons.radio_button_checked,
-                                color: Colors.grey,
-                              )
-                            : Icon(
-                                Icons.radio_button_unchecked,
-                                color: Colors.grey,
-                              ),
-                        SizedBox(width: 7),
-                        Expanded(
-                          child: item,
-                        ),
-                      ]));
-                    },
-                    isExpanded: true,
                   ),
                 SizedBox(
                   height: 10.0,

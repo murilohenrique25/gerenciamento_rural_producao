@@ -64,7 +64,8 @@ class _CadastroEconomiaGastoState extends State<CadastroEconomiaGasto> {
                   double t = quant * valor;
                   _editedGasto.valorTotal = t;
                   Navigator.pop(context, _editedGasto);
-                } catch (Expetion) {
+                  // ignore: non_constant_identifier_names
+                } catch (Exception) {
                   showDialog(
                     context: context,
                     builder: (context) {

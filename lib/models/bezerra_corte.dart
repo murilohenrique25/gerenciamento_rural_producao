@@ -50,7 +50,7 @@ class BezerraCorte extends AnimalCorte {
       "peso_desmama": pesoDesmama,
       "virou_adulto": virouAdulto,
       "descricao": descricao,
-      "animal_abatido": descricao,
+      "animal_abatido": animalAbatido
     };
     if (id != null) {
       map["id"] = id;

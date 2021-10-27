@@ -1,3 +1,4 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/cavalo_db.dart';
@@ -9,7 +10,7 @@ import 'package:gerenciamento_rural/models/egua.dart';
 import 'package:gerenciamento_rural/models/medicamento.dart';
 import 'package:gerenciamento_rural/models/potro.dart';
 import 'package:gerenciamento_rural/models/tratamento.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+
 import 'package:toast/toast.dart';
 
 class CadastroTratamentoEquino extends StatefulWidget {
@@ -116,136 +117,64 @@ class _CadastroTratamentoEquinoState extends State<CadastroTratamentoEquino> {
                       size: 80.0,
                       color: Color.fromARGB(255, 4, 125, 141),
                     ),
-                    SearchableDropdown.single(
-                      items: _cavalos.map((cavalo) {
-                        return DropdownMenuItem(
-                          value: cavalo,
-                          child: Row(
-                            children: [
-                              Text(cavalo.nome),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: cavalo,
-                      hint: "Selecione cavalo",
-                      searchHint: "Selecione cavalo",
+                    CustomSearchableDropDown(
+                      items: _cavalos,
+                      label: 'Selecione um cavalo',
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.blue)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.search),
+                      ),
+                      dropDownMenuItems: _cavalos?.map((item) {
+                            return item.nome;
+                          })?.toList() ??
+                          [],
                       onChanged: (value) {
-                        setState(() {
-                          _editedTratamento.idAnimal = value.id;
-                          _editedTratamento.nomeAnimal = value.nome;
-                          nomeAnimal = value.nome;
-                        });
+                        _editedTratamento.idAnimal = value.id;
+                        _editedTratamento.nomeAnimal = value.nome;
+                        nomeAnimal = value.nome;
                       },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
-                    ),
-                    SizedBox(
-                      height: 5.0,
                     ),
                     Text("OU"),
-                    SearchableDropdown.single(
-                      items: _eguas.map((egua) {
-                        return DropdownMenuItem(
-                          value: egua,
-                          child: Row(
-                            children: [
-                              Text(egua.nome),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: egua,
-                      hint: "Selecione égua",
-                      searchHint: "Selecione égua",
+                    CustomSearchableDropDown(
+                      items: _eguas,
+                      label: 'Selecione uma égua',
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.blue)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.search),
+                      ),
+                      dropDownMenuItems: _eguas?.map((item) {
+                            return item.nome;
+                          })?.toList() ??
+                          [],
                       onChanged: (value) {
-                        setState(() {
-                          _editedTratamento.idAnimal = value.id;
-                          _editedTratamento.nomeAnimal = value.nome;
-                          nomeAnimal = value.nome;
-                        });
+                        _editedTratamento.idAnimal = value.id;
+                        _editedTratamento.nomeAnimal = value.nome;
+                        nomeAnimal = value.nome;
                       },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
-                    ),
-                    SizedBox(
-                      height: 5.0,
                     ),
                     Text("OU"),
-                    SearchableDropdown.single(
-                      items: _potros.map((potro) {
-                        return DropdownMenuItem(
-                          value: potro,
-                          child: Row(
-                            children: [
-                              Text(potro.nome),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: egua,
-                      hint: "Selecione potro",
-                      searchHint: "Selecione potro",
+                    CustomSearchableDropDown(
+                      items: _potros,
+                      label: 'Selecione um potro',
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.blue)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.search),
+                      ),
+                      dropDownMenuItems: _potros?.map((item) {
+                            return item.nome;
+                          })?.toList() ??
+                          [],
                       onChanged: (value) {
-                        setState(() {
-                          _editedTratamento.idAnimal = value.id;
-                          _editedTratamento.nomeAnimal = value.nome;
-                          nomeAnimal = value.nome;
-                        });
+                        _editedTratamento.idAnimal = value.id;
+                        _editedTratamento.nomeAnimal = value.nome;
+                        nomeAnimal = value.nome;
                       },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
                     ),
                     SizedBox(
                       height: 10.0,
@@ -275,48 +204,26 @@ class _CadastroTratamentoEquinoState extends State<CadastroTratamentoEquino> {
                       keyboardType: TextInputType.text,
                     ),
                     SizedBox(height: 5.0),
-                    SearchableDropdown.single(
-                      items: _medicamentos.map((medicamento) {
-                        return DropdownMenuItem(
-                          value: medicamento,
-                          child: Row(
-                            children: [
-                              Text(medicamento.nomeMedicamento),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: med,
-                      hint: "Selecione um medicamento",
-                      searchHint: "Selecione um medicamento",
+                    CustomSearchableDropDown(
+                      items: _medicamentos,
+                      label: 'Selecione um medicamento',
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.blue)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.search),
+                      ),
+                      dropDownMenuItems: _medicamentos?.map((item) {
+                            return item.nomeMedicamento;
+                          })?.toList() ??
+                          [],
                       onChanged: (value) {
-                        setState(() {
-                          med = value;
-                          _editedTratamento.idMedicamento = value.id;
-                          _editedTratamento.nomeMedicamento =
-                              value.nomeMedicamento;
-                          nomeMedicamento = value.nomeMedicamento;
-                        });
+                        med = value;
+                        _editedTratamento.idMedicamento = value.id;
+                        _editedTratamento.nomeMedicamento =
+                            value.nomeMedicamento;
+                        nomeMedicamento = value.nomeMedicamento;
                       },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
                     ),
                     SizedBox(
                       height: 10.0,

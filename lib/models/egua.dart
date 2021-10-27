@@ -42,7 +42,7 @@ class Egua {
     situacao = map["situacao"]; //
     diagnosticoGestacao = map["diagnostico_gestacao"];
     vm = map["vm"];
-    diasPrenha = map["diasPrenha"];
+    diasPrenha = map["dias_prenha"];
     cios = map["cios"];
     totalPartos = map["total_partos"];
     pelagem = map["pelagem"];
@@ -67,7 +67,7 @@ class Egua {
       "peso": peso,
       "observacao": observacao,
       "situacao": situacao,
-      "diasPrenha": diasPrenha,
+      "dias_prenha": diasPrenha,
       "diagnostico_gestacao": diagnosticoGestacao,
       "vm": vm,
       "cios": cios,

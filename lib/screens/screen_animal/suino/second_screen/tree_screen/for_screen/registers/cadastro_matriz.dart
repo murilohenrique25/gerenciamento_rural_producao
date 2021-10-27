@@ -1,11 +1,11 @@
-import 'package:date_format/date_format.dart';
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/abatidos_db.dart';
 import 'package:gerenciamento_rural/models/abatidos.dart';
 import 'package:gerenciamento_rural/models/matriz.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+
 import 'package:toast/toast.dart';
 
 class CadastroMatriz extends StatefulWidget {
@@ -26,7 +26,6 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
   int _radioValue = 0;
   String estado;
   final _nomeController = TextEditingController();
-  final _origemController = TextEditingController();
   final _racaController = TextEditingController();
   final _paiController = TextEditingController();
   final _descricaoController = TextEditingController();
@@ -45,7 +44,6 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
   final df = new DateFormat("dd-MM-yyyy");
   bool _matrizEdited = false;
   Matriz _editedMatriz;
-  String _idadeAnimal = "1ano e 2meses";
 
   final GlobalKey<ScaffoldState> _scaffoldstate =
       new GlobalKey<ScaffoldState>();
@@ -66,7 +64,6 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
     } else {
       _editedMatriz = Matriz.fromMap(widget.matriz.toMap());
       _nomeController.text = _editedMatriz.nomeAnimal;
-      _origemController.text = _editedMatriz.origem;
       _racaController.text = _editedMatriz.raca;
       _paiController.text = _editedMatriz.pai;
       _maeController.text = _editedMatriz.mae;
@@ -89,7 +86,7 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
       _loteController.text = _editedMatriz.lote;
       numeroData = _editedMatriz.dataNascimento;
       _dataNasc.text = numeroData;
-      idadeFinal = differenceDate();
+      idadeFinal = calculaIdadeAnimal(numeroData);
     }
   }
 
@@ -327,7 +324,7 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
               if (_diasprenhaController.text == null) {
                 _editedMatriz.diasPrenha = 0;
               }
-              if (_editedMatriz.estado == "Abatida") {
+              if (_editedMatriz.estado != "Viva") {
                 AbatidosDB abatidosDB = AbatidosDB();
                 Abatido abatido;
                 _editedMatriz.estado = "Abatida";
@@ -376,7 +373,7 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                     setState(() {
                       _editedMatriz.dataNascimento = text;
                       numeroData = _dataNasc.text;
-                      idadeFinal = differenceDate();
+                      idadeFinal = calculaIdadeAnimal(numeroData);
                     });
                   },
                 ),
@@ -414,7 +411,6 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                 ),
                 TextField(
                   keyboardType: TextInputType.text,
-                  controller: _origemController,
                   decoration: InputDecoration(labelText: "Origem"),
                   onChanged: (text) {
                     _matrizEdited = true;
@@ -435,7 +431,6 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                   },
                 ),
                 TextField(
-                  keyboardType: TextInputType.number,
                   controller: _loteController,
                   decoration: InputDecoration(labelText: "Lote"),
                   onChanged: (text) {
@@ -445,46 +440,23 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
                     });
                   },
                 ),
-                SearchableDropdown.single(
-                  items: diagnosticos.map((d) {
-                    return DropdownMenuItem(
-                      value: d,
-                      child: Row(
-                        children: [
-                          Text(d),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: d,
-                  hint: "Selecione um diagnostico",
-                  searchHint: "Selecione um diagnostico",
+                CustomSearchableDropDown(
+                  items: diagnosticos,
+                  label: 'Selecione um diagnóstico',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: diagnosticos?.map((item) {
+                        return item;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _matrizEdited = true;
-                    setState(() {
-                      _editedMatriz.diagnosticoGestacao = value;
-                      nomeD = value;
-                    });
+                    _editedMatriz.diagnosticoGestacao = value;
+                    nomeD = value;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 20.0,
@@ -643,40 +615,30 @@ class _CadastroMatrizState extends State<CadastroMatriz> {
     return _editedMatriz.partoPrevisto;
   }
 
-  String differenceDate() {
-    String num = "";
-    DateTime dt = DateTime.now();
-    if (numeroData.isNotEmpty) {
-      num = numeroData.split('-').reversed.join();
+  String calculaIdadeAnimal(String dateString) {
+    String dataFinal = "";
+    if (dateString.length == 10) {
+      DateTime data = DateTime.parse(dateString.split('-').reversed.join());
+      //data = dateString as DateTime;
+      DateTime dataAgora = DateTime.now();
+      int ano = (dataAgora.year - data.year);
+      int mes = (dataAgora.month - data.month);
+      int dia = (dataAgora.day - data.day);
+      if (dia < 0) {
+        dia = dia + 30;
+        mes = mes - 1;
+      }
+      if (mes < 0) {
+        mes = mes + 12;
+        ano = ano - 1;
+      }
+      dataFinal = ano.toString() +
+          " anos " +
+          mes.toString() +
+          " meses " +
+          dia.toString() +
+          " dias";
     }
-
-    DateTime date = DateTime.parse(num);
-    int quant = dt.difference(date).inDays;
-    if (quant < 0) {
-      _idadeAnimal = "Data incorreta";
-    } else if (quant < 365) {
-      _idadeAnimal = "$quant dias";
-    } else if (quant == 365) {
-      _idadeAnimal = "1 ano";
-    } else if (quant > 365 && quant < 731) {
-      int dias = quant - 365;
-      _idadeAnimal = "1 ano e $dias dias";
-    } else if (quant > 731 && quant < 1096) {
-      int dias = quant - 731;
-      _idadeAnimal = "2 ano e $dias dias";
-    } else if (quant > 1095 && quant < 1461) {
-      int dias = quant - 1095;
-      _idadeAnimal = "3 ano e $dias dias";
-    } else if (quant > 1460 && quant < 1826) {
-      int dias = quant - 1460;
-      _idadeAnimal = "4 ano e $dias dias";
-    } else if (quant > 1825 && quant < 2191) {
-      int dias = quant - 1825;
-      _idadeAnimal = "5 ano e $dias dias";
-    } else if (quant > 2190 && quant < 2.556) {
-      int dias = quant - 2190;
-      _idadeAnimal = "6 ano e $dias dias";
-    }
-    return _idadeAnimal;
+    return dataFinal;
   }
 }

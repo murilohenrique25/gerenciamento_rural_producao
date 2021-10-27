@@ -103,7 +103,7 @@ class _ListaAbatidosState extends State<ListaAbatidos> {
             child: Row(
               children: [
                 Text(
-                  "Nome da Ninhada: " + abatidos[index].nome ?? "",
+                  "Nome da Ninhada: " + abatidos[index].identificacao ?? "",
                   style: TextStyle(fontSize: 14.0),
                 ),
               ],
@@ -318,11 +318,10 @@ class _ListaAbatidosState extends State<ListaAbatidos> {
                     mainAxisAlignment: pdfLib.MainAxisAlignment.center,
                     crossAxisAlignment: pdfLib.CrossAxisAlignment.start,
                     children: [
-                      pdfLib.Text('Instituto Federal Goiano',
+                      pdfLib.Text('Control IF Goiano',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white)),
-                      pdfLib.Text(
-                          'Rodovia Geraldo Silva Nascimento Km 2,5, Rod. Gustavo Capanema,\nUrutaí - GO, 75790-000',
+                      pdfLib.Text('control@institutofederal.com.br',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),

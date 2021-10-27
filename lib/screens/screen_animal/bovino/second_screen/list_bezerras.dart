@@ -345,13 +345,10 @@ class _ListaBezerrasState extends State<ListaBezerras> {
                     mainAxisAlignment: pdfLib.MainAxisAlignment.center,
                     crossAxisAlignment: pdfLib.CrossAxisAlignment.start,
                     children: [
-                      pdfLib.Text('Instituto Federal Goiano',
+                      pdfLib.Text('Control IF Goiano',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white)),
-                      pdfLib.Text(
-                          'Rodovia Geraldo Silva Nascimento Km 2,5, Rod. Gustavo Capanema,\nUrutaí - GO, 75790-000',
-                          style: pdfLib.TextStyle(color: PdfColors.white)),
-                      pdfLib.Text('(64) 3465-1900',
+                      pdfLib.Text('control@institutofederal.com.br',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('Bezerras',
                           style: pdfLib.TextStyle(

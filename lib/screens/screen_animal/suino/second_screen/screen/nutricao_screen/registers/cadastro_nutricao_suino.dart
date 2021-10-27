@@ -1,7 +1,7 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/models/nutricao_suina.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class CadastroNutricaoSuino extends StatefulWidget {
   final NutricaoSuina nutricaoSuina;
@@ -127,46 +127,23 @@ class _CadastroNutricaoSuinoState extends State<CadastroNutricaoSuino> {
                     });
                   },
                 ),
-                SearchableDropdown.single(
-                  items: estado.map((estado) {
-                    return DropdownMenuItem(
-                      value: estado,
-                      child: Row(
-                        children: [
-                          Text(estado),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: estado,
-                  hint: "Selecione um Estado",
-                  searchHint: "Selecione um Estado",
+                CustomSearchableDropDown(
+                  items: estado,
+                  label: 'Selecione um estado',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: estado?.map((item) {
+                        return item;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _nutricaoEdited = true;
-                    setState(() {
-                      nomeEstado = value;
-                      _editedNutricao.fase = value;
-                    });
+                    nomeEstado = value;
+                    _editedNutricao.fase = value;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 10.0,

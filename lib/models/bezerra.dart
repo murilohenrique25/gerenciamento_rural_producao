@@ -6,11 +6,19 @@ class Bezerra extends Animal {
   double pesoDesmama;
   String dataDesmama;
   int virouNovilha;
+  String origem;
+  String observacao;
+  double peso;
+  String cec;
 
   Bezerra();
   Bezerra.fromMap(Map map) {
     idBezerra = map["idBezerra"];
     nome = map["nome"];
+    origem = map["origem"];
+    observacao = map["observacao"];
+    peso = map["peso"];
+    cec = map["cec"];
     dataNascimento = map["dataNascimento"];
     raca = map["raca"];
     idLote = map["idLote"];
@@ -32,6 +40,10 @@ class Bezerra extends Animal {
       "nome": nome,
       "dataNascimento": dataNascimento,
       "raca": raca,
+      "origem": origem,
+      "observacao": observacao,
+      "peso": peso,
+      "cec": cec,
       "idLote": idLote,
       "pesoNascimento": pesoNascimento,
       "pesoDesmama": pesoDesmama,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/nutricao/screen/nutricao_concentrado_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/nutricao/screen/nutricao_suplemento_screen.dart';
-import 'package:gerenciamento_rural/screens/screen_animal/caprinos/second_screen/nutricao/screen/nutricao_volumosa_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/nutricao/screen/nutricao_concentrado_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/nutricao/screen/nutricao_suplemento_screen.dart';
+import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/nutricao/screen/nutricao_volumosa_screen.dart';
 
 class CadastrarNutricaoBovinoCorte extends StatefulWidget {
   @override
@@ -45,7 +45,7 @@ class _CadastrarNutricaoBovinoCorteState
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: NutricaoConcentradoCaprinoScreen(),
+                          child: NutricaoConcentradoBovinoCorteScreen(),
                         ),
                       ],
                     ),
@@ -59,7 +59,7 @@ class _CadastrarNutricaoBovinoCorteState
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: NutricaoSuplementoCaprinoScreen(),
+                          child: NutricaoSuplementoBovinoCorteScreen(),
                         ),
                       ],
                     ),
@@ -79,7 +79,7 @@ class _CadastrarNutricaoBovinoCorteState
                         ),
                         Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: NutricaoVolumosaCaprinoScreen(),
+                          child: NutricaoVolumosaBovinoCorteScreen(),
                         ),
                       ],
                     ),

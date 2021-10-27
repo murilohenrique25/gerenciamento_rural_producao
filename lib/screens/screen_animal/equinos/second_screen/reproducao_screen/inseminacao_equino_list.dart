@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/inseminacao_suina_db.dart';
+import 'package:gerenciamento_rural/helpers/inseminacao_equino_db.dart';
 import 'package:gerenciamento_rural/models/inseminacao_equino.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/equinos/second_screen/reproducao_screen/registers/cadastro_inseminacao_monta.dart';
 import 'package:gerenciamento_rural/screens/utilitarios/pdfViwerPage.dart';
@@ -17,7 +17,7 @@ class ListaInseminacaoEquino extends StatefulWidget {
 
 class _ListaInseminacaoEquinoState extends State<ListaInseminacaoEquino> {
   TextEditingController editingController = TextEditingController();
-  InseminacaoSuinaDB helper = InseminacaoSuinaDB();
+  InseminacaoEquinoDB helper = InseminacaoEquinoDB();
   List<InseminacaoEquino> items = [];
   List<InseminacaoEquino> inseminacoes = [];
   List<InseminacaoEquino> tInseminacoes = [];
@@ -297,11 +297,10 @@ class _ListaInseminacaoEquinoState extends State<ListaInseminacaoEquino> {
                     mainAxisAlignment: pdfLib.MainAxisAlignment.center,
                     crossAxisAlignment: pdfLib.CrossAxisAlignment.start,
                     children: [
-                      pdfLib.Text('Instituto Federal Goiano',
+                      pdfLib.Text('Control IF Goiano',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white)),
-                      pdfLib.Text(
-                          'Rodovia Geraldo Silva Nascimento Km 2,5, Rod. Gustavo Capanema,\nUrutaí - GO, 75790-000',
+                      pdfLib.Text('control@institutofederal.com.br',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),

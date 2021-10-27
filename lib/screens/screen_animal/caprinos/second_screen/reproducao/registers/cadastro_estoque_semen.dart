@@ -1,10 +1,11 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/reprodutor_db.dart';
 import 'package:gerenciamento_rural/models/inventario_semen_caprino.dart';
 import 'package:gerenciamento_rural/models/reprodutor.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+
 import 'package:toast/toast.dart';
 
 class CadastroEstoqueSemenCaprina extends StatefulWidget {
@@ -143,47 +144,24 @@ class _CadastroEstoqueSemenCaprinaState
                 SizedBox(
                   height: 20.0,
                 ),
-                SearchableDropdown.single(
-                  items: reprodutores.map((reprodutor) {
-                    return DropdownMenuItem(
-                      value: reprodutor,
-                      child: Row(
-                        children: [
-                          Text(reprodutor.nomeAnimal),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: reprodutor,
-                  hint: "Selecione um reprodutor",
-                  searchHint: "Selecione um reprodutor",
+                CustomSearchableDropDown(
+                  items: reprodutores,
+                  label: 'Selecione um reprodutor',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: reprodutores?.map((item) {
+                        return item.nomeAnimal;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      _editedInventario.idReprodutor = value.id;
-                      _editedInventario.nomeReprodutor = value.nomeAnimal;
-                      nomeMacho = value.nomeAnimal;
-                    });
+                    _editedInventario.idReprodutor = value.id;
+                    _editedInventario.nomeReprodutor = value.nomeAnimal;
+                    nomeMacho = value.nomeAnimal;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 10.0,
@@ -225,7 +203,7 @@ class _CadastroEstoqueSemenCaprinaState
                   onChanged: (text) {
                     _inventarioEdited = true;
                     setState(() {
-                      _editedInventario.dataCadastro = text;
+                      _editedInventario.dataValidade = text;
                     });
                   },
                 ),

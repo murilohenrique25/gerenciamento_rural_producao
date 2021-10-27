@@ -57,6 +57,7 @@ class _CadastroNutricaoVolumosoCaprinoState
       _ndtController.text = _editedNutricao.ndt.toString();
       _obsController.text = _editedNutricao.observacao;
       _baiaController.text = _editedNutricao.baia;
+      _loteControlller.text = _editedNutricao.nomeLote;
     }
   }
 
@@ -112,7 +113,7 @@ class _CadastroNutricaoVolumosoCaprinoState
                   onChanged: (text) {
                     _nutricaoEdited = true;
                     setState(() {
-                      _editedNutricao.tipo = text;
+                      _editedNutricao.nomeLote = text;
                     });
                   },
                 ),

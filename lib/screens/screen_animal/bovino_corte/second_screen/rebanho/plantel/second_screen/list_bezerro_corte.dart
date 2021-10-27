@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/bezerro_corte_db.dart';
+import 'package:gerenciamento_rural/helpers/garrote_corte_db.dart';
 import 'package:gerenciamento_rural/models/bezerro_corte.dart';
+import 'package:gerenciamento_rural/models/garrote_corte.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/pdf_screen/pdfViwerPage.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino_corte/second_screen/rebanho/plantel/second_screen/registers/cadastro_bezerro_corte.dart';
 import 'package:pdf/pdf.dart';
@@ -60,7 +62,7 @@ class _ListaBezerroCorteState extends State<ListaBezerroCorte> {
               }),
         ],
         centerTitle: true,
-        title: Text("Vacas da Propriedade"),
+        title: Text("Bezerros da Propriedade"),
       ),
       body: Container(
         child: Column(
@@ -201,6 +203,22 @@ class _ListaBezerroCorteState extends State<ListaBezerroCorte> {
         items.addAll(totalBez);
       });
     });
+    items.forEach((element) {
+      String num = "";
+      DateTime dt = DateTime.now();
+      num = element.dataNascimento.split('-').reversed.join();
+      DateTime date = DateTime.parse(num);
+
+      int quant = dt.difference(date).inDays;
+      if (quant >= 720) {
+        GarroteCorte garroteCorte;
+        GarroteCorteDB garroteCorteDB = GarroteCorteDB();
+        element.virouAdulto = 1;
+        helper.updateItem(element);
+        garroteCorte = GarroteCorte.fromMap(element.toMap());
+        garroteCorteDB.insert(garroteCorte);
+      }
+    });
   }
 
   _creatPdf(context) async {
@@ -292,11 +310,10 @@ class _ListaBezerroCorteState extends State<ListaBezerroCorte> {
                     mainAxisAlignment: pdfLib.MainAxisAlignment.center,
                     crossAxisAlignment: pdfLib.CrossAxisAlignment.start,
                     children: [
-                      pdfLib.Text('Instituto Federal Goiano',
+                       pdfLib.Text('Control IF Goiano',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white)),
-                      pdfLib.Text(
-                          'Rodovia Geraldo Silva Nascimento Km 2,5, Rod. Gustavo Capanema,\nUrutaí - GO, 75790-000',
+                      pdfLib.Text('control@institutofederal.com.br',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),

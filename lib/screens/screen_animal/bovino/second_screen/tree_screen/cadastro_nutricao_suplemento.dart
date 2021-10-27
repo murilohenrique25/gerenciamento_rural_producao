@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/lote_db.dart';
-import 'package:gerenciamento_rural/models/lote.dart';
 import 'package:gerenciamento_rural/models/nutricao_suplementar.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class CadastroNutricaoSuplemento extends StatefulWidget {
   final NutricaoSuplementar nutricaoSuplementar;
@@ -15,19 +12,14 @@ class CadastroNutricaoSuplemento extends StatefulWidget {
 
 class _CadastroNutricaoSuplementoState
     extends State<CadastroNutricaoSuplemento> {
-  LoteDB helperLote = LoteDB();
-  List<Lote> lotes = [];
   NutricaoSuplementar _editedNutricao;
   bool _nutricaoEdited = false;
   final _nameFocus = FocusNode();
-
-  Lote lote;
-
   final _quantIndController = TextEditingController();
   final _quantTotalController = TextEditingController();
   final _ingredientesController = TextEditingController();
   final _obsController = TextEditingController();
-
+  final _loteController = TextEditingController();
   final df = new DateFormat("dd-MM-yyyy");
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -44,7 +36,6 @@ class _CadastroNutricaoSuplementoState
   @override
   void initState() {
     super.initState();
-    _getAllLotes();
     if (widget.nutricaoSuplementar == null) {
       _editedNutricao = NutricaoSuplementar();
     } else {
@@ -54,6 +45,7 @@ class _CadastroNutricaoSuplementoState
       _quantTotalController.text = _editedNutricao.quantidadeTotal.toString();
       _ingredientesController.text = _editedNutricao.ingredientes;
       _obsController.text = _editedNutricao.observacao;
+      _loteController.text = _editedNutricao.nomeLote;
     }
   }
 
@@ -102,49 +94,16 @@ class _CadastroNutricaoSuplementoState
                 SizedBox(
                   height: 20,
                 ),
-                SearchableDropdown.single(
-                  items: lotes.map((lote) {
-                    return DropdownMenuItem(
-                      value: lote,
-                      child: Row(
-                        children: [
-                          Text(lote.nome),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: lote,
-                  hint: "Selecione um Lote",
-                  searchHint: "Selecione um Lote",
-                  onChanged: (value) {
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _loteController,
+                  decoration: InputDecoration(labelText: "Lote"),
+                  onChanged: (text) {
                     _nutricaoEdited = true;
                     setState(() {
-                      _editedNutricao.id = value.id;
-                      _editedNutricao.nomeLote = value.name;
+                      _editedNutricao.nomeLote = text;
                     });
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
-                ),
-                SizedBox(
-                  height: 10.0,
                 ),
                 TextField(
                   focusNode: _nameFocus,
@@ -234,13 +193,5 @@ class _CadastroNutricaoSuplementoState
     } else {
       return Future.value(true);
     }
-  }
-
-  void _getAllLotes() {
-    helperLote.getAllItems().then((list) {
-      setState(() {
-        lotes = list;
-      });
-    });
   }
 }

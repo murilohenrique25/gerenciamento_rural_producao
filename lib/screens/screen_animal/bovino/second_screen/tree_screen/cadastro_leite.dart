@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/models/leite.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+//
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:toast/toast.dart';
 
 class CadastroLeite extends StatefulWidget {
@@ -130,44 +131,24 @@ class _CadastroLeiteState extends State<CadastroLeite> {
                     color: Color.fromARGB(255, 4, 125, 141),
                   ),
                   SizedBox(height: 5.0),
-                  SearchableDropdown.single(
-                    items: meses.map((Mes mes) {
-                      return DropdownMenuItem(
-                        value: mes.numeroMes,
-                        child: Row(
-                          children: [
-                            Text(mes.nomeMes),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                    value: _editedProdLeite.idMes,
-                    hint: "Selecione o mês",
-                    searchHint: "Selecione o mês",
+                  CustomSearchableDropDown(
+                    items: meses,
+                    label: 'Selecione um mês',
+                    decoration:
+                        BoxDecoration(border: Border.all(color: Colors.blue)),
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: Icon(Icons.search),
+                    ),
+                    dropDownMenuItems: meses?.map((item) {
+                          return item.nomeMes;
+                        })?.toList() ??
+                        [],
                     onChanged: (value) {
-                      setState(() {
-                        _editedProdLeite.idMes = value;
-                      });
+                      if (value != null) {
+                        _editedProdLeite.idMes = value.numeroMes;
+                      }
                     },
-                    doneButton: "Pronto",
-                    displayItem: (item, selected) {
-                      return (Row(children: [
-                        selected
-                            ? Icon(
-                                Icons.radio_button_checked,
-                                color: Colors.grey,
-                              )
-                            : Icon(
-                                Icons.radio_button_unchecked,
-                                color: Colors.grey,
-                              ),
-                        SizedBox(width: 7),
-                        Expanded(
-                          child: item,
-                        ),
-                      ]));
-                    },
-                    isExpanded: true,
                   ),
                   SizedBox(
                     height: 5.0,

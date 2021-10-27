@@ -1,3 +1,4 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/medicamento_db.dart';
@@ -6,7 +7,6 @@ import 'package:gerenciamento_rural/models/medicamento.dart';
 import 'package:gerenciamento_rural/models/touro.dart';
 import 'package:gerenciamento_rural/models/tratamento.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/medicamentos/tratamento_list.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class CadastroTratamento extends StatefulWidget {
   final Tratamento tratamento;
@@ -97,48 +97,23 @@ class _CadastroTratamentoState extends State<CadastroTratamento> {
                       size: 80.0,
                       color: Color.fromARGB(255, 4, 125, 141),
                     ),
-                    SearchableDropdown.single(
-                      items: _touros.map((touro) {
-                        return DropdownMenuItem(
-                          value: touro,
-                          child: Row(
-                            children: [
-                              Text(touro.nome),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: touro,
-                      hint: "Selecione touro",
-                      searchHint: "Selecione touro",
+                    CustomSearchableDropDown(
+                      items: _touros,
+                      label: 'Selecione um touro',
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.blue)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.search),
+                      ),
+                      dropDownMenuItems: _touros?.map((item) {
+                            return item.nome;
+                          })?.toList() ??
+                          [],
                       onChanged: (value) {
-                        setState(() {
-                          _editedTratamento.idAnimal = value.idTouro;
-                          _editedTratamento.nomeAnimal = value.nome;
-                        });
+                        _editedTratamento.idAnimal = value.idTouro;
+                        _editedTratamento.nomeAnimal = value.nome;
                       },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
-                    ),
-                    SizedBox(
-                      height: 5.0,
                     ),
                     TextField(
                       controller: _numeroLoteController,
@@ -158,46 +133,24 @@ class _CadastroTratamentoState extends State<CadastroTratamento> {
                       keyboardType: TextInputType.text,
                     ),
                     SizedBox(height: 5.0),
-                    SearchableDropdown.single(
-                      items: _medicamento.map((medicamento) {
-                        return DropdownMenuItem(
-                          value: medicamento,
-                          child: Row(
-                            children: [
-                              Text(medicamento.nomeMedicamento),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: med,
-                      hint: "Selecione um medicamento",
-                      searchHint: "Selecione um medicamento",
+                    CustomSearchableDropDown(
+                      items: _medicamento,
+                      label: 'Selecione um medicamento',
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.blue)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.search),
+                      ),
+                      dropDownMenuItems: _medicamento?.map((item) {
+                            return item.nomeMedicamento;
+                          })?.toList() ??
+                          [],
                       onChanged: (value) {
-                        setState(() {
-                          _editedTratamento.idMedicamento = value.idMedicamento;
-                          _editedTratamento.nomeMedicamento =
-                              value.nomeMedicamento;
-                        });
+                        _editedTratamento.idMedicamento = value.idMedicamento;
+                        _editedTratamento.nomeMedicamento =
+                            value.nomeMedicamento;
                       },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
                     ),
                     SizedBox(
                       height: 5.0,

@@ -1,9 +1,9 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/models/inventario_semen.dart';
 import 'package:gerenciamento_rural/models/touro.dart';
 import 'package:gerenciamento_rural/helpers/touro_db.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 // ignore: must_be_immutable
 class CadastroInventarioSemen extends StatefulWidget {
@@ -140,47 +140,24 @@ class _CadastroInventarioSemenState extends State<CadastroInventarioSemen> {
                 SizedBox(
                   height: 20.0,
                 ),
-                SearchableDropdown.single(
-                  items: touros.map((t) {
-                    return DropdownMenuItem(
-                      value: t,
-                      child: Row(
-                        children: [
-                          Text(t.nome),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: selectedTouro,
-                  hint: "Selecione um Touro",
-                  searchHint: "Selecione um Touro",
+                CustomSearchableDropDown(
+                  items: touros,
+                  label: 'Selecione um Touro',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: touros?.map((item) {
+                        return item.nome;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      idTouro = value.idTouro;
-                      _editedInventario.idTouro = value.idTouro;
-                      _editedInventario.nomeTouro = value.nome;
-                    });
+                    idTouro = value.idTouro;
+                    _editedInventario.idTouro = value.idTouro;
+                    _editedInventario.nomeTouro = value.nome;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 TextField(
                   controller: _quantidadeController,

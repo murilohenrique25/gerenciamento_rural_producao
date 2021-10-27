@@ -1,3 +1,4 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/bezerra_db.dart';
@@ -5,7 +6,7 @@ import 'package:gerenciamento_rural/helpers/lote_db.dart';
 import 'package:gerenciamento_rural/models/bezerra.dart';
 import 'package:gerenciamento_rural/models/lote.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+//
 import 'package:toast/toast.dart';
 
 class CadastroBezerra extends StatefulWidget {
@@ -26,11 +27,15 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
   Bezerra _editedBezerra;
   String idadeFinal = "";
   String numeroData;
-  int selectedLotes;
+  String nomeLote = "";
+  Lote lote;
   int _radioValue = 0;
 
   final _nomeController = TextEditingController();
+  final _origemController = TextEditingController();
+  final _obsController = TextEditingController();
   final _pesoController = TextEditingController();
+  final _cecController = TextEditingController();
   final _pesoDesmamaController = TextEditingController();
   final _racaController = TextEditingController();
   final _paiController = TextEditingController();
@@ -39,6 +44,7 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
   final _avoFMaternoController = TextEditingController();
   final _avoFPaternoController = TextEditingController();
   final _avoMPaternoController = TextEditingController();
+
   var _dataNasc = MaskedTextController(mask: '00-00-0000');
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -46,8 +52,6 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
   var _dataDesmamaController = MaskedTextController(mask: '00-00-0000');
 
   final df = new DateFormat("dd-MM-yyyy");
-
-  String _idadeAnimal = "1ano e 2meses";
 
   final GlobalKey<ScaffoldState> _scaffoldstate =
       new GlobalKey<ScaffoldState>();
@@ -89,10 +93,14 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
       _avoFMaternoController.text = _editedBezerra.avoFMaterno;
       _avoFPaternoController.text = _editedBezerra.avoFPaterno;
       _avoMPaternoController.text = _editedBezerra.avoMPaterno;
-      selectedLotes = _editedBezerra.idLote;
+      if (_editedBezerra.idLote != null) lote.id = _editedBezerra.idLote;
+      _origemController.text = _editedBezerra.origem;
+      _pesoController.text = _editedBezerra.peso.toString();
+      _obsController.text = _editedBezerra.observacao;
+      _cecController.text = _editedBezerra.cec;
       numeroData = _editedBezerra.dataNascimento;
       _dataNasc.text = numeroData;
-      idadeFinal = differenceDate();
+      idadeFinal = calculaIdadeAnimal(numeroData);
     }
   }
 
@@ -257,7 +265,7 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
                     setState(() {
                       numeroData = _dataNasc.text;
                       _editedBezerra.dataNascimento = _dataNasc.text;
-                      idadeFinal = differenceDate();
+                      idadeFinal = calculaIdadeAnimal(numeroData);
                     });
                   },
                 ),
@@ -271,49 +279,35 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
                 SizedBox(
                   height: 20.0,
                 ),
-                SearchableDropdown.single(
-                  items: lotes.map((Lote lote) {
-                    return DropdownMenuItem(
-                      value: lote.id,
-                      child: Row(
-                        children: [
-                          Text(lote.nome),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: selectedLotes,
-                  hint: "Selecione um Lote",
-                  searchHint: "Selecione um Lote",
+                CustomSearchableDropDown(
+                  items: lotes,
+                  label: 'Selecione um lote',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: lotes?.map((item) {
+                        return item.nome;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _bezerraEdited = true;
-                    setState(() {
-                      _editedBezerra.idLote = value;
-                      selectedLotes = value;
-                    });
+                    if (value != null) {
+                      _editedBezerra.idLote = value.id;
+                      nomeLote = value.nome;
+                    }
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 10.0,
+                ),
+                Text("Lote:  $nomeLote",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                SizedBox(
+                  height: 20.0,
                 ),
                 TextField(
                   keyboardType: TextInputType.text,
@@ -323,6 +317,50 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
                     _bezerraEdited = true;
                     setState(() {
                       _editedBezerra.raca = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _origemController,
+                  decoration: InputDecoration(labelText: "Procedência"),
+                  onChanged: (text) {
+                    _bezerraEdited = true;
+                    setState(() {
+                      _editedBezerra.origem = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _pesoController,
+                  decoration: InputDecoration(labelText: "Peso"),
+                  onChanged: (text) {
+                    _bezerraEdited = true;
+                    setState(() {
+                      _editedBezerra.peso = double.parse(text);
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _cecController,
+                  decoration: InputDecoration(labelText: "CEC"),
+                  onChanged: (text) {
+                    _bezerraEdited = true;
+                    setState(() {
+                      _editedBezerra.cec = text;
+                    });
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _obsController,
+                  decoration: InputDecoration(labelText: "Observação"),
+                  onChanged: (text) {
+                    _bezerraEdited = true;
+                    setState(() {
+                      _editedBezerra.observacao = text;
                     });
                   },
                 ),
@@ -436,41 +474,31 @@ class _CadastroBezerraState extends State<CadastroBezerra> {
     }
   }
 
-  String differenceDate() {
-    String num = "";
-    DateTime dt = DateTime.now();
-    if (numeroData.isNotEmpty) {
-      num = numeroData.split('-').reversed.join();
+  String calculaIdadeAnimal(String dateString) {
+    String dataFinal = "";
+    if (dateString.length == 10) {
+      DateTime data = DateTime.parse(dateString.split('-').reversed.join());
+      //data = dateString as DateTime;
+      DateTime dataAgora = DateTime.now();
+      int ano = (dataAgora.year - data.year);
+      int mes = (dataAgora.month - data.month);
+      int dia = (dataAgora.day - data.day);
+      if (dia < 0) {
+        dia = dia + 30;
+        mes = mes - 1;
+      }
+      if (mes < 0) {
+        mes = mes + 12;
+        ano = ano - 1;
+      }
+      dataFinal = ano.toString() +
+          " anos " +
+          mes.toString() +
+          " meses " +
+          dia.toString() +
+          " dias";
     }
-
-    DateTime date = DateTime.parse(num);
-    int quant = dt.difference(date).inDays;
-    if (quant < 0) {
-      _idadeAnimal = "Data incorreta";
-    } else if (quant < 365) {
-      _idadeAnimal = "$quant dias";
-    } else if (quant == 365) {
-      _idadeAnimal = "1 ano";
-    } else if (quant > 365 && quant < 731) {
-      int dias = quant - 365;
-      _idadeAnimal = "1 ano e $dias dias";
-    } else if (quant > 731 && quant < 1096) {
-      int dias = quant - 731;
-      _idadeAnimal = "2 ano e $dias dias";
-    } else if (quant > 1095 && quant < 1461) {
-      int dias = quant - 1095;
-      _idadeAnimal = "3 ano e $dias dias";
-    } else if (quant > 1460 && quant < 1826) {
-      int dias = quant - 1460;
-      _idadeAnimal = "4 ano e $dias dias";
-    } else if (quant > 1825 && quant < 2191) {
-      int dias = quant - 1825;
-      _idadeAnimal = "5 ano e $dias dias";
-    } else if (quant > 2190 && quant < 2.556) {
-      int dias = quant - 2190;
-      _idadeAnimal = "6 ano e $dias dias";
-    }
-    return _idadeAnimal;
+    return dataFinal;
   }
 
   void _getAllLotes() {

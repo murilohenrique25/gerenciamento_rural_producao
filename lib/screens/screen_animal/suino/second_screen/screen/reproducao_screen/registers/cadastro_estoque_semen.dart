@@ -1,10 +1,11 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/cachaco_db.dart';
 import 'package:gerenciamento_rural/models/cachaco.dart';
 import 'package:gerenciamento_rural/models/inventario_semen_suino.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+
 import 'package:toast/toast.dart';
 
 class CadastroEstoqueSemenSuino extends StatefulWidget {
@@ -78,6 +79,7 @@ class _CadastroEstoqueSemenSuinoState extends State<CadastroEstoqueSemenSuino> {
           _editedInventario.celulasNormais.toString();
       _defeitosMaioresController.text = _editedInventario.defeitoMaiores;
       _defeitosMenoresController.text = _editedInventario.defeitoMenores;
+      nomeCachaco = _editedInventario.nomeCachaco;
     }
   }
 
@@ -141,47 +143,24 @@ class _CadastroEstoqueSemenSuinoState extends State<CadastroEstoqueSemenSuino> {
                 SizedBox(
                   height: 20.0,
                 ),
-                SearchableDropdown.single(
-                  items: cachacos.map((cachaco) {
-                    return DropdownMenuItem(
-                      value: cachaco,
-                      child: Row(
-                        children: [
-                          Text(cachaco.nomeAnimal),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: cachaco,
-                  hint: "Selecione um cachaço",
-                  searchHint: "Selecione um cachaço",
+                CustomSearchableDropDown(
+                  items: cachacos,
+                  label: 'Selecione um cachaço',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: cachacos?.map((item) {
+                        return item.nomeAnimal;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      _editedInventario.idCachaco = value.idAnimal;
-                      _editedInventario.nomeCachaco = value.nomeAnimal;
-                      nomeCachaco = value.nomeAnimal;
-                    });
+                    _editedInventario.idCachaco = value.idAnimal;
+                    _editedInventario.nomeCachaco = value.nomeAnimal;
+                    nomeCachaco = value.nomeAnimal;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 10.0,
@@ -224,7 +203,7 @@ class _CadastroEstoqueSemenSuinoState extends State<CadastroEstoqueSemenSuino> {
                   onChanged: (text) {
                     _inventarioEdited = true;
                     setState(() {
-                      _editedInventario.dataCadastro = text;
+                      _editedInventario.dataValidade = text;
                     });
                   },
                 ),

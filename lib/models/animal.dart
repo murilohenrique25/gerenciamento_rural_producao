@@ -3,6 +3,7 @@ abstract class Animal {
   String dataNascimento;
   String raca; //Raça
   int idLote;
+  String nomeLote;
   String estado;
   //Pedigree
   String pai;

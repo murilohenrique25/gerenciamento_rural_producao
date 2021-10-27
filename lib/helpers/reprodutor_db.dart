@@ -71,7 +71,8 @@ class ReprodutorDB extends HelperDB {
 
   Future<List> getAllItems() async {
     Database db = await this.getDb();
-    List listMap = await db.rawQuery("SELECT * FROM reprodutor");
+    List listMap =
+        await db.rawQuery("SELECT * FROM reprodutor WHERE situacao='Vivo'");
     List<Reprodutor> list = [];
     for (Map m in listMap) {
       list.add(Reprodutor.fromMap(m));

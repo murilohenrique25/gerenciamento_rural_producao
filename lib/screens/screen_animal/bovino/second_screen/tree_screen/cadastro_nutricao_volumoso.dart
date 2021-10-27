@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/lote_db.dart';
-import 'package:gerenciamento_rural/models/lote.dart';
 import 'package:gerenciamento_rural/models/nutricao_volumoso.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class CadastroNutricaoVolumoso extends StatefulWidget {
   final NutricaoVolumoso nutricaoVolumoso;
@@ -14,12 +11,9 @@ class CadastroNutricaoVolumoso extends StatefulWidget {
 }
 
 class _CadastroNutricaoVolumosoState extends State<CadastroNutricaoVolumoso> {
-  LoteDB helperLote = LoteDB();
-  List<Lote> lotes = [];
   final _nameFocus = FocusNode();
   bool _nutricaoEdited = false;
   NutricaoVolumoso _editedNutricao;
-  Lote lote;
 
   final _tipoController = TextEditingController();
   final _quantIndController = TextEditingController();
@@ -29,6 +23,7 @@ class _CadastroNutricaoVolumosoState extends State<CadastroNutricaoVolumoso> {
   final _msController = TextEditingController();
   final _umidController = TextEditingController();
   final _obsController = TextEditingController();
+  final _loteController = TextEditingController();
 
   final df = new DateFormat("dd-MM-yyyy");
 
@@ -46,7 +41,6 @@ class _CadastroNutricaoVolumosoState extends State<CadastroNutricaoVolumoso> {
   @override
   void initState() {
     super.initState();
-    _getAllLotes();
     if (widget.nutricaoVolumoso == null) {
       _editedNutricao = NutricaoVolumoso();
     } else {
@@ -60,6 +54,7 @@ class _CadastroNutricaoVolumosoState extends State<CadastroNutricaoVolumoso> {
       _pbController.text = _editedNutricao.pb.toString();
       _ndtController.text = _editedNutricao.ndt.toString();
       _obsController.text = _editedNutricao.observacao;
+      _loteController.text = _editedNutricao.nomeLote;
     }
   }
 
@@ -108,49 +103,16 @@ class _CadastroNutricaoVolumosoState extends State<CadastroNutricaoVolumoso> {
                 SizedBox(
                   height: 20,
                 ),
-                SearchableDropdown.single(
-                  items: lotes.map((lote) {
-                    return DropdownMenuItem(
-                      value: lote,
-                      child: Row(
-                        children: [
-                          Text(lote.nome),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: lote,
-                  hint: "Selecione um Lote",
-                  searchHint: "Selecione um Lote",
-                  onChanged: (value) {
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _loteController,
+                  decoration: InputDecoration(labelText: "Lote"),
+                  onChanged: (text) {
                     _nutricaoEdited = true;
                     setState(() {
-                      _editedNutricao.idLote = value.id;
-                      _editedNutricao.nomeLote = value.name;
+                      _editedNutricao.nomeLote = text;
                     });
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
-                ),
-                SizedBox(
-                  height: 10.0,
                 ),
                 TextField(
                   controller: _tipoController,
@@ -283,13 +245,5 @@ class _CadastroNutricaoVolumosoState extends State<CadastroNutricaoVolumoso> {
     } else {
       return Future.value(true);
     }
-  }
-
-  void _getAllLotes() {
-    helperLote.getAllItems().then((list) {
-      setState(() {
-        lotes = list;
-      });
-    });
   }
 }

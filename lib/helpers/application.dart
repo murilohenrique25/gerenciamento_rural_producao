@@ -1,4 +1,4 @@
-String dbName = 'segunda14064.db';
+String dbName = '091002.db';
 int dbVersion = 1;
 //antunesaugustocmdf
 List<String> dbCreate = [
@@ -31,13 +31,21 @@ List<String> dbCreate = [
     diagnosticoGestacao TEXT,
     raca TEXT, 
     idLote INTEGER,
+    nomeLote TEXT,
     estado TEXT,
     pai TEXT,
     mae TEXT,
+    dataDiagnosticoGestacao TEXT,
+    tipoDiagnosticoGestacao TEXT,
+    diasPrenha INTEGER,
     avoMMaterno TEXT,
     avoFMaterno TEXT,
     avoMPaterno TEXT,
-    avoFPaterno TEXT
+    avoFPaterno TEXT,
+    origem TEXT,
+    observacao TEXT,
+    peso REAL,
+    cec TEXT
     )""",
   //tb NOVILHA
   """CREATE TABLE novilha(
@@ -80,7 +88,11 @@ List<String> dbCreate = [
     avoMPaterno TEXT,
     avoFPaterno TEXT,
     virouNovilha INTEGER,
-    estado TEXT
+    estado TEXT,
+     origem TEXT,
+    observacao TEXT,
+    peso REAL,
+    cec TEXT
     )""",
   //tabela inventario semen
   """CREATE TABLE inventarioSemen(
@@ -528,10 +540,10 @@ List<String> dbCreate = [
       resenha TEXT,
       observacao TEXT,
       situacao TEXT,
-      diagnosticoGestacao TEXT,
+      diagnostico_gestacao TEXT,
       cios TEXT,
-      totalPartos TEXT,
-      diasPrenha INTEGER,
+      total_partos TEXT,
+      dias_prenha INTEGER,
       baia TEXT,
       peso REAL,
       vm TEXT,
@@ -599,6 +611,7 @@ List<String> dbCreate = [
   """CREATE TABLE nutricaoSuplementarEquino(
     id INTEGER PRIMARY KEY,
     id_lote INTEGER,
+    baia TEXT,
     nome_lote TEXT,
     ingredientes TEXT,
     quantidade_individual REAL,
@@ -606,7 +619,7 @@ List<String> dbCreate = [
     observacao TEXT,
     data TEXT 
   )""",
-  //tabela medicamentoSuino
+  //tabela medicamentoEquino
   """CREATE TABLE medicamentoEquino(
   id INTEGER PRIMARY KEY,
   nomeMedicamento TEXT,
@@ -647,10 +660,10 @@ List<String> dbCreate = [
   //tb inseminacaoEquino
   """CREATE TABLE inseminacaoEquino(
       id INTEGER PRIMARY KEY,
-      id_matriz INTEGER,
-      nome_matriz TEXT,
+      id_egua INTEGER,
+      nome_egua TEXT,
       id_semen INTEGER,
-      nome_cachaco TEXT,
+      nome_cavalo TEXT,
       data TEXT,
       observacao TEXT,
       inseminador TEXT,
@@ -660,9 +673,9 @@ List<String> dbCreate = [
   //tb inventarioSemenEquino
   """CREATE TABLE inventarioSemenEquino(
       id INTEGER PRIMARY KEY,
-      id_cachaco INTEGER,
-      nome_cachaco TEXT,
-      identificao TEXT,
+      id_cavalo INTEGER,
+      nome_cavalo TEXT,
+      identificacao TEXT,
       quantidade INTEGER,
       cor TEXT,
       data_cadastro TEXT,
@@ -816,6 +829,7 @@ List<String> dbCreate = [
      situacao TEXT,
      procedencia TEXT,
      baia TEXT,
+     peso REAL,
      origem TEXT,
      observacao TEXT,
      diagnostico_gestacao TEXT,
@@ -938,6 +952,8 @@ List<String> dbCreate = [
     id_lote INTEGER,
     nome TEXT,
     peso REAL,
+    data TEXT,
+    tipo TEXT,
      FOREIGN KEY (id_lote) REFERENCES loteCaprino(id)
     )""",
   //tabela gasto
@@ -1273,5 +1289,18 @@ List<String> dbCreate = [
       idTouro INTEGER,
       nomeTouro TEXT,
       dataCadastro TEXT
-    )"""
+    )""",
+  //tb registroPartoBC
+  """CREATE TABLE registroPartoBC(
+    id INTEGER PRIMARY KEY,
+    nome_vaca TEXT,
+      nome_touro TEXT,
+      quantidade INTEGER,
+      quant_machos INTEGER,
+      quant_femeas INTEGER,
+      problema TEXT,
+      data TEXT,
+      tipo_inseminacao TEXT,
+      total_partos REAL
+      )""",
 ];

@@ -21,6 +21,7 @@ class MatrizCaprino extends Caprinos {
     raca = map["raca"]; //
     pai = map["pai"]; //
     mae = map["mae"]; //
+    peso = map["peso"];
     situacao = map["situacao"]; //
     procedencia = map["procedencia"];
     baia = map["baia"];
@@ -50,6 +51,7 @@ class MatrizCaprino extends Caprinos {
       "situacao": situacao,
       "procedencia": procedencia,
       "baia": baia,
+      "peso": peso,
       "origem": origem,
       "diagnostico_gestacao": diagnosticoGestacao,
       "idade_primeiro_parto": idadePrimeiroParto,

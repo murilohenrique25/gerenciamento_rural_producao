@@ -49,6 +49,7 @@ class _CadastroNutricaoSuplementoCaprinoState
       _ingredientesController.text = _editedNutricao.ingredientes;
       _obsController.text = _editedNutricao.observacao;
       _baiaController.text = _editedNutricao.baia;
+      _loteController.text = _editedNutricao.nomeLote;
     }
   }
 
@@ -105,7 +106,7 @@ class _CadastroNutricaoSuplementoCaprinoState
                   onChanged: (text) {
                     _nutricaoEdited = true;
                     setState(() {
-                      _editedNutricao.ingredientes = text;
+                      _editedNutricao.nomeLote = text;
                     });
                   },
                 ),
@@ -121,7 +122,6 @@ class _CadastroNutricaoSuplementoCaprinoState
                   },
                 ),
                 TextField(
-                  focusNode: _nameFocus,
                   keyboardType: TextInputType.text,
                   controller: _ingredientesController,
                   decoration: InputDecoration(labelText: "Ingredientes"),

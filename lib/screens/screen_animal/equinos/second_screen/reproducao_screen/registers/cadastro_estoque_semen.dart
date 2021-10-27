@@ -1,10 +1,11 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/cavalo_db.dart';
 import 'package:gerenciamento_rural/models/cavalo.dart';
 import 'package:gerenciamento_rural/models/inventario_semen_equino.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+
 import 'package:toast/toast.dart';
 
 class CadastroEstoqueSemenEquino extends StatefulWidget {
@@ -24,7 +25,7 @@ class _CadastroEstoqueSemenEquinoState
   InventarioSemenEquino _editedInventario;
   Cavalo cavalo = Cavalo();
   String idadeFinal = "";
-  String nomeCachaco = "";
+  String nomeCavalo = "";
   final _vigorController = TextEditingController();
   final _obsController = TextEditingController();
   final _palhetaController = TextEditingController();
@@ -142,51 +143,29 @@ class _CadastroEstoqueSemenEquinoState
                 SizedBox(
                   height: 20.0,
                 ),
-                SearchableDropdown.single(
-                  items: cavalos.map((cavalo) {
-                    return DropdownMenuItem(
-                      value: cavalo,
-                      child: Row(
-                        children: [
-                          Text(cavalo.nome),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: cavalo,
-                  hint: "Selecione um cavalo",
-                  searchHint: "Selecione um cavalo",
+                CustomSearchableDropDown(
+                  items: cavalos,
+                  label: 'Selecione um cavalo',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: cavalos?.map((item) {
+                        return item.nome;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _inventarioEdited = true;
-                    setState(() {
-                      _editedInventario.id = value.id;
-                      _editedInventario.nomeCavalo = value.nome;
-                    });
+                    _editedInventario.id = value.id;
+                    _editedInventario.nomeCavalo = value.nome;
+                    nomeCavalo = value.nome;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 10.0,
                 ),
-                Text("Cachaço selecionado:  $nomeCachaco",
+                Text("Cachaço selecionado:  $nomeCavalo",
                     style: TextStyle(
                         fontSize: 16.0,
                         color: Color.fromARGB(255, 4, 125, 141))),

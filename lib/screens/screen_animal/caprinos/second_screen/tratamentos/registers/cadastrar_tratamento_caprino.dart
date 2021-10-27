@@ -1,3 +1,4 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/jovem_femea_caprino_db.dart';
@@ -11,7 +12,6 @@ import 'package:gerenciamento_rural/models/matriz_caprino.dart';
 import 'package:gerenciamento_rural/models/medicamento.dart';
 import 'package:gerenciamento_rural/models/reprodutor.dart';
 import 'package:gerenciamento_rural/models/tratamento.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class CadastroTratamentoCaprino extends StatefulWidget {
   final Tratamento tratamento;
@@ -113,181 +113,92 @@ class _CadastroTratamentoCaprinoState extends State<CadastroTratamentoCaprino> {
                       size: 80.0,
                       color: Color.fromARGB(255, 4, 125, 141),
                     ),
-                    SearchableDropdown.single(
-                      items: _reprodutores.map((reprodutor) {
-                        return DropdownMenuItem(
-                          value: reprodutor,
-                          child: Row(
-                            children: [
-                              Text(reprodutor.nomeAnimal),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: reprodutor,
-                      hint: "Selecione reprodutor",
-                      searchHint: "Selecione reprodutor",
+                    CustomSearchableDropDown(
+                      items: _reprodutores,
+                      label: 'Selecione reprodutor',
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.blue)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.search),
+                      ),
+                      dropDownMenuItems: _reprodutores?.map((item) {
+                            return item.nomeAnimal;
+                          })?.toList() ??
+                          [],
                       onChanged: (value) {
-                        setState(() {
+                        if (value != null) {
                           _editedTratamento.idAnimal = value.id;
                           _editedTratamento.nomeAnimal = value.nomeAnimal;
                           nomeAnimal = value.nomeAnimal;
-                        });
+                        }
                       },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
-                    ),
-                    SizedBox(
-                      height: 5.0,
                     ),
                     Text("OU"),
-                    SearchableDropdown.single(
-                      items: _matrizes.map((matrizCaprino) {
-                        return DropdownMenuItem(
-                          value: matrizCaprino,
-                          child: Row(
-                            children: [
-                              Text(matrizCaprino.nomeAnimal),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: matrizCaprino,
-                      hint: "Selecione matriz",
-                      searchHint: "Selecione matriz",
+                    CustomSearchableDropDown(
+                      items: _matrizes,
+                      label: 'Selecione matriz',
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.blue)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.search),
+                      ),
+                      dropDownMenuItems: _matrizes?.map((item) {
+                            return item.nomeAnimal;
+                          })?.toList() ??
+                          [],
                       onChanged: (value) {
-                        setState(() {
+                        if (value != null) {
                           _editedTratamento.idAnimal = value.id;
                           _editedTratamento.nomeAnimal = value.nomeAnimal;
                           nomeAnimal = value.nomeAnimal;
-                        });
+                        }
                       },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
-                    ),
-                    SizedBox(
-                      height: 5.0,
                     ),
                     Text("OU"),
-                    SearchableDropdown.single(
-                      items: _jovensF.map((jovemFemeaCaprino) {
-                        return DropdownMenuItem(
-                          value: jovemFemeaCaprino,
-                          child: Row(
-                            children: [
-                              Text(jovemFemeaCaprino.nomeAnimal),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: jovemFemeaCaprino,
-                      hint: "Selecione jovem fêmea",
-                      searchHint: "Selecione jovem fêmea",
+                    CustomSearchableDropDown(
+                      items: _jovensF,
+                      label: 'Selecione jovem fêmea',
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.blue)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.search),
+                      ),
+                      dropDownMenuItems: _jovensF?.map((item) {
+                            return item.nomeAnimal;
+                          })?.toList() ??
+                          [],
                       onChanged: (value) {
-                        setState(() {
+                        if (value != null) {
                           _editedTratamento.idAnimal = value.id;
                           _editedTratamento.nomeAnimal = value.nomeAnimal;
                           nomeAnimal = value.nomeAnimal;
-                        });
+                        }
                       },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
-                    ),
-                    SizedBox(
-                      height: 5.0,
                     ),
                     Text("OU"),
-                    SearchableDropdown.single(
-                      items: _jovensM.map((jovemMachoCaprino) {
-                        return DropdownMenuItem(
-                          value: jovemMachoCaprino,
-                          child: Row(
-                            children: [
-                              Text(jovemMachoCaprino.nomeAnimal),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: jovemMachoCaprino,
-                      hint: "Selecione jovem macho",
-                      searchHint: "Selecione jovem macho",
+                    CustomSearchableDropDown(
+                      items: _jovensM,
+                      label: 'Selecione jovem macho',
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.blue)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.search),
+                      ),
+                      dropDownMenuItems: _jovensM?.map((item) {
+                            return item.nomeAnimal;
+                          })?.toList() ??
+                          [],
                       onChanged: (value) {
-                        setState(() {
+                        if (value != null) {
                           _editedTratamento.idAnimal = value.id;
                           _editedTratamento.nomeAnimal = value.nomeAnimal;
                           nomeAnimal = value.nomeAnimal;
-                        });
+                        }
                       },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
                     ),
                     SizedBox(
                       height: 10.0,
@@ -317,47 +228,27 @@ class _CadastroTratamentoCaprinoState extends State<CadastroTratamentoCaprino> {
                       keyboardType: TextInputType.text,
                     ),
                     SizedBox(height: 5.0),
-                    SearchableDropdown.single(
-                      items: _medicamentos.map((med) {
-                        return DropdownMenuItem(
-                          value: med,
-                          child: Row(
-                            children: [
-                              Text(med.nomeMedicamento),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: med,
-                      hint: "Selecione medicamento",
-                      searchHint: "Selecione medicamento",
+                    CustomSearchableDropDown(
+                      items: _medicamentos,
+                      label: 'Selecione um medicamento',
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.blue)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.search),
+                      ),
+                      dropDownMenuItems: _medicamentos?.map((item) {
+                            return item.nomeMedicamento;
+                          })?.toList() ??
+                          [],
                       onChanged: (value) {
-                        setState(() {
+                        if (value != null) {
                           _editedTratamento.idMedicamento = value.id;
                           _editedTratamento.nomeMedicamento =
                               value.nomeMedicamento;
                           nomeMedicamento = value.nomeMedicamento;
-                        });
+                        }
                       },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
                     ),
                     Text("Medicamento:  $nomeMedicamento",
                         style: TextStyle(

@@ -42,8 +42,8 @@ android {
         applicationId "br.com.devmurilo.gerenciamento_rural"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 5
-        versionName "1.0.5"
+        versionCode 7
+        versionName "1.0.7"
     }
 
     signingConfigs {

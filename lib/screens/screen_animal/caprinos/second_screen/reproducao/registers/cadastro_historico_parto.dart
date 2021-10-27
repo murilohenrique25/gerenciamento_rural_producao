@@ -1,3 +1,4 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/matriz_caprino_db.dart';
@@ -7,7 +8,7 @@ import 'package:gerenciamento_rural/models/matriz_caprino.dart';
 import 'package:gerenciamento_rural/models/registro_partos_caprinos.dart';
 import 'package:gerenciamento_rural/models/reprodutor.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+
 import 'package:toast/toast.dart';
 
 class CadastroHistoricoPartoCaprino extends StatefulWidget {
@@ -63,24 +64,21 @@ class _CadastroHistoricoPartoCaprinoState
     if (widget.registroPartoCaprino == null) {
       _editedRegistros = RegistroPartoCaprino();
     } else {
-      // _editedRegistros =
-      //     RegistroPartoCaprino.fromMap(widget.registroPartoCaprino.toMap());
-      // _palhetaController.text = _editedRegistros.identificacao;
-      // _quantidadeController.text = _editedRegistros.quantidade.toString();
-      // _corController.text = _editedRegistros.cor;
-      // _dataColeta.text = _editedRegistros.dataCadastro;
-      // _dataValidade.text = _editedRegistros.dataValidade;
-      // _obsController.text = _editedRegistros.observacao;
-      // _vigorController.text = _editedRegistros.vigor;
-      // _aspectoController.text = _editedRegistros.aspecto;
-      // _mortilidadeController.text = _editedRegistros.mortalidade;
-      // _turbilhamentoController.text = _editedRegistros.turbilhamento;
-      // _concentracaoController.text = _editedRegistros.concentracao;
-      // _volumeController.text = _editedRegistros.volume.toString();
-      // _celulasNormaisController.text =
-      //     _editedRegistros.celulasNormais.toString();
-      // _defeitosMaioresController.text = _editedRegistros.defeitoMaiores;
-      // _defeitosMenoresController.text = _editedRegistros.defeitoMenores;
+      _editedRegistros =
+          RegistroPartoCaprino.fromMap(widget.registroPartoCaprino.toMap());
+      nomeMatriz = _editedRegistros.nomeMatriz;
+      nomeMacho = _editedRegistros.nomeReprodutor;
+      _data.text = _editedRegistros.data;
+      _quantidadeController.text = _editedRegistros.quantidade.toString();
+      _quantidadeFController.text = _editedRegistros.quantFemeas.toString();
+      _quantidadeMController.text = _editedRegistros.quantMachos.toString();
+      _problemaController.text = _editedRegistros.problema;
+      _quantidadeController.text = _editedRegistros.quantidade.toString();
+      if (_editedRegistros.tipoInseminacao == "Inseminação") {
+        _radioValueSetor = 0;
+      } else {
+        _radioValueSetor = 1;
+      }
     }
   }
 
@@ -127,46 +125,25 @@ class _CadastroHistoricoPartoCaprinoState
                   size: 80.0,
                   color: Color.fromARGB(255, 4, 125, 141),
                 ),
-                SearchableDropdown.single(
-                  items: matrizes.map((matriz) {
-                    return DropdownMenuItem(
-                      value: matriz,
-                      child: Row(
-                        children: [
-                          Text(matriz.nomeAnimal),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: matriz,
-                  hint: "Selecione uma matriz",
-                  searchHint: "Selecione uma matriz",
+                CustomSearchableDropDown(
+                  items: matrizes,
+                  label: 'Selecione uma matriz',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: matrizes?.map((item) {
+                        return item.nomeAnimal;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _inventarioEdited = true;
-                    setState(() {
+                    if (value != null) {
                       _editedRegistros.nomeMatriz = value.nomeAnimal;
                       nomeMatriz = value.nomeAnimal;
-                    });
+                    }
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 10.0,
@@ -178,46 +155,25 @@ class _CadastroHistoricoPartoCaprinoState
                 SizedBox(
                   height: 10.0,
                 ),
-                SearchableDropdown.single(
-                  items: reprodutores.map((reprodutor) {
-                    return DropdownMenuItem(
-                      value: reprodutor,
-                      child: Row(
-                        children: [
-                          Text(reprodutor.nomeAnimal),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: reprodutor,
-                  hint: "Selecione um reprodutor",
-                  searchHint: "Selecione um reprodutor",
+                CustomSearchableDropDown(
+                  items: reprodutores,
+                  label: 'Selecione um reprodutor',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: reprodutores?.map((item) {
+                        return item.nomeAnimal;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _inventarioEdited = true;
-                    setState(() {
+                    if (value != null) {
                       _editedRegistros.nomeReprodutor = value.nomeAnimal;
                       nomeMacho = value.nomeAnimal;
-                    });
+                    }
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 10.0,

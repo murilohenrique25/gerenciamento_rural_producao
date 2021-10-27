@@ -33,7 +33,7 @@ class _CaprinosState extends State<Caprinos> {
                     colorBlendMode: BlendMode.modulate,
                   ),
                   Text(
-                    "Caprinos",
+                    "Caprinos e Ovinos",
                     style: TextStyle(
                         color: Colors.black,
                         letterSpacing: 1.0,

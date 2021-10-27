@@ -1,3 +1,4 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/inventario_semen_bovino_corte_db.dart';
@@ -8,7 +9,6 @@ import 'package:gerenciamento_rural/models/inventario_semen.dart';
 import 'package:gerenciamento_rural/models/novilha_corte.dart';
 import 'package:gerenciamento_rural/models/vaca_corte.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class CadastroInseminacaoBovinoCorte extends StatefulWidget {
   final Inseminacao inseminacao;
@@ -43,6 +43,8 @@ class _CadastroInseminacaoBovinoCorteState
   String verificaAnimal;
   VacaCorte vaca;
   NovilhaCorte novilha;
+  String nomeFemea = "";
+  String nomeSemen = "";
   void _reset() {
     setState(() {
       _formKey = GlobalKey();
@@ -57,6 +59,11 @@ class _CadastroInseminacaoBovinoCorteState
       _editedInseminacao = Inseminacao();
     } else {
       _editedInseminacao = Inseminacao.fromMap(widget.inseminacao.toMap());
+      nomeFemea = _editedInseminacao.nomeVaca;
+      nomeSemen = _editedInseminacao.nomeTouro;
+      _inseminadorController.text = _editedInseminacao.inseminador;
+      _obsController.text = _editedInseminacao.observacao;
+      _dataInse.text = _editedInseminacao.data;
     }
   }
 
@@ -81,8 +88,11 @@ class _CadastroInseminacaoBovinoCorteState
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            selectedInseminacao.quantidade = selectedInseminacao.quantidade - 1;
-            helperInventario.updateItem(selectedInseminacao);
+            if (_editedInseminacao.id == null) {
+              selectedInseminacao.quantidade =
+                  selectedInseminacao.quantidade - 1;
+              helperInventario.updateItem(selectedInseminacao);
+            }
             String num = _editedInseminacao.data.split('-').reversed.join();
             DateTime dates = DateTime.parse(num);
             DateTime dateParto = dates.add(new Duration(days: 284));
@@ -119,131 +129,88 @@ class _CadastroInseminacaoBovinoCorteState
                   size: 80.0,
                   color: Color.fromARGB(255, 4, 125, 141),
                 ),
-                SearchableDropdown.single(
-                  items: totalVacas.map((vaca) {
-                    return DropdownMenuItem(
-                      value: vaca,
-                      child: Row(
-                        children: [
-                          Text(vaca.nome),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: vaca,
-                  hint: "Selecione uma Vaca",
-                  searchHint: "Selecione uma Vaca",
+                CustomSearchableDropDown(
+                  items: totalVacas,
+                  label: 'Selecione uma vaca',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: totalVacas?.map((item) {
+                        return item.nome;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    setState(() {
-                      verificaAnimal = "vaca";
-                      vaca = value;
-                      _editedInseminacao.idVaca = value.idVaca;
-                      _editedInseminacao.nomeVaca = value.nome;
-                    });
+                    verificaAnimal = "vaca";
+                    vaca = value;
+                    _editedInseminacao.idVaca = value.id;
+                    _editedInseminacao.nomeVaca = value.nome;
+                    nomeFemea = value.nome;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 Text("OU"),
-                SearchableDropdown.single(
-                  items: totalNovilhas.map((novilha) {
-                    return DropdownMenuItem(
-                      value: novilha,
-                      child: Row(
-                        children: [
-                          Text(novilha.nome),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: novilha,
-                  hint: "Selecione uma Novilha",
-                  searchHint: "Selecione uma Novilha",
+                CustomSearchableDropDown(
+                  items: totalNovilhas,
+                  label: 'Selecione uma novilha',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: totalNovilhas?.map((item) {
+                        return item.nome;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    setState(() {
-                      verificaAnimal = "novilha";
-                      novilha = value;
-                      _editedInseminacao.idVaca = value.idNovilha;
-                      _editedInseminacao.nomeVaca = value.nome;
-                    });
+                    verificaAnimal = "novilha";
+                    novilha = value;
+                    _editedInseminacao.idVaca = value.id;
+                    _editedInseminacao.nomeVaca = value.nome;
+                    nomeFemea = value.nome;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
-                SearchableDropdown.single(
-                  items: semens.map((semen) {
-                    return DropdownMenuItem(
-                      value: semen,
-                      child: Row(
-                        children: [
-                          Text(semen.nomeTouro),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: selectedInseminacao,
-                  hint: "Selecione um Sêmen",
-                  searchHint: "Selecione um Sêmen",
+                SizedBox(
+                  height: 10.0,
+                ),
+                Text("Fêmea:  $nomeFemea",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                SizedBox(
+                  height: 20.0,
+                ),
+                CustomSearchableDropDown(
+                  items: semens,
+                  label: 'Selecione um Sêmen',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: semens?.map((item) {
+                        return item.nomeTouro;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    setState(() {
-                      selectedInseminacao = value;
-                      _editedInseminacao.idSemen = value.id;
-                      _editedInseminacao.nomeTouro = value.nomeTouro;
-                    });
+                    selectedInseminacao = value;
+                    _editedInseminacao.idSemen = value.id;
+                    _editedInseminacao.nomeTouro = value.nomeTouro;
+                    nomeSemen = value.nomeTouro;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Text("Sêmen:  $nomeSemen",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color.fromARGB(255, 4, 125, 141))),
+                SizedBox(
+                  height: 20.0,
                 ),
                 TextField(
                   keyboardType: TextInputType.text,

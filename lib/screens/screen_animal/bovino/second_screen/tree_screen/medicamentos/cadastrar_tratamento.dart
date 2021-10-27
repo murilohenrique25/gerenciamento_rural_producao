@@ -1,3 +1,4 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/bezerra_db.dart';
@@ -10,7 +11,6 @@ import 'package:gerenciamento_rural/models/novilha.dart';
 import 'package:gerenciamento_rural/models/tratamento.dart';
 import 'package:gerenciamento_rural/models/vaca.dart';
 import 'package:gerenciamento_rural/screens/screen_animal/bovino/second_screen/tree_screen/medicamentos/tratamento_list.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class CadastroTratamento extends StatefulWidget {
   final Tratamento tratamento;
@@ -109,133 +109,73 @@ class _CadastroTratamentoState extends State<CadastroTratamento> {
                       size: 80.0,
                       color: Color.fromARGB(255, 4, 125, 141),
                     ),
-                    SearchableDropdown.single(
-                      items: _vacas.map((vaca) {
-                        return DropdownMenuItem(
-                          value: vaca,
-                          child: Row(
-                            children: [
-                              Text(vaca.nome),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: vac,
-                      hint: "Selecione vaca",
-                      searchHint: "Selecione vaca",
+                    CustomSearchableDropDown(
+                      items: _vacas,
+                      label: 'Selecione uma vaca',
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.blue)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.search),
+                      ),
+                      dropDownMenuItems: _vacas?.map((item) {
+                            return item.nome;
+                          })?.toList() ??
+                          [],
                       onChanged: (value) {
-                        setState(() {
+                        if (value != null) {
                           _editedTratamento.idAnimal = value.idVaca;
-                          _editedTratamento.nomeAnimal = value.nomeVaca;
-                        });
+                          _editedTratamento.nomeAnimal = value.nome;
+                        }
                       },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
                     ),
                     SizedBox(
                       height: 5.0,
                     ),
                     Text("OU"),
-                    SearchableDropdown.single(
-                      items: _novilhas.map((novilha) {
-                        return DropdownMenuItem(
-                          value: novilha,
-                          child: Row(
-                            children: [
-                              Text(novilha.nome),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: nov,
-                      hint: "Selecione novilha",
-                      searchHint: "Selecione novilha",
+                    CustomSearchableDropDown(
+                      items: _novilhas,
+                      label: 'Selecione uma novilha',
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.blue)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.search),
+                      ),
+                      dropDownMenuItems: _novilhas?.map((item) {
+                            return item.nome;
+                          })?.toList() ??
+                          [],
                       onChanged: (value) {
-                        setState(() {
+                        if (value != null) {
                           _editedTratamento.idAnimal = value.idNovilha;
                           _editedTratamento.nomeAnimal = value.nome;
-                        });
+                        }
                       },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
                     ),
                     SizedBox(
                       height: 5.0,
                     ),
                     Text("OU"),
-                    SearchableDropdown.single(
-                      items: _bezerras.map((bezerra) {
-                        return DropdownMenuItem(
-                          value: bezerra,
-                          child: Row(
-                            children: [
-                              Text(bezerra.nome),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: bez,
-                      hint: "Selecione bezerra",
-                      searchHint: "Selecione bezerra",
+                    CustomSearchableDropDown(
+                      items: _bezerras,
+                      label: 'Selecione uma bezerra',
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.blue)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.search),
+                      ),
+                      dropDownMenuItems: _bezerras?.map((item) {
+                            return item.nome;
+                          })?.toList() ??
+                          [],
                       onChanged: (value) {
-                        setState(() {
+                        if (value != null) {
                           _editedTratamento.idAnimal = value.idBezerra;
                           _editedTratamento.nomeAnimal = value.nome;
-                        });
+                        }
                       },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
                     ),
                     SizedBox(
                       height: 5.0,
@@ -258,46 +198,26 @@ class _CadastroTratamentoState extends State<CadastroTratamento> {
                       keyboardType: TextInputType.text,
                     ),
                     SizedBox(height: 5.0),
-                    SearchableDropdown.single(
-                      items: _medicamento.map((medicamento) {
-                        return DropdownMenuItem(
-                          value: medicamento,
-                          child: Row(
-                            children: [
-                              Text(medicamento.nomeMedicamento),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      value: med,
-                      hint: "Selecione um medicamento",
-                      searchHint: "Selecione um medicamento",
+                    CustomSearchableDropDown(
+                      items: _medicamento,
+                      label: 'Selecione um medicamento',
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.blue)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.search),
+                      ),
+                      dropDownMenuItems: _medicamento?.map((item) {
+                            return item.nomeMedicamento;
+                          })?.toList() ??
+                          [],
                       onChanged: (value) {
-                        setState(() {
-                          _editedTratamento.idMedicamento = value.idMedicamento;
+                        if (value != null) {
+                          _editedTratamento.idMedicamento = value.id;
                           _editedTratamento.nomeMedicamento =
                               value.nomeMedicamento;
-                        });
+                        }
                       },
-                      doneButton: "Pronto",
-                      displayItem: (item, selected) {
-                        return (Row(children: [
-                          selected
-                              ? Icon(
-                                  Icons.radio_button_checked,
-                                  color: Colors.grey,
-                                )
-                              : Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.grey,
-                                ),
-                          SizedBox(width: 7),
-                          Expanded(
-                            child: item,
-                          ),
-                        ]));
-                      },
-                      isExpanded: true,
                     ),
                     SizedBox(
                       height: 5.0,

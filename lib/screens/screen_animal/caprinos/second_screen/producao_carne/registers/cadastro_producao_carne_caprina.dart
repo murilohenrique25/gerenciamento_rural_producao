@@ -1,8 +1,9 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_rural/helpers/preco_carne_caprino_db.dart';
 import 'package:gerenciamento_rural/models/preco_carne_caprina.dart';
 import 'package:gerenciamento_rural/models/producao_carne_caprina.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+
 import 'package:toast/toast.dart';
 
 class CadastroProducaoCarneCaprina extends StatefulWidget {
@@ -30,6 +31,7 @@ class _CadastroProducaoCarneCaprinaState
     _getAllPreco();
     if (widget.producaoCarneCaprina == null) {
       _editedProducaoCarne = ProducaoCarneCaprina();
+      _editedProducaoCarne.quantidade = 0.0;
     } else {
       _editedProducaoCarne =
           ProducaoCarneCaprina.fromMap(widget.producaoCarneCaprina.toMap());
@@ -95,48 +97,27 @@ class _CadastroProducaoCarneCaprinaState
                     });
                   },
                 ),
-                SearchableDropdown.single(
-                  items: precoCarne.map((preco) {
-                    return DropdownMenuItem(
-                      value: preco,
-                      child: Row(
-                        children: [
-                          Text(preco.data),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: precoCarneCaprina,
-                  hint: "Selecione um mês",
-                  searchHint: "Selecione um mês",
+                CustomSearchableDropDown(
+                  items: precoCarne,
+                  label: 'Selecione um mês',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: precoCarne?.map((item) {
+                        return item.data;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _producaoCarneEdited = true;
-                    setState(() {
+                    if (value != null) {
                       _editedProducaoCarne.data = value.data;
                       nomeMes = value.data;
                       _editedProducaoCarne.preco = value.preco;
                       nomePreco = value.preco;
-                    });
+                    }
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 5.0,

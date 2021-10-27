@@ -117,7 +117,7 @@ class _ListNutricaoVolumosoCaprinoState
                   width: 5.0,
                 ),
                 Text(
-                  "Data: " + totalNT[index].data,
+                  "Baia: " + totalNT[index].baia,
                   style: TextStyle(fontSize: 14.0),
                 ),
               ],
@@ -313,11 +313,10 @@ class _ListNutricaoVolumosoCaprinoState
                     mainAxisAlignment: pdfLib.MainAxisAlignment.center,
                     crossAxisAlignment: pdfLib.CrossAxisAlignment.start,
                     children: [
-                      pdfLib.Text('Instituto Federal Goiano',
+                      pdfLib.Text('Control IF Goiano',
                           style: pdfLib.TextStyle(
                               fontSize: 22, color: PdfColors.white)),
-                      pdfLib.Text(
-                          'Rodovia Geraldo Silva Nascimento Km 2,5, Rod. Gustavo Capanema,\nUrutaí - GO, 75790-000',
+                      pdfLib.Text('control@institutofederal.com.br',
                           style: pdfLib.TextStyle(color: PdfColors.white)),
                       pdfLib.Text('(64) 3465-1900',
                           style: pdfLib.TextStyle(color: PdfColors.white)),

@@ -1,5 +1,7 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:gerenciamento_rural/helpers/cavalo_db.dart';
 import 'package:gerenciamento_rural/helpers/egua_db.dart';
 import 'package:gerenciamento_rural/helpers/inventario_semen_equino_db.dart';
 import 'package:gerenciamento_rural/models/cavalo.dart';
@@ -7,7 +9,7 @@ import 'package:gerenciamento_rural/models/egua.dart';
 import 'package:gerenciamento_rural/models/inseminacao_equino.dart';
 import 'package:gerenciamento_rural/models/inventario_semen_equino.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+
 import 'package:toast/toast.dart';
 
 class CadastroInseminacaoMontaEquino extends StatefulWidget {
@@ -21,10 +23,12 @@ class CadastroInseminacaoMontaEquino extends StatefulWidget {
 class _CadastroInseminacaoMontaEquinoState
     extends State<CadastroInseminacaoMontaEquino> {
   EguaDB eguaDB = EguaDB();
+  CavaloDB cavaloDB = CavaloDB();
   InventarioSemenEquinoDB _inventarioSemenDB = InventarioSemenEquinoDB();
   int _radioValue = 0;
   String tipo;
   List<Egua> eguas;
+  List<Cavalo> cavalos;
   List<InventarioSemenEquino> listaSemens;
   InventarioSemenEquino inventarioSemen;
   InseminacaoEquino _editedInseminacao;
@@ -94,15 +98,16 @@ class _CadastroInseminacaoMontaEquinoState
               if (_radioValue == 0) {
                 inventarioSemen.quantidade = inventarioSemen.quantidade - 1;
                 _inventarioSemenDB.updateItem(inventarioSemen);
-                egua.diasPrenha = 0;
-                String num = _editedInseminacao.data.split('-').reversed.join();
-                DateTime dates = DateTime.parse(num);
-                DateTime dateParto = dates.add(new Duration(days: 335));
-                var format = new DateFormat("dd-MM-yyyy");
-                String dataParto = format.format(dateParto);
-                egua.partoPrevisto = dataParto;
-                eguaDB.updateItem(egua);
               }
+              egua.diasPrenha = 0;
+              String num = _editedInseminacao.data.split('-').reversed.join();
+              DateTime dates = DateTime.parse(num);
+              DateTime dateParto = dates.add(new Duration(days: 335));
+              var format = new DateFormat("dd-MM-yyyy");
+              String dataParto = format.format(dateParto);
+              egua.partoPrevisto = dataParto;
+              eguaDB.updateItem(egua);
+
               Navigator.pop(context, _editedInseminacao);
             }
           },
@@ -152,49 +157,26 @@ class _CadastroInseminacaoMontaEquinoState
                 SizedBox(
                   height: 20.0,
                 ),
-                SearchableDropdown.single(
-                  items: eguas.map((egua) {
-                    return DropdownMenuItem(
-                      value: egua,
-                      child: Row(
-                        children: [
-                          Text(egua.nome),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: egua,
-                  hint: "Selecione uma égua",
-                  searchHint: "Selecione uma égua",
+                CustomSearchableDropDown(
+                  items: eguas,
+                  label: 'Selecione uma égua',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: eguas?.map((item) {
+                        return item.nome;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _inseminacaoEdited = true;
-                    setState(() {
-                      nomeEgua = value.nome;
-                      _editedInseminacao.idEgua = value.id;
-                      _editedInseminacao.nomeEgua = value.nome;
-                      nomeEgua = value.nome;
-                      egua = value;
-                    });
+                    nomeEgua = value.nome;
+                    _editedInseminacao.idEgua = value.id;
+                    _editedInseminacao.nomeEgua = value.nome;
+                    nomeEgua = value.nome;
+                    egua = value;
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 10.0,
@@ -206,51 +188,47 @@ class _CadastroInseminacaoMontaEquinoState
                 SizedBox(
                   height: 10.0,
                 ),
-                SearchableDropdown.single(
-                  items: listaSemens.map((cavalo) {
-                    return DropdownMenuItem(
-                      value: cavalo,
-                      child: Row(
-                        children: [
-                          Text(cavalo.nomeCavalo),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: cavalo,
-                  hint: "Selecione um cavalo",
-                  searchHint: "Selecione um cavalo",
-                  onChanged: (value) {
-                    _inseminacaoEdited = true;
-                    setState(() {
+                if (_radioValue == 0)
+                  CustomSearchableDropDown(
+                    items: listaSemens,
+                    label: 'Selecione um sêmen',
+                    decoration:
+                        BoxDecoration(border: Border.all(color: Colors.blue)),
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: Icon(Icons.search),
+                    ),
+                    dropDownMenuItems: listaSemens?.map((item) {
+                          return item.nomeCavalo;
+                        })?.toList() ??
+                        [],
+                    onChanged: (value) {
+                      inventarioSemen = value;
                       _editedInseminacao.idSemen = value.idCavalo;
                       _editedInseminacao.nomeCavalo = value.nomeCavalo;
                       nomeCavalo = value.nomeCavalo;
-                    });
-                  },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
-                ),
-                SizedBox(
-                  height: 10.0,
-                ),
+                    },
+                  ),
+                if (_radioValue == 1)
+                  CustomSearchableDropDown(
+                    items: cavalos,
+                    label: 'Selecione um cavalo',
+                    decoration:
+                        BoxDecoration(border: Border.all(color: Colors.blue)),
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: Icon(Icons.search),
+                    ),
+                    dropDownMenuItems: cavalos?.map((item) {
+                          return item.nome;
+                        })?.toList() ??
+                        [],
+                    onChanged: (value) {
+                      _editedInseminacao.idSemen = value.id;
+                      _editedInseminacao.nomeCavalo = value.nome;
+                      nomeCavalo = value.nome;
+                    },
+                  ),
                 Text("Cavalo selecionado:  $nomeCavalo",
                     style: TextStyle(
                         fontSize: 16.0,
@@ -354,6 +332,11 @@ class _CadastroInseminacaoMontaEquinoState
     eguaDB.getAllItems().then((list) {
       setState(() {
         eguas = list;
+      });
+    });
+    cavaloDB.getAllItems().then((value) {
+      setState(() {
+        cavalos = value;
       });
     });
   }

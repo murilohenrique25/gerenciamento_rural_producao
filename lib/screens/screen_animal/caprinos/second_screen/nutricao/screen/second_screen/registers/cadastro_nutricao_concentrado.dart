@@ -54,6 +54,7 @@ class _CadastroNutricaoConcentradoCaprinoState
       _ndtController.text = _editedNutricao.ndt.toString();
       _obsController.text = _editedNutricao.observacao;
       _baiaController.text = _editedNutricao.baia;
+      _loteController.text = _editedNutricao.nomeLote;
     }
   }
 

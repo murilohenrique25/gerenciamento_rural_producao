@@ -1,3 +1,4 @@
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:gerenciamento_rural/helpers/lote_caprino_db.dart';
@@ -6,7 +7,6 @@ import 'package:gerenciamento_rural/helpers/todos_caprinos_db.dart';
 import 'package:gerenciamento_rural/models/lote.dart';
 import 'package:gerenciamento_rural/models/pesagem_lote_caprina.dart';
 import 'package:gerenciamento_rural/models/todoscaprino.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class CadastroPesagemLoteCaprino extends StatefulWidget {
   final PesagemLoteCaprina pesagemLoteCaprina;
@@ -50,6 +50,8 @@ class _CadastroPesagemLoteCaprinoState
       baiaController.text = _editedPesagem.baia;
       pesoController.text = _editedPesagem.peso.toString();
       data.text = _editedPesagem.data;
+      nomeLote = _editedPesagem.lote;
+      nomeAnimal = _editedPesagem.animal;
       obsController.text = _editedPesagem.observacao;
     }
   }
@@ -86,46 +88,25 @@ class _CadastroPesagemLoteCaprinoState
                 SizedBox(
                   height: 20,
                 ),
-                SearchableDropdown.single(
-                  items: lotes.map((lote) {
-                    return DropdownMenuItem(
-                      value: lote,
-                      child: Row(
-                        children: [
-                          Text(lote.nome),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: lote,
-                  hint: "Selecione um lote",
-                  searchHint: "Selecione um lote",
+                CustomSearchableDropDown(
+                  items: lotes,
+                  label: 'Selecione um lote',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: lotes?.map((item) {
+                        return item.nome;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _producaoCarneEdited = true;
-                    setState(() {
+                    if (value != null) {
                       _editedPesagem.lote = value.nome;
                       nomeLote = value.nome;
-                    });
+                    }
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 5.0,
@@ -155,46 +136,25 @@ class _CadastroPesagemLoteCaprinoState
                     });
                   },
                 ),
-                SearchableDropdown.single(
-                  items: animais.map((animal) {
-                    return DropdownMenuItem(
-                      value: animal,
-                      child: Row(
-                        children: [
-                          Text(animal.nome),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: animal,
-                  hint: "Selecione um animal",
-                  searchHint: "Selecione um animal",
+                CustomSearchableDropDown(
+                  items: animais,
+                  label: 'Selecione um animal',
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.blue)),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.search),
+                  ),
+                  dropDownMenuItems: animais?.map((item) {
+                        return item.nome;
+                      })?.toList() ??
+                      [],
                   onChanged: (value) {
-                    _producaoCarneEdited = true;
-                    setState(() {
+                    if (value != null) {
                       _editedPesagem.animal = value.nome;
                       nomeAnimal = value.nome;
-                    });
+                    }
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
                 ),
                 SizedBox(
                   height: 5.0,

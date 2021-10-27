@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_rural/helpers/lote_db.dart';
-import 'package:gerenciamento_rural/models/lote.dart';
 import 'package:gerenciamento_rural/models/nutricao_concentrado.dart';
 import 'package:intl/intl.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class CadastroNutricaoConcentrado extends StatefulWidget {
   final NutricaoConcentrado nutricaoConcentrado;
@@ -15,10 +12,6 @@ class CadastroNutricaoConcentrado extends StatefulWidget {
 
 class _CadastroNutricaoConcentradoState
     extends State<CadastroNutricaoConcentrado> {
-  LoteDB helperLote = LoteDB();
-  List<Lote> lotes = [];
-  Lote lote;
-  Lote selectedLote;
   bool _nutricaoEdited = false;
   NutricaoConcentrado _editedNutricao;
 
@@ -27,7 +20,7 @@ class _CadastroNutricaoConcentradoState
   final _pbController = TextEditingController();
   final _ndtController = TextEditingController();
   final _ingredientesController = TextEditingController();
-
+  final _loteController = TextEditingController();
   final _obsController = TextEditingController();
 
   final df = new DateFormat("dd-MM-yyyy");
@@ -46,7 +39,6 @@ class _CadastroNutricaoConcentradoState
   @override
   void initState() {
     super.initState();
-    _getAllLotes();
     if (widget.nutricaoConcentrado == null) {
       _editedNutricao = NutricaoConcentrado();
     } else {
@@ -58,6 +50,7 @@ class _CadastroNutricaoConcentradoState
       _pbController.text = _editedNutricao.pb.toString();
       _ndtController.text = _editedNutricao.ndt.toString();
       _obsController.text = _editedNutricao.observacao;
+      _loteController.text = _editedNutricao.nomeLote;
     }
   }
 
@@ -106,51 +99,16 @@ class _CadastroNutricaoConcentradoState
                 SizedBox(
                   height: 20,
                 ),
-                SearchableDropdown.single(
-                  items: lotes.map((lote) {
-                    return DropdownMenuItem(
-                      value: lote,
-                      child: Row(
-                        children: [
-                          Text(lote.nome),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  value: lote,
-                  hint: "Selecione um Lote",
-                  searchHint: "Selecione um Lote",
-                  onChanged: (value) {
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: _loteController,
+                  decoration: InputDecoration(labelText: "Lote"),
+                  onChanged: (text) {
                     _nutricaoEdited = true;
                     setState(() {
-                      selectedLote = value;
-
-                      _editedNutricao.id = value.id;
-                      _editedNutricao.nomeLote = value.name;
+                      _editedNutricao.nomeLote = text;
                     });
                   },
-                  doneButton: "Pronto",
-                  displayItem: (item, selected) {
-                    return (Row(children: [
-                      selected
-                          ? Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.grey,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked,
-                              color: Colors.grey,
-                            ),
-                      SizedBox(width: 7),
-                      Expanded(
-                        child: item,
-                      ),
-                    ]));
-                  },
-                  isExpanded: true,
-                ),
-                SizedBox(
-                  height: 10.0,
                 ),
                 TextField(
                   keyboardType: TextInputType.text,
@@ -261,13 +219,5 @@ class _CadastroNutricaoConcentradoState
     } else {
       return Future.value(true);
     }
-  }
-
-  void _getAllLotes() {
-    helperLote.getAllItems().then((list) {
-      setState(() {
-        lotes = list;
-      });
-    });
   }
 }
